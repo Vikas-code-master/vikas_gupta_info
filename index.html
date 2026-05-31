@@ -286,6 +286,23 @@
     left: 0;
     color: var(--accent);
   }
+  .work-tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--border);
+  }
+  .work-tech-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--fg-subtle);
+    margin-right: 4px;
+    align-self: center;
+    font-weight: 600;
+  }
 
   /* Projects */
   .projects { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
@@ -795,8 +812,16 @@
         <li><strong>Wellness — Diagnostic:</strong> Built REST APIs for member-level diagnostic test selection with partner-specific options; implemented test search, slot booking, coupon application, and end-to-end booking workflows.</li>
         <li><strong>Wellness — Gyms:</strong> Built integration APIs to aggregate and expose gym services from partners such as Cult and Fitpass.</li>
         <li><strong>Wellness — Consultations:</strong> Developed APIs enabling medical consultation services through third-party partners including MediBuddy and Practo.</li>
-        <li><em>Tech Stack:</em> Spring Boot (Java), SQL Server, Elasticsearch, MongoDB, AWS.</li>
       </ul>
+      <div class="work-tech">
+        <span class="work-tech-label">Stack</span>
+        <span class="tag">Java</span>
+        <span class="tag">Spring Boot</span>
+        <span class="tag">SQL Server</span>
+        <span class="tag">Elasticsearch</span>
+        <span class="tag">MongoDB</span>
+        <span class="tag">AWS</span>
+      </div>
     </div>
 
     <div class="work-item">
@@ -808,12 +833,27 @@
         <div class="work-meta">May 2021 — Mar 2025 · Gurugram</div>
       </div>
       <ul>
-        <li><strong>Coreservice:</strong> Developed features for pre-payment customer journeys — visit, enquiry, lead, and order — handling <strong>10M/day traffic</strong> (2:1 read/write). Tech: Spring MVC (Java), SQL Server, MongoDB, AWS.</li>
-        <li><strong>Policy Copy Detail (PCD) &amp; Central Doc Repo (CDR):</strong> Built a robust central backend providing policy details for multiple teams. Improved performance using design patterns, indexing, and Kafka (2M/day). In CDR managed policy copies, miscellaneous, and KYC docs (250K/day). Tech: Spring Boot (Java), Kafka, AWS S3, SQL Server, MongoDB.</li>
-        <li><strong>Docprime:</strong> Implemented login, member addition, HealthId creation, document storage by user/consent from HIP in HealthLocker. Added JWT auth and authorization for secure resource access. Tech: Spring MVC (Java), Postgres, MongoDB, AWS, ReactJS.</li>
-        <li><strong>Mongo Cron Jobs:</strong> Built scheduled jobs to migrate data from MongoDB to S3 — <strong>reduced cost by 20%</strong>. Tech: Spring MVC (Java), MongoDB, AWS, jQuery.</li>
-        <li><strong>Aadhaar Vault:</strong> Developed a secure storage system for UIDAI metadata used across teams. Tech: Spring Boot (Java), MySQL, MongoDB, AWS.</li>
+        <li><strong>Coreservice:</strong> Developed features for pre-payment customer journeys — visit, enquiry, lead, and order — handling <strong>10M/day traffic</strong> (2:1 read/write).</li>
+        <li><strong>Policy Copy Detail (PCD) &amp; Central Doc Repo (CDR):</strong> Built a robust central backend providing policy details for multiple teams. Improved performance using design patterns, indexing, and Kafka (2M/day). In CDR managed policy copies, miscellaneous, and KYC docs (250K/day).</li>
+        <li><strong>Docprime:</strong> Implemented login, member addition, HealthId creation, document storage by user/consent from HIP in HealthLocker. Added JWT auth and authorization for secure resource access.</li>
+        <li><strong>Mongo Cron Jobs:</strong> Built scheduled jobs to migrate data from MongoDB to S3 — <strong>reduced cost by 20%</strong>.</li>
+        <li><strong>Aadhaar Vault:</strong> Developed a secure storage system for UIDAI metadata used across teams.</li>
       </ul>
+      <div class="work-tech">
+        <span class="work-tech-label">Stack</span>
+        <span class="tag">Java</span>
+        <span class="tag">Spring MVC</span>
+        <span class="tag">Spring Boot</span>
+        <span class="tag">Kafka</span>
+        <span class="tag">SQL Server</span>
+        <span class="tag">MySQL</span>
+        <span class="tag">PostgreSQL</span>
+        <span class="tag">MongoDB</span>
+        <span class="tag">AWS</span>
+        <span class="tag">AWS S3</span>
+        <span class="tag">React</span>
+        <span class="tag">jQuery</span>
+      </div>
     </div>
 
     <div class="work-item">
