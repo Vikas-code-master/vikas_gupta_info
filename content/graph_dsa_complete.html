@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Graph DSA — Complete Guide (Basic to Advanced)</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --surface: #1e293b;
+    --surface-2: #273449;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --accent: #38bdf8;
+    --accent-2: #a78bfa;
+    --good: #34d399;
+    --warn: #fbbf24;
+    --danger: #f87171;
+    --code-bg: #0b1220;
+    --border: #334155;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+  }
+  header {
+    background: linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 100%);
+    padding: 56px 24px;
+    text-align: center;
+    color: white;
+  }
+  header h1 { margin: 0 0 12px; font-size: 2.5rem; letter-spacing: -0.02em; }
+  header p { margin: 0; font-size: 1.1rem; opacity: 0.9; }
+  .layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  nav.toc {
+    position: sticky;
+    top: 0;
+    align-self: start;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 24px 16px;
+    border-right: 1px solid var(--border);
+    background: var(--surface);
+  }
+  nav.toc h3 {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin: 16px 0 8px;
+  }
+  nav.toc h3:first-child { margin-top: 0; }
+  nav.toc a {
+    display: block;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    transition: all 0.15s;
+  }
+  nav.toc a:hover { background: var(--surface-2); color: var(--text); }
+  main { padding: 40px 48px; max-width: 1100px; }
+  h2 {
+    color: var(--accent);
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 8px;
+    margin-top: 48px;
+    font-size: 1.8rem;
+  }
+  h3 { color: var(--accent-2); margin-top: 32px; font-size: 1.35rem; }
+  h4 { color: var(--text); margin-top: 24px; font-size: 1.1rem; }
+  pre {
+    background: var(--code-bg);
+    padding: 18px;
+    border-radius: 8px;
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  code {
+    font-family: "JetBrains Mono", Menlo, Monaco, "Courier New", monospace;
+    font-size: 0.9em;
+  }
+  p code, li code, td code {
+    background: var(--surface-2);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--accent);
+  }
+  pre code { background: none; padding: 0; color: var(--text); }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 16px 0;
+    background: var(--surface);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 10px 14px;
+    text-align: left;
+  }
+  th { background: var(--surface-2); color: var(--accent); }
+  .callout {
+    border-left: 4px solid var(--accent);
+    background: var(--surface);
+    padding: 14px 18px;
+    margin: 18px 0;
+    border-radius: 0 6px 6px 0;
+  }
+  .callout.warn { border-color: var(--warn); }
+  .callout.good { border-color: var(--good); }
+  .callout.danger { border-color: var(--danger); }
+  .callout strong { color: var(--accent); }
+  .callout.warn strong { color: var(--warn); }
+  .callout.good strong { color: var(--good); }
+  .callout.danger strong { color: var(--danger); }
+  .pill {
+    display: inline-block;
+    background: var(--surface-2);
+    color: var(--accent);
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    margin: 2px 4px 2px 0;
+    border: 1px solid var(--border);
+  }
+  .complexity {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin: 12px 0;
+  }
+  .complexity div {
+    background: var(--surface);
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+  .complexity .label {
+    color: var(--muted);
+    font-size: 0.8rem;
+    display: block;
+  }
+  .complexity .value {
+    color: var(--good);
+    font-family: monospace;
+    font-weight: bold;
+  }
+  svg.graph { background: var(--surface); border-radius: 8px; border: 1px solid var(--border); margin: 12px 0; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    nav.toc { position: static; height: auto; }
+    main { padding: 24px; }
+    .grid-2 { grid-template-columns: 1fr; }
+  }
+  ul, ol { padding-left: 24px; }
+  li { margin: 6px 0; }
+  a.ref { color: var(--accent); }
+  hr { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Graph Data Structures &amp; Algorithms</h1>
+  <p>The complete journey — from adjacency lists to network flow, with real-world applications</p>
+</header>
+
+<div class="layout">
+  <nav class="toc">
+    <h3>Foundations</h3>
+    <a href="#intro">1. What is a Graph?</a>
+    <a href="#types">2. Types of Graphs</a>
+    <a href="#terminology">3. Terminology</a>
+    <a href="#representation">4. Representations</a>
+
+    <h3>Traversal</h3>
+    <a href="#bfs">5. Breadth-First Search</a>
+    <a href="#dfs">6. Depth-First Search</a>
+    <a href="#topological">7. Topological Sort</a>
+
+    <h3>Connectivity</h3>
+    <a href="#disjoint-set">8. Disjoint Set Union</a>
+    <a href="#scc">9. Strongly Connected Components</a>
+    <a href="#bridges">10. Bridges &amp; Articulation Points</a>
+
+    <h3>Shortest Paths</h3>
+    <a href="#dijkstra">11. Dijkstra's Algorithm</a>
+    <a href="#bellman-ford">12. Bellman-Ford</a>
+    <a href="#floyd-warshall">13. Floyd-Warshall</a>
+    <a href="#johnson">14. Johnson's Algorithm</a>
+    <a href="#a-star">15. A* Search</a>
+
+    <h3>Spanning Trees</h3>
+    <a href="#kruskal">16. Kruskal's MST</a>
+    <a href="#prim">17. Prim's MST</a>
+
+    <h3>Advanced</h3>
+    <a href="#max-flow">18. Network Flow</a>
+    <a href="#bipartite-matching">19. Bipartite Matching</a>
+    <a href="#tsp">20. Traveling Salesman</a>
+    <a href="#euler-hamilton">21. Euler &amp; Hamilton</a>
+    <a href="#pagerank">22. PageRank</a>
+
+    <h3>Applications</h3>
+    <a href="#real-world">23. Real-World Examples</a>
+    <a href="#cheatsheet">24. Cheatsheet</a>
+  </nav>
+
+  <main>
+
+  <section id="intro">
+    <h2>1. What is a Graph?</h2>
+    <p>A <strong>graph</strong> is a non-linear data structure consisting of a set of <strong>vertices</strong> (nodes) connected by <strong>edges</strong> (links). Formally, a graph <code>G = (V, E)</code> where <code>V</code> is the vertex set and <code>E ⊆ V × V</code> is the edge set.</p>
+    <p>Unlike trees, graphs can have cycles, multiple edges between nodes, and disconnected components. They model practically anything where things relate to other things — friendships, road networks, dependencies, web pages, molecules, neural networks.</p>
+
+    <svg class="graph" width="100%" height="220" viewBox="0 0 500 220">
+      <line x1="80" y1="50" x2="200" y2="50" stroke="#94a3b8" stroke-width="2"/>
+      <line x1="80" y1="50" x2="80" y2="170" stroke="#94a3b8" stroke-width="2"/>
+      <line x1="200" y1="50" x2="320" y2="120" stroke="#94a3b8" stroke-width="2"/>
+      <line x1="80" y1="170" x2="200" y2="170" stroke="#94a3b8" stroke-width="2"/>
+      <line x1="200" y1="170" x2="320" y2="120" stroke="#94a3b8" stroke-width="2"/>
+      <line x1="320" y1="120" x2="430" y2="60" stroke="#94a3b8" stroke-width="2"/>
+      <line x1="320" y1="120" x2="430" y2="180" stroke="#94a3b8" stroke-width="2"/>
+      <g fill="#38bdf8" stroke="#0ea5e9" stroke-width="2">
+        <circle cx="80" cy="50" r="22"/><circle cx="200" cy="50" r="22"/>
+        <circle cx="80" cy="170" r="22"/><circle cx="200" cy="170" r="22"/>
+        <circle cx="320" cy="120" r="22"/><circle cx="430" cy="60" r="22"/>
+        <circle cx="430" cy="180" r="22"/>
+      </g>
+      <g fill="white" font-family="monospace" font-size="14" text-anchor="middle" dy="5">
+        <text x="80" y="50">A</text><text x="200" y="50">B</text>
+        <text x="80" y="170">C</text><text x="200" y="170">D</text>
+        <text x="320" y="120">E</text><text x="430" y="60">F</text>
+        <text x="430" y="180">G</text>
+      </g>
+    </svg>
+
+    <div class="callout">
+      <strong>Why graphs matter:</strong> any problem that can be reframed as "nodes and connections" instantly inherits decades of optimal algorithms. Recognizing the graph structure is often half the solution.
+    </div>
+  </section>
+
+  <section id="types">
+    <h2>2. Types of Graphs</h2>
+    <table>
+      <tr><th>Type</th><th>Description</th><th>Example</th></tr>
+      <tr><td>Undirected</td><td>Edges have no direction</td><td>Facebook friendships</td></tr>
+      <tr><td>Directed (Digraph)</td><td>Edges have a direction (u → v)</td><td>Twitter follows</td></tr>
+      <tr><td>Weighted</td><td>Edges carry numeric values</td><td>Road distances</td></tr>
+      <tr><td>Unweighted</td><td>All edges equal cost</td><td>Web hyperlinks</td></tr>
+      <tr><td>Cyclic</td><td>Contains at least one cycle</td><td>Currency exchange</td></tr>
+      <tr><td>Acyclic (DAG)</td><td>No cycles, directed</td><td>Build dependencies</td></tr>
+      <tr><td>Connected</td><td>Path exists between any two nodes</td><td>Single component</td></tr>
+      <tr><td>Disconnected</td><td>Multiple components</td><td>Multiple chat groups</td></tr>
+      <tr><td>Complete (K<sub>n</sub>)</td><td>Every pair connected</td><td>Fully meshed network</td></tr>
+      <tr><td>Bipartite</td><td>Vertices split into two sets, edges only across</td><td>Jobs ↔ Workers</td></tr>
+      <tr><td>Tree</td><td>Connected, acyclic, |E| = |V| − 1</td><td>Filesystem</td></tr>
+      <tr><td>Multigraph</td><td>Multiple edges between same pair</td><td>Flight routes by airline</td></tr>
+      <tr><td>Sparse / Dense</td><td>|E| ≪ |V|² vs |E| ≈ |V|²</td><td>Social vs molecule graph</td></tr>
+    </table>
+  </section>
+
+  <section id="terminology">
+    <h2>3. Essential Terminology</h2>
+    <ul>
+      <li><strong>Degree:</strong> number of edges incident to a vertex. In digraphs: <em>in-degree</em> and <em>out-degree</em>.</li>
+      <li><strong>Path:</strong> sequence of vertices connected by edges with no repeats.</li>
+      <li><strong>Walk:</strong> sequence allowing repeats. <strong>Trail:</strong> no repeated edge.</li>
+      <li><strong>Cycle:</strong> path that starts and ends at the same vertex.</li>
+      <li><strong>Subgraph:</strong> graph formed from a subset of V and E.</li>
+      <li><strong>Component:</strong> maximal connected subgraph.</li>
+      <li><strong>Spanning Tree:</strong> tree subgraph touching every vertex.</li>
+      <li><strong>Diameter:</strong> longest shortest-path between any two vertices.</li>
+      <li><strong>Girth:</strong> length of shortest cycle.</li>
+      <li><strong>Adjacent:</strong> two vertices sharing an edge.</li>
+      <li><strong>Self-loop:</strong> edge from a vertex to itself.</li>
+    </ul>
+  </section>
+
+  <section id="representation">
+    <h2>4. Graph Representations</h2>
+
+    <h3>Adjacency Matrix</h3>
+    <p>2D array where <code>M[i][j] = 1</code> (or weight) if edge exists. Space: <code>O(V²)</code>. Edge lookup: <code>O(1)</code>. Best for dense graphs.</p>
+<pre><code>int n = 5;
+int[][] adj = new int[n][n];
+adj[0][1] = adj[1][0] = 1;   // undirected edge 0-1
+adj[1][2] = adj[2][1] = 1;</code></pre>
+
+    <h3>Adjacency List</h3>
+    <p>Array of lists; <code>adj[u]</code> stores neighbors of <code>u</code>. Space: <code>O(V + E)</code>. Best for sparse graphs (most real-world graphs).</p>
+<pre><code>// int[] {neighbor, weight}
+List&lt;List&lt;int[]&gt;&gt; adj = new ArrayList&lt;&gt;();
+for (int i = 0; i &lt; n; i++) adj.add(new ArrayList&lt;&gt;());
+adj.get(0).add(new int[]{1, 4});   // edge to 1 with weight 4
+adj.get(1).add(new int[]{0, 4});</code></pre>
+
+    <h3>Edge List</h3>
+    <p>Just a list of <code>(u, v, w)</code> tuples. Compact; used by Kruskal &amp; Bellman-Ford.</p>
+<pre><code>// int[] {u, v, weight}
+int[][] edges = { {0, 1, 4}, {1, 2, 3}, {0, 2, 5} };</code></pre>
+
+    <table>
+      <tr><th>Operation</th><th>Adjacency Matrix</th><th>Adjacency List</th><th>Edge List</th></tr>
+      <tr><td>Space</td><td>O(V²)</td><td>O(V + E)</td><td>O(E)</td></tr>
+      <tr><td>Add edge</td><td>O(1)</td><td>O(1)</td><td>O(1)</td></tr>
+      <tr><td>Edge lookup</td><td>O(1)</td><td>O(deg(v))</td><td>O(E)</td></tr>
+      <tr><td>Iterate neighbors</td><td>O(V)</td><td>O(deg(v))</td><td>O(E)</td></tr>
+    </table>
+  </section>
+
+  <hr>
+
+  <section id="bfs">
+    <h2>5. Breadth-First Search (BFS)</h2>
+    <p>Explores level by level using a queue. Finds the <strong>shortest path in unweighted graphs</strong>. Foundation for many other algorithms.</p>
+    <div class="complexity">
+      <div><span class="label">Time</span><span class="value">O(V + E)</span></div>
+      <div><span class="label">Space</span><span class="value">O(V)</span></div>
+    </div>
+<pre><code>static int[][] bfs(List&lt;List&lt;Integer&gt;&gt; adj, int start) {
+    int n = adj.size();
+    int[] dist = new int[n];
+    int[] parent = new int[n];
+    Arrays.fill(dist, -1);
+    Arrays.fill(parent, -1);
+    dist[start] = 0;
+    Deque&lt;Integer&gt; q = new ArrayDeque&lt;&gt;();
+    q.offer(start);
+    while (!q.isEmpty()) {
+        int u = q.poll();
+        for (int v : adj.get(u)) {
+            if (dist[v] == -1) {
+                dist[v] = dist[u] + 1;
+                parent[v] = u;
+                q.offer(v);
+            }
+        }
+    }
+    return new int[][]{dist, parent};
+}</code></pre>
+    <p><strong>Use cases:</strong> shortest path (unweighted), level-order traversal, finding connected components, web crawling, social network "degrees of separation", garbage collection (mark phase), finding cycles in undirected graphs.</p>
+  </section>
+
+  <section id="dfs">
+    <h2>6. Depth-First Search (DFS)</h2>
+    <p>Explores as far as possible before backtracking. Uses a stack (or recursion). Underpins topological sort, SCCs, cycle detection, and bridges.</p>
+    <div class="complexity">
+      <div><span class="label">Time</span><span class="value">O(V + E)</span></div>
+      <div><span class="label">Space</span><span class="value">O(V)</span></div>
+    </div>
+<pre><code>static List&lt;Integer&gt; dfs(List&lt;List&lt;Integer&gt;&gt; adj, int start) {
+    boolean[] visited = new boolean[adj.size()];
+    List&lt;Integer&gt; order = new ArrayList&lt;&gt;();
+    dfsVisit(adj, start, visited, order);
+    return order;
+}
+
+static void dfsVisit(List&lt;List&lt;Integer&gt;&gt; adj, int u,
+                     boolean[] visited, List&lt;Integer&gt; order) {
+    visited[u] = true;
+    order.add(u);
+    for (int v : adj.get(u))
+        if (!visited[v]) dfsVisit(adj, v, visited, order);
+}
+
+// Iterative version (avoid stack overflow)
+static void dfsIter(List&lt;List&lt;Integer&gt;&gt; adj, int start) {
+    boolean[] visited = new boolean[adj.size()];
+    Deque&lt;Integer&gt; stack = new ArrayDeque&lt;&gt;();
+    stack.push(start);
+    visited[start] = true;
+    while (!stack.isEmpty()) {
+        int u = stack.pop();
+        for (int v : adj.get(u)) {
+            if (!visited[v]) {
+                visited[v] = true;
+                stack.push(v);
+            }
+        }
+    }
+}</code></pre>
+    <h4>DFS Edge Classification (in DAG/digraph)</h4>
+    <ul>
+      <li><strong>Tree edge:</strong> discovered new vertex.</li>
+      <li><strong>Back edge:</strong> to ancestor (indicates cycle).</li>
+      <li><strong>Forward edge:</strong> to descendant.</li>
+      <li><strong>Cross edge:</strong> between different subtrees.</li>
+    </ul>
+  </section>
+
+  <section id="topological">
+    <h2>7. Topological Sort</h2>
+    <p>Linear ordering of a <strong>DAG</strong>'s vertices such that for every edge <code>u → v</code>, <code>u</code> appears before <code>v</code>. Used to schedule tasks with dependencies.</p>
+
+    <h3>Kahn's Algorithm (BFS-based)</h3>
+<pre><code>static List&lt;Integer&gt; topoKahn(int n, int[][] edges) {
+    List&lt;List&lt;Integer&gt;&gt; adj = new ArrayList&lt;&gt;();
+    for (int i = 0; i &lt; n; i++) adj.add(new ArrayList&lt;&gt;());
+    int[] indeg = new int[n];
+    for (int[] e : edges) {
+        adj.get(e[0]).add(e[1]);
+        indeg[e[1]]++;
+    }
+    Deque&lt;Integer&gt; q = new ArrayDeque&lt;&gt;();
+    for (int i = 0; i &lt; n; i++) if (indeg[i] == 0) q.offer(i);
+    List&lt;Integer&gt; order = new ArrayList&lt;&gt;();
+    while (!q.isEmpty()) {
+        int u = q.poll();
+        order.add(u);
+        for (int v : adj.get(u))
+            if (--indeg[v] == 0) q.offer(v);
+    }
+    return order.size() == n ? order : null;   // null means cycle
+}</code></pre>
+
+    <h3>DFS-based Topological Sort</h3>
+<pre><code>static List&lt;Integer&gt; topoDfs(int n, List&lt;List&lt;Integer&gt;&gt; adj) {
+    boolean[] visited = new boolean[n];
+    Deque&lt;Integer&gt; order = new ArrayDeque&lt;&gt;();
+    for (int i = 0; i &lt; n; i++)
+        if (!visited[i]) topoVisit(i, adj, visited, order);
+    return new ArrayList&lt;&gt;(order);   // pushed in reverse-finish order
+}
+
+static void topoVisit(int u, List&lt;List&lt;Integer&gt;&gt; adj,
+                      boolean[] visited, Deque&lt;Integer&gt; order) {
+    visited[u] = true;
+    for (int v : adj.get(u))
+        if (!visited[v]) topoVisit(v, adj, visited, order);
+    order.push(u);
+}</code></pre>
+
+    <p><strong>Real-world:</strong> course prerequisites, build systems (Make, Bazel), Excel formula recalc, package installation, instruction scheduling in compilers.</p>
+  </section>
+
+  <hr>
+
+  <section id="disjoint-set">
+    <h2>8. Disjoint Set Union (Union-Find)</h2>
+    <p>A data structure for tracking elements partitioned into disjoint sets. Two operations: <code>find(x)</code> returns set representative; <code>union(x, y)</code> merges sets. Lightning fast with two optimizations: <strong>path compression</strong> and <strong>union by rank/size</strong>.</p>
+    <div class="complexity">
+      <div><span class="label">Amortized op</span><span class="value">O(α(n))</span></div>
+      <div><span class="label">α(n)</span><span class="value">≤ 4 for any practical n</span></div>
+    </div>
+<pre><code>class DSU {
+    int[] parent, rank, size;
+    int components;
+
+    DSU(int n) {
+        parent = new int[n];
+        rank = new int[n];
+        size = new int[n];
+        components = n;
+        for (int i = 0; i &lt; n; i++) { parent[i] = i; size[i] = 1; }
+    }
+
+    int find(int x) {
+        while (parent[x] != x) {
+            parent[x] = parent[parent[x]];   // path compression
+            x = parent[x];
+        }
+        return x;
+    }
+
+    boolean union(int x, int y) {
+        int rx = find(x), ry = find(y);
+        if (rx == ry) return false;
+        if (rank[rx] &lt; rank[ry]) { int t = rx; rx = ry; ry = t; }
+        parent[ry] = rx;
+        size[rx] += size[ry];
+        if (rank[rx] == rank[ry]) rank[rx]++;
+        components--;
+        return true;
+    }
+
+    boolean connected(int x, int y) { return find(x) == find(y); }
+}</code></pre>
+
+    <div class="callout good">
+      <strong>Where DSU shines:</strong> Kruskal's MST, detecting cycles in undirected graphs, dynamic connectivity, image processing (connected pixel regions), Kruskal-style clustering, percolation simulations, and offline LCA queries.
+    </div>
+
+    <h3>Variants</h3>
+    <ul>
+      <li><strong>Weighted DSU:</strong> tracks relative weights between elements (used in equation systems).</li>
+      <li><strong>Persistent DSU:</strong> supports rollback for offline algorithms.</li>
+      <li><strong>DSU on tree (small-to-large):</strong> classic competitive-programming technique.</li>
+    </ul>
+  </section>
+
+  <section id="scc">
+    <h2>9. Strongly Connected Components (SCC)</h2>
+    <p>In a digraph, an SCC is a maximal subgraph where every vertex is reachable from every other. Two famous algorithms:</p>
+
+    <h3>Kosaraju's Algorithm</h3>
+    <ol>
+      <li>DFS on original graph, push vertices onto stack in finish order.</li>
+      <li>Reverse the graph.</li>
+      <li>Pop from stack, run DFS on reversed graph — each tree is an SCC.</li>
+    </ol>
+<pre><code>static int[] kosaraju(int n, List&lt;List&lt;Integer&gt;&gt; adj) {
+    List&lt;List&lt;Integer&gt;&gt; rev = new ArrayList&lt;&gt;();
+    for (int i = 0; i &lt; n; i++) rev.add(new ArrayList&lt;&gt;());
+    for (int u = 0; u &lt; n; u++)
+        for (int v : adj.get(u)) rev.get(v).add(u);
+
+    boolean[] visited = new boolean[n];
+    Deque&lt;Integer&gt; order = new ArrayDeque&lt;&gt;();
+    for (int i = 0; i &lt; n; i++)
+        if (!visited[i]) dfs1(i, adj, visited, order);
+
+    int[] comp = new int[n];
+    Arrays.fill(comp, -1);
+    int c = 0;
+    while (!order.isEmpty()) {
+        int u = order.pop();
+        if (comp[u] == -1) { dfs2(u, c, rev, comp); c++; }
+    }
+    return comp;
+}
+
+static void dfs1(int u, List&lt;List&lt;Integer&gt;&gt; adj,
+                 boolean[] visited, Deque&lt;Integer&gt; order) {
+    visited[u] = true;
+    for (int v : adj.get(u))
+        if (!visited[v]) dfs1(v, adj, visited, order);
+    order.push(u);
+}
+
+static void dfs2(int u, int c, List&lt;List&lt;Integer&gt;&gt; rev, int[] comp) {
+    comp[u] = c;
+    for (int v : rev.get(u))
+        if (comp[v] == -1) dfs2(v, c, rev, comp);
+}</code></pre>
+
+    <h3>Tarjan's Algorithm</h3>
+    <p>Single-pass DFS using discovery times and a "low-link" value; identifies SCCs with one stack. <code>O(V + E)</code>.</p>
+    <p><strong>Applications:</strong> 2-SAT solver, condensation graphs (DAG of SCCs), deadlock detection, recommendation systems, finding cycles in dependency graphs.</p>
+  </section>
+
+  <section id="bridges">
+    <h2>10. Bridges &amp; Articulation Points</h2>
+    <p><strong>Bridge:</strong> an edge whose removal disconnects the graph. <strong>Articulation point:</strong> a vertex whose removal disconnects the graph. Found via DFS in <code>O(V + E)</code> using discovery times <code>disc[u]</code> and lowest reachable ancestor <code>low[u]</code>.</p>
+<pre><code>class BridgeFinder {
+    int[] disc, low, parent;
+    int timer = 0;
+    List&lt;int[]&gt; result = new ArrayList&lt;&gt;();
+    List&lt;List&lt;Integer&gt;&gt; adj;
+
+    List&lt;int[]&gt; bridges(int n, List&lt;List&lt;Integer&gt;&gt; adj) {
+        this.adj = adj;
+        disc = new int[n]; low = new int[n]; parent = new int[n];
+        Arrays.fill(disc, -1); Arrays.fill(parent, -1);
+        for (int i = 0; i &lt; n; i++) if (disc[i] == -1) dfs(i);
+        return result;
+    }
+
+    void dfs(int u) {
+        disc[u] = low[u] = timer++;
+        for (int v : adj.get(u)) {
+            if (disc[v] == -1) {
+                parent[v] = u;
+                dfs(v);
+                low[u] = Math.min(low[u], low[v]);
+                if (low[v] &gt; disc[u]) result.add(new int[]{u, v});   // bridge
+            } else if (v != parent[u]) {
+                low[u] = Math.min(low[u], disc[v]);
+            }
+        }
+    }
+}</code></pre>
+    <p><strong>Real-world:</strong> identifying single points of failure in networks, vulnerability analysis in power grids, critical roads in transportation.</p>
+  </section>
+
+  <hr>
+
+  <section id="dijkstra">
+    <h2>11. Dijkstra's Algorithm</h2>
+    <p>Finds shortest paths from a source to all vertices in a graph with <strong>non-negative</strong> edge weights. Greedy: repeatedly extract the closest unsettled vertex and relax its edges.</p>
+    <div class="complexity">
+      <div><span class="label">Binary heap</span><span class="value">O((V + E) log V)</span></div>
+      <div><span class="label">Fibonacci heap</span><span class="value">O(E + V log V)</span></div>
+      <div><span class="label">Array</span><span class="value">O(V²)</span></div>
+    </div>
+<pre><code>static long[] dijkstra(int n, List&lt;List&lt;int[]&gt;&gt; adj, int src) {
+    long[] dist = new long[n];
+    int[] parent = new int[n];
+    Arrays.fill(dist, Long.MAX_VALUE);
+    Arrays.fill(parent, -1);
+    dist[src] = 0;
+    // PQ entries: long[]{distance, node}
+    PriorityQueue&lt;long[]&gt; pq = new PriorityQueue&lt;&gt;(
+        (a, b) -&gt; Long.compare(a[0], b[0]));
+    pq.offer(new long[]{0, src});
+    while (!pq.isEmpty()) {
+        long[] cur = pq.poll();
+        long d = cur[0];
+        int u = (int) cur[1];
+        if (d &gt; dist[u]) continue;          // stale entry
+        for (int[] e : adj.get(u)) {
+            int v = e[0], w = e[1];
+            long nd = d + w;
+            if (nd &lt; dist[v]) {
+                dist[v] = nd;
+                parent[v] = u;
+                pq.offer(new long[]{nd, v});
+            }
+        }
+    }
+    return dist;
+}</code></pre>
+    <div class="callout warn">
+      <strong>Caveat:</strong> Dijkstra fails with negative edges because once we settle a node we assume no shorter path exists — a negative edge could violate that. Use Bellman-Ford for negative weights.
+    </div>
+    <p><strong>Real-world:</strong> Google Maps / Waze routing, IP routing (OSPF, IS-IS), robotics path planning, network latency optimization, currency arbitrage (with negation).</p>
+  </section>
+
+  <section id="bellman-ford">
+    <h2>12. Bellman-Ford Algorithm</h2>
+    <p>Computes shortest paths from a source even with <strong>negative edge weights</strong>. Detects <strong>negative cycles</strong> reachable from the source. Slower than Dijkstra but more general.</p>
+    <div class="complexity">
+      <div><span class="label">Time</span><span class="value">O(V · E)</span></div>
+      <div><span class="label">Space</span><span class="value">O(V)</span></div>
+    </div>
+<pre><code>static long[] bellmanFord(int n, int[][] edges, int src) {
+    long[] dist = new long[n];
+    Arrays.fill(dist, Long.MAX_VALUE);
+    dist[src] = 0;
+    for (int i = 0; i &lt; n - 1; i++) {
+        boolean updated = false;
+        for (int[] e : edges) {
+            int u = e[0], v = e[1], w = e[2];
+            if (dist[u] != Long.MAX_VALUE &amp;&amp; dist[u] + w &lt; dist[v]) {
+                dist[v] = dist[u] + w;
+                updated = true;
+            }
+        }
+        if (!updated) break;           // early termination
+    }
+    // Negative cycle detection
+    for (int[] e : edges) {
+        int u = e[0], v = e[1], w = e[2];
+        if (dist[u] != Long.MAX_VALUE &amp;&amp; dist[u] + w &lt; dist[v])
+            return null;               // negative cycle reachable from src
+    }
+    return dist;
+}</code></pre>
+    <p><strong>Why V−1 iterations?</strong> The shortest path uses at most V−1 edges (no cycles needed). After V−1 relaxations, if anything still improves, a negative cycle exists.</p>
+
+    <h4>SPFA (Shortest Path Faster Algorithm)</h4>
+    <p>A queue-based optimization of Bellman-Ford. Average <code>O(kE)</code> where k is small in practice, but worst case still <code>O(VE)</code>.</p>
+
+    <p><strong>Real-world:</strong> RIP routing protocol, currency arbitrage detection, financial modeling with rebates, parsing expression grammars with negative weights.</p>
+  </section>
+
+  <section id="floyd-warshall">
+    <h2>13. Floyd-Warshall (All-Pairs Shortest Paths)</h2>
+    <p>Computes shortest paths between <strong>every pair</strong> of vertices. Dynamic programming over intermediate vertices. Handles negative weights (no negative cycles).</p>
+    <div class="complexity">
+      <div><span class="label">Time</span><span class="value">O(V³)</span></div>
+      <div><span class="label">Space</span><span class="value">O(V²)</span></div>
+    </div>
+<pre><code>static long[][] floydWarshall(int n, long[][] weight) {
+    long[][] dist = new long[n][n];
+    for (int i = 0; i &lt; n; i++)
+        dist[i] = weight[i].clone();
+    for (int k = 0; k &lt; n; k++)
+        for (int i = 0; i &lt; n; i++)
+            for (int j = 0; j &lt; n; j++)
+                if (dist[i][k] != Long.MAX_VALUE
+                    &amp;&amp; dist[k][j] != Long.MAX_VALUE
+                    &amp;&amp; dist[i][k] + dist[k][j] &lt; dist[i][j])
+                    dist[i][j] = dist[i][k] + dist[k][j];
+    // Negative cycle if any dist[i][i] &lt; 0
+    return dist;
+}</code></pre>
+    <p><strong>The DP insight:</strong> <code>dist[i][j]</code> after iteration <code>k</code> is the shortest path using only vertices <code>{0..k}</code> as intermediates.</p>
+    <p><strong>Use cases:</strong> transitive closure, finding diameter of a small graph, Warshall's algorithm for reachability, dense graphs where V is small (≤ 500).</p>
+  </section>
+
+  <section id="johnson">
+    <h2>14. Johnson's Algorithm</h2>
+    <p>All-pairs shortest paths for <strong>sparse graphs</strong> with possibly negative weights. Cleverly combines Bellman-Ford and Dijkstra.</p>
+    <ol>
+      <li>Add a dummy vertex <code>q</code> with 0-weight edges to every vertex.</li>
+      <li>Run Bellman-Ford from <code>q</code> to get <code>h(v)</code>; detect negative cycles.</li>
+      <li>Reweight every edge <code>(u, v, w)</code> to <code>w + h(u) − h(v)</code> (now non-negative).</li>
+      <li>Run Dijkstra from each vertex on the reweighted graph.</li>
+      <li>Restore original distances: <code>d(u, v) = d'(u, v) − h(u) + h(v)</code>.</li>
+    </ol>
+    <div class="complexity">
+      <div><span class="label">Time</span><span class="value">O(V² log V + VE)</span></div>
+    </div>
+    <p>Beats Floyd-Warshall when <code>E ≪ V²</code>.</p>
+  </section>
+
+  <section id="a-star">
+    <h2>15. A* Search</h2>
+    <p>Best-first search using <code>f(n) = g(n) + h(n)</code> where <code>g</code> is cost so far and <code>h</code> is an <strong>admissible heuristic</strong> (never overestimates). Optimal and complete given an admissible heuristic.</p>
+<pre><code>interface Neighbors&lt;T&gt; { List&lt;Edge&lt;T&gt;&gt; of(T node); }
+interface Heuristic&lt;T&gt; { double estimate(T node); }
+record Edge&lt;T&gt;(T to, double weight) {}
+
+static &lt;T&gt; List&lt;T&gt; aStar(T start, T goal,
+                          Neighbors&lt;T&gt; neighbors, Heuristic&lt;T&gt; h) {
+    Map&lt;T, Double&gt; g = new HashMap&lt;&gt;();
+    Map&lt;T, T&gt; parent = new HashMap&lt;&gt;();
+    g.put(start, 0.0);
+    parent.put(start, null);
+    PriorityQueue&lt;Object[]&gt; pq = new PriorityQueue&lt;&gt;(
+        (a, b) -&gt; Double.compare((double) a[0], (double) b[0]));
+    pq.offer(new Object[]{h.estimate(start), 0.0, start});
+    while (!pq.isEmpty()) {
+        Object[] cur = pq.poll();
+        double gu = (double) cur[1];
+        @SuppressWarnings("unchecked") T u = (T) cur[2];
+        if (u.equals(goal)) return reconstruct(parent, u);
+        if (gu &gt; g.get(u)) continue;
+        for (Edge&lt;T&gt; e : neighbors.of(u)) {
+            double ng = gu + e.weight();
+            if (ng &lt; g.getOrDefault(e.to(), Double.POSITIVE_INFINITY)) {
+                g.put(e.to(), ng);
+                parent.put(e.to(), u);
+                pq.offer(new Object[]{ng + h.estimate(e.to()), ng, e.to()});
+            }
+        }
+    }
+    return null;
+}</code></pre>
+    <p><strong>Heuristics:</strong> Euclidean distance, Manhattan distance (grids), straight-line distance, learned heuristics (ML).</p>
+    <p><strong>Real-world:</strong> game pathfinding (NPCs in video games), GPS navigation with ETA, robot motion planning, puzzle solvers (8-puzzle, Rubik's cube).</p>
+
+    <h4>Variants</h4>
+    <ul>
+      <li><strong>IDA*:</strong> iterative deepening A* — memory efficient.</li>
+      <li><strong>D* / D* Lite:</strong> dynamic replanning when graph changes (Mars rovers).</li>
+      <li><strong>Bidirectional Dijkstra / A*:</strong> search from both ends; meet in middle.</li>
+    </ul>
+  </section>
+
+  <hr>
+
+  <section id="kruskal">
+    <h2>16. Kruskal's Minimum Spanning Tree</h2>
+    <p>Greedy: sort edges, add the cheapest edge that doesn't form a cycle (checked via DSU). Produces an MST: connects all vertices with minimum total weight.</p>
+    <div class="complexity">
+      <div><span class="label">Time</span><span class="value">O(E log E)</span></div>
+      <div><span class="label">Bottleneck</span><span class="value">edge sort</span></div>
+    </div>
+<pre><code>// edges: int[] {u, v, weight}
+static int kruskal(int n, int[][] edges, List&lt;int[]&gt; mstOut) {
+    Arrays.sort(edges, (a, b) -&gt; Integer.compare(a[2], b[2]));
+    DSU dsu = new DSU(n);
+    int total = 0;
+    for (int[] e : edges) {
+        if (dsu.union(e[0], e[1])) {
+            mstOut.add(e);
+            total += e[2];
+            if (mstOut.size() == n - 1) break;
+        }
+    }
+    return total;
+}</code></pre>
+    <p><strong>Real-world:</strong> network design (laying cables, pipelines), clustering (single-link), approximate TSP, image segmentation.</p>
+  </section>
+
+  <section id="prim">
+    <h2>17. Prim's Minimum Spanning Tree</h2>
+    <p>Grow the MST one vertex at a time from a starting vertex, always adding the cheapest edge crossing the boundary. Better for dense graphs.</p>
+    <div class="complexity">
+      <div><span class="label">Binary heap</span><span class="value">O((V + E) log V)</span></div>
+      <div><span class="label">Fibonacci heap</span><span class="value">O(E + V log V)</span></div>
+    </div>
+<pre><code>static int prim(int n, List&lt;List&lt;int[]&gt;&gt; adj, List&lt;int[]&gt; mstOut) {
+    boolean[] visited = new boolean[n];
+    // PQ entries: int[]{weight, node, parent}
+    PriorityQueue&lt;int[]&gt; pq = new PriorityQueue&lt;&gt;(
+        (a, b) -&gt; Integer.compare(a[0], b[0]));
+    pq.offer(new int[]{0, 0, -1});
+    int total = 0, taken = 0;
+    while (!pq.isEmpty() &amp;&amp; taken &lt; n) {
+        int[] cur = pq.poll();
+        int w = cur[0], u = cur[1], p = cur[2];
+        if (visited[u]) continue;
+        visited[u] = true;
+        total += w;
+        taken++;
+        if (p != -1) mstOut.add(new int[]{p, u, w});
+        for (int[] e : adj.get(u)) {
+            int v = e[0], ew = e[1];
+            if (!visited[v]) pq.offer(new int[]{ew, v, u});
+        }
+    }
+    return total;
+}</code></pre>
+    <div class="callout">
+      <strong>Kruskal vs Prim:</strong> Both give an MST. Use Kruskal when edges are pre-sorted or graph is sparse and given as edge list. Use Prim with a heap on dense adjacency-list graphs. <strong>Borůvka's</strong> is a third option, parallelizable in <code>O(E log V)</code>.
+    </div>
+  </section>
+
+  <hr>
+
+  <section id="max-flow">
+    <h2>18. Maximum Flow (Ford-Fulkerson, Edmonds-Karp, Dinic)</h2>
+    <p>Given a directed graph with edge capacities, find the maximum flow from source <code>s</code> to sink <code>t</code>. Repeatedly find augmenting paths and push flow until none remain.</p>
+
+    <h3>Ford-Fulkerson with BFS (Edmonds-Karp)</h3>
+    <div class="complexity">
+      <div><span class="label">Time</span><span class="value">O(V · E²)</span></div>
+    </div>
+<pre><code>static int edmondsKarp(int n, int[][] capacity, int s, int t) {
+    int[][] flow = new int[n][n];
+    int maxFlow = 0;
+    while (true) {
+        int[] parent = new int[n];
+        Arrays.fill(parent, -1);
+        parent[s] = s;
+        Deque&lt;Integer&gt; q = new ArrayDeque&lt;&gt;();
+        q.offer(s);
+        while (!q.isEmpty() &amp;&amp; parent[t] == -1) {
+            int u = q.poll();
+            for (int v = 0; v &lt; n; v++) {
+                if (parent[v] == -1 &amp;&amp; capacity[u][v] - flow[u][v] &gt; 0) {
+                    parent[v] = u;
+                    q.offer(v);
+                }
+            }
+        }
+        if (parent[t] == -1) break;
+        // bottleneck
+        int pathFlow = Integer.MAX_VALUE;
+        for (int v = t; v != s; v = parent[v]) {
+            int u = parent[v];
+            pathFlow = Math.min(pathFlow, capacity[u][v] - flow[u][v]);
+        }
+        for (int v = t; v != s; v = parent[v]) {
+            int u = parent[v];
+            flow[u][v] += pathFlow;
+            flow[v][u] -= pathFlow;
+        }
+        maxFlow += pathFlow;
+    }
+    return maxFlow;
+}</code></pre>
+
+    <h3>Dinic's Algorithm</h3>
+    <p>Builds a layered graph via BFS, then finds blocking flows via DFS. <code>O(V² · E)</code> general, <code>O(E · √V)</code> on unit-capacity / bipartite graphs.</p>
+
+    <h3>Max-Flow Min-Cut Theorem</h3>
+    <p>The maximum flow equals the minimum capacity of any s-t cut. This duality unlocks countless problem reductions.</p>
+
+    <p><strong>Real-world:</strong> bipartite matching, image segmentation, network reliability, baseball elimination, project selection, airline scheduling, traffic optimization.</p>
+  </section>
+
+  <section id="bipartite-matching">
+    <h2>19. Bipartite Matching</h2>
+    <p>In a bipartite graph (two sets U and V), find the largest set of edges with no shared endpoints. Reducible to max flow with a super-source and super-sink.</p>
+
+    <h3>Hopcroft-Karp Algorithm</h3>
+    <p>Augments along multiple shortest paths simultaneously. <code>O(E · √V)</code> — best general bipartite matching algorithm.</p>
+
+    <h3>Hungarian Algorithm</h3>
+    <p>For weighted bipartite matching (assignment problem): find perfect matching of minimum (or maximum) total weight. <code>O(V³)</code>.</p>
+    <p><strong>Real-world:</strong> assigning workers to jobs, ride-share dispatch (Uber/Lyft), kidney exchange programs, ad auctions, scheduling exams to rooms.</p>
+  </section>
+
+  <section id="tsp">
+    <h2>20. Traveling Salesman Problem (TSP)</h2>
+    <p>Find the shortest tour visiting every vertex exactly once and returning to start. <strong>NP-hard</strong>.</p>
+
+    <h3>Held-Karp DP</h3>
+    <p>Bitmask DP over subsets: <code>dp[mask][i]</code> = shortest path visiting set <code>mask</code> ending at <code>i</code>. <code>O(2ⁿ · n²)</code> time, <code>O(2ⁿ · n)</code> space — feasible up to ~20 cities.</p>
+<pre><code>static int tsp(int[][] dist) {
+    int n = dist.length;
+    int INF = Integer.MAX_VALUE / 2;
+    int[][] dp = new int[1 &lt;&lt; n][n];
+    for (int[] row : dp) Arrays.fill(row, INF);
+    dp[1][0] = 0;
+    for (int mask = 0; mask &lt; (1 &lt;&lt; n); mask++) {
+        for (int u = 0; u &lt; n; u++) {
+            if (dp[mask][u] == INF || ((mask &gt;&gt; u) &amp; 1) == 0) continue;
+            for (int v = 0; v &lt; n; v++) {
+                if (((mask &gt;&gt; v) &amp; 1) == 1) continue;
+                int nm = mask | (1 &lt;&lt; v);
+                int cost = dp[mask][u] + dist[u][v];
+                if (cost &lt; dp[nm][v]) dp[nm][v] = cost;
+            }
+        }
+    }
+    int best = INF, full = (1 &lt;&lt; n) - 1;
+    for (int u = 1; u &lt; n; u++)
+        best = Math.min(best, dp[full][u] + dist[u][0]);
+    return best;
+}</code></pre>
+
+    <h3>Approximations</h3>
+    <ul>
+      <li><strong>Christofides:</strong> 1.5-approximation for metric TSP using MST + minimum-weight matching.</li>
+      <li><strong>2-opt / 3-opt / Lin-Kernighan:</strong> local search heuristics, near-optimal in practice.</li>
+      <li><strong>Genetic algorithms, simulated annealing, ACO:</strong> metaheuristics.</li>
+    </ul>
+    <p><strong>Real-world:</strong> delivery routing (UPS ORION saves ~$300M/yr), PCB drilling order, DNA sequencing, telescope scheduling.</p>
+  </section>
+
+  <section id="euler-hamilton">
+    <h2>21. Eulerian &amp; Hamiltonian Paths</h2>
+    <table>
+      <tr><th></th><th>Eulerian</th><th>Hamiltonian</th></tr>
+      <tr><td>Visits every</td><td>edge once</td><td>vertex once</td></tr>
+      <tr><td>Existence</td><td>Easy: 0 or 2 odd-degree vertices (undirected)</td><td>Hard: NP-complete</td></tr>
+      <tr><td>Construction</td><td>Hierholzer's algorithm — O(E)</td><td>Backtracking / Held-Karp</td></tr>
+    </table>
+    <h3>Hierholzer's Algorithm (Eulerian circuit)</h3>
+<pre><code>static List&lt;Integer&gt; hierholzer(List&lt;Deque&lt;Integer&gt;&gt; adj, int start) {
+    Deque&lt;Integer&gt; stack = new ArrayDeque&lt;&gt;();
+    List&lt;Integer&gt; circuit = new ArrayList&lt;&gt;();
+    stack.push(start);
+    while (!stack.isEmpty()) {
+        int u = stack.peek();
+        if (!adj.get(u).isEmpty()) {
+            stack.push(adj.get(u).pop());
+        } else {
+            circuit.add(stack.pop());
+        }
+    }
+    Collections.reverse(circuit);
+    return circuit;
+}</code></pre>
+    <p><strong>Famous example:</strong> the Königsberg bridges problem — Euler founded graph theory by proving no such walk exists.</p>
+    <p><strong>Real-world:</strong> DNA fragment assembly (de Bruijn graphs), Chinese Postman problem (street sweeping, snowplow routing), CNC machine tool paths.</p>
+  </section>
+
+  <section id="pagerank">
+    <h2>22. PageRank</h2>
+    <p>The algorithm that powered Google. Computes a stationary distribution of a random walk on the web graph with teleportation.</p>
+    <p><code>PR(u) = (1−d)/N + d · Σ PR(v)/L(v)</code> over inbound links <code>v → u</code>, where <code>d ≈ 0.85</code> is the damping factor.</p>
+<pre><code>static double[] pagerank(List&lt;List&lt;Integer&gt;&gt; adj, int n,
+                         double d, int iters, double tol) {
+    double[] pr = new double[n];
+    Arrays.fill(pr, 1.0 / n);
+    int[] out = new int[n];
+    for (int i = 0; i &lt; n; i++) out[i] = adj.get(i).size();
+
+    for (int it = 0; it &lt; iters; it++) {
+        double[] next = new double[n];
+        Arrays.fill(next, (1 - d) / n);
+        for (int u = 0; u &lt; n; u++) {
+            if (out[u] == 0) {
+                double share = pr[u] / n;            // dangling redistribution
+                for (int v = 0; v &lt; n; v++) next[v] += d * share;
+            } else {
+                double share = d * pr[u] / out[u];
+                for (int v : adj.get(u)) next[v] += share;
+            }
+        }
+        double delta = 0;
+        for (int i = 0; i &lt; n; i++) delta += Math.abs(pr[i] - next[i]);
+        pr = next;
+        if (delta &lt; tol) break;
+    }
+    return pr;
+}</code></pre>
+    <p><strong>Variants:</strong> Personalized PageRank (recommender systems), HITS (Hubs and Authorities), TrustRank (spam detection), TextRank (keyword extraction).</p>
+  </section>
+
+  <hr>
+
+  <section id="real-world">
+    <h2>23. Real-World Applications Catalog</h2>
+
+    <h3>Navigation &amp; Logistics</h3>
+    <ul>
+      <li><strong>Google Maps / Waze:</strong> Dijkstra + A* + contraction hierarchies on road graphs (>100M nodes).</li>
+      <li><strong>Uber dispatch:</strong> bipartite matching + Hungarian algorithm for driver-rider assignment.</li>
+      <li><strong>UPS ORION:</strong> TSP variants for daily delivery routes — saves ~10M gallons of fuel annually.</li>
+      <li><strong>Airline routing:</strong> max-flow for crew scheduling; Dijkstra for cheapest fare with layovers.</li>
+    </ul>
+
+    <h3>Social Networks</h3>
+    <ul>
+      <li><strong>Facebook friend suggestions:</strong> BFS for "friends of friends"; community detection (Louvain) for groups.</li>
+      <li><strong>LinkedIn connections:</strong> shortest-path queries on a billion-node graph (using bidirectional BFS).</li>
+      <li><strong>Twitter recommendations:</strong> personalized PageRank (SimRank, "Who To Follow").</li>
+      <li><strong>Influence maximization:</strong> greedy + submodular optimization on social graphs.</li>
+    </ul>
+
+    <h3>Internet &amp; Web</h3>
+    <ul>
+      <li><strong>Google Search:</strong> PageRank for ranking; Bloom filters + graph compression for the crawl graph.</li>
+      <li><strong>Internet routing:</strong> OSPF uses Dijkstra; BGP uses path-vector with policy.</li>
+      <li><strong>Content delivery (CDN):</strong> shortest-path from user to nearest edge server.</li>
+      <li><strong>DNS:</strong> hierarchical tree resolution with caching.</li>
+    </ul>
+
+    <h3>Software Engineering</h3>
+    <ul>
+      <li><strong>Build systems (Bazel, Make):</strong> topological sort on the DAG of targets.</li>
+      <li><strong>Package managers (npm, pip):</strong> DAG resolution + SAT solving for version constraints.</li>
+      <li><strong>Garbage collection:</strong> reachability via BFS/DFS from GC roots; SCCs for cycle collection.</li>
+      <li><strong>Compilers:</strong> control-flow graph, dominator trees, register allocation as graph coloring.</li>
+      <li><strong>Spreadsheets:</strong> topological sort on cell dependency DAG to schedule recalcs.</li>
+    </ul>
+
+    <h3>Biology &amp; Chemistry</h3>
+    <ul>
+      <li><strong>Genome assembly:</strong> Eulerian paths in de Bruijn graphs (k-mer overlaps).</li>
+      <li><strong>Protein interaction networks:</strong> clustering coefficients, motif discovery.</li>
+      <li><strong>Phylogenetic trees:</strong> minimum-evolution / maximum-likelihood graph algorithms.</li>
+      <li><strong>Drug discovery:</strong> graph neural networks on molecular structure.</li>
+    </ul>
+
+    <h3>Finance</h3>
+    <ul>
+      <li><strong>Currency arbitrage:</strong> Bellman-Ford to find negative cycles in <code>−log(rate)</code> graphs.</li>
+      <li><strong>Fraud detection:</strong> community detection + cycle finding on transaction graphs.</li>
+      <li><strong>Knowledge graphs:</strong> entity linking via random walks for risk assessment.</li>
+    </ul>
+
+    <h3>Infrastructure &amp; Operations</h3>
+    <ul>
+      <li><strong>Power grids:</strong> bridges/articulation points for cascade-failure analysis.</li>
+      <li><strong>Water/sewer networks:</strong> max-flow for capacity planning.</li>
+      <li><strong>Telecom backbone design:</strong> MST for minimum-cable layout.</li>
+      <li><strong>Kubernetes scheduling:</strong> bipartite matching for pods ↔ nodes with constraints.</li>
+    </ul>
+
+    <h3>Games &amp; AI</h3>
+    <ul>
+      <li><strong>Game AI pathfinding:</strong> A* on navigation meshes; jump-point search on grids.</li>
+      <li><strong>Chess/Go engines:</strong> game trees, minimax with alpha-beta pruning, MCTS on state graphs.</li>
+      <li><strong>Procedural content:</strong> Wave Function Collapse on adjacency graphs.</li>
+      <li><strong>Knowledge graphs in LLMs:</strong> graph-augmented retrieval, GraphRAG for context.</li>
+    </ul>
+  </section>
+
+  <hr>
+
+  <section id="cheatsheet">
+    <h2>24. Algorithm Cheatsheet</h2>
+    <table>
+      <tr>
+        <th>Problem</th><th>Algorithm</th><th>Complexity</th><th>Notes</th>
+      </tr>
+      <tr><td>Traversal</td><td>BFS / DFS</td><td>O(V + E)</td><td>Foundation for all</td></tr>
+      <tr><td>Shortest path (unweighted)</td><td>BFS</td><td>O(V + E)</td><td>Single source</td></tr>
+      <tr><td>Shortest path (non-neg weights)</td><td>Dijkstra</td><td>O((V+E) log V)</td><td>Use heap</td></tr>
+      <tr><td>Shortest path (negative weights)</td><td>Bellman-Ford</td><td>O(V·E)</td><td>Detects neg cycles</td></tr>
+      <tr><td>All-pairs shortest paths</td><td>Floyd-Warshall</td><td>O(V³)</td><td>Dense, small V</td></tr>
+      <tr><td>All-pairs (sparse)</td><td>Johnson</td><td>O(V² log V + VE)</td><td>Reweighting trick</td></tr>
+      <tr><td>Heuristic shortest path</td><td>A*</td><td>O(E) best</td><td>Needs admissible h</td></tr>
+      <tr><td>MST</td><td>Kruskal</td><td>O(E log E)</td><td>Uses DSU</td></tr>
+      <tr><td>MST</td><td>Prim</td><td>O((V+E) log V)</td><td>Uses heap</td></tr>
+      <tr><td>Topological sort</td><td>Kahn / DFS</td><td>O(V + E)</td><td>DAG only</td></tr>
+      <tr><td>Cycle detection (undirected)</td><td>DSU / DFS</td><td>O(V + E)</td><td></td></tr>
+      <tr><td>Cycle detection (directed)</td><td>DFS w/ colors</td><td>O(V + E)</td><td>Back edges</td></tr>
+      <tr><td>SCCs</td><td>Tarjan / Kosaraju</td><td>O(V + E)</td><td>One-pass vs two-pass</td></tr>
+      <tr><td>Bridges / articulation</td><td>Tarjan low-link</td><td>O(V + E)</td><td></td></tr>
+      <tr><td>Max flow</td><td>Edmonds-Karp</td><td>O(V·E²)</td><td>Easy to implement</td></tr>
+      <tr><td>Max flow</td><td>Dinic</td><td>O(V²·E)</td><td>O(E√V) bipartite</td></tr>
+      <tr><td>Bipartite matching</td><td>Hopcroft-Karp</td><td>O(E·√V)</td><td></td></tr>
+      <tr><td>Assignment problem</td><td>Hungarian</td><td>O(V³)</td><td>Weighted matching</td></tr>
+      <tr><td>TSP exact</td><td>Held-Karp DP</td><td>O(2ⁿ·n²)</td><td>n ≤ 20</td></tr>
+      <tr><td>TSP approx</td><td>Christofides</td><td>O(V³)</td><td>1.5× optimal</td></tr>
+      <tr><td>Eulerian circuit</td><td>Hierholzer</td><td>O(E)</td><td></td></tr>
+      <tr><td>Connectivity queries</td><td>DSU</td><td>O(α(n))</td><td>Near-constant</td></tr>
+      <tr><td>PageRank</td><td>Power iteration</td><td>O(k·E)</td><td>k = iterations</td></tr>
+    </table>
+
+    <h3>Decision Tree: Which Algorithm?</h3>
+    <ul>
+      <li><strong>Need all reachable nodes?</strong> → BFS or DFS.</li>
+      <li><strong>Need shortest path?</strong>
+        <ul>
+          <li>Unweighted → BFS.</li>
+          <li>Non-negative weights, single source → Dijkstra.</li>
+          <li>Negative weights, single source → Bellman-Ford.</li>
+          <li>All pairs, dense → Floyd-Warshall.</li>
+          <li>All pairs, sparse → Johnson.</li>
+          <li>With heuristic → A*.</li>
+        </ul>
+      </li>
+      <li><strong>Need cheapest connection of all nodes?</strong> → MST (Kruskal/Prim).</li>
+      <li><strong>Need ordering with dependencies?</strong> → Topological sort (DAG).</li>
+      <li><strong>Need to track groups/components?</strong> → DSU.</li>
+      <li><strong>Need maximum throughput?</strong> → Max flow (Dinic).</li>
+      <li><strong>Need to pair items optimally?</strong> → Bipartite matching / Hungarian.</li>
+      <li><strong>Need to find cycles or critical edges?</strong> → DFS-based (Tarjan, low-link).</li>
+    </ul>
+
+    <div class="callout good">
+      <strong>Final advice:</strong> 90% of "graph problems" you'll see in interviews and real systems are solved with BFS, DFS, Dijkstra, topological sort, DSU, or MST. Master those six and you'll handle the vast majority. Save the heavyweights (max flow, Hungarian, NP-hard) for when you genuinely need them.
+    </div>
+  </section>
+
+  <hr>
+  <p style="text-align:center; color: var(--muted); margin: 40px 0;">
+    Generated as a single self-contained reference. View source for the full markup. Happy graphing.
+  </p>
+
+  </main>
+</div>
+
+</body>
+</html>

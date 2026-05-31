@@ -1,0 +1,1828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Networking Handbook — From Cables to Cloud</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --surface: #1e293b;
+    --surface-2: #273449;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --accent: #38bdf8;
+    --accent-2: #a78bfa;
+    --good: #34d399;
+    --warn: #fbbf24;
+    --danger: #f87171;
+    --code-bg: #0b1220;
+    --border: #334155;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+  }
+  header {
+    background: linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 100%);
+    padding: 56px 24px;
+    text-align: center;
+    color: white;
+  }
+  header h1 { margin: 0 0 12px; font-size: 2.5rem; letter-spacing: -0.02em; }
+  header p { margin: 0; font-size: 1.1rem; opacity: 0.9; }
+  .layout {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    max-width: 1450px;
+    margin: 0 auto;
+  }
+  nav.toc {
+    position: sticky;
+    top: 0;
+    align-self: start;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 24px 16px;
+    border-right: 1px solid var(--border);
+    background: var(--surface);
+  }
+  nav.toc h3 {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin: 16px 0 8px;
+  }
+  nav.toc h3:first-child { margin-top: 0; }
+  nav.toc a {
+    display: block;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.88rem;
+    transition: all 0.15s;
+  }
+  nav.toc a:hover { background: var(--surface-2); color: var(--text); }
+  main { padding: 40px 48px; max-width: 1100px; }
+  h2 {
+    color: var(--accent);
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 8px;
+    margin-top: 48px;
+    font-size: 1.8rem;
+  }
+  h3 { color: var(--accent-2); margin-top: 32px; font-size: 1.35rem; }
+  h4 { color: var(--text); margin-top: 24px; font-size: 1.1rem; }
+  pre {
+    background: var(--code-bg);
+    padding: 18px;
+    border-radius: 8px;
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    font-size: 0.86rem;
+    line-height: 1.5;
+  }
+  code {
+    font-family: "JetBrains Mono", Menlo, Monaco, "Courier New", monospace;
+    font-size: 0.9em;
+  }
+  p code, li code, td code {
+    background: var(--surface-2);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--accent);
+  }
+  pre code { background: none; padding: 0; color: var(--text); }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 16px 0;
+    background: var(--surface);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 10px 14px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th { background: var(--surface-2); color: var(--accent); }
+  .callout {
+    border-left: 4px solid var(--accent);
+    background: var(--surface);
+    padding: 14px 18px;
+    margin: 18px 0;
+    border-radius: 0 6px 6px 0;
+  }
+  .callout.warn { border-color: var(--warn); }
+  .callout.good { border-color: var(--good); }
+  .callout.danger { border-color: var(--danger); }
+  .callout strong { color: var(--accent); }
+  .callout.warn strong { color: var(--warn); }
+  .callout.good strong { color: var(--good); }
+  .callout.danger strong { color: var(--danger); }
+  svg.diagram { background: var(--surface); border-radius: 8px; border: 1px solid var(--border); margin: 16px 0; display: block; max-width: 100%; }
+  ul, ol { padding-left: 24px; }
+  li { margin: 6px 0; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+  .step {
+    background: var(--surface);
+    border-left: 4px solid var(--accent-2);
+    padding: 14px 18px;
+    margin: 14px 0;
+    border-radius: 0 6px 6px 0;
+  }
+  .step .num {
+    display: inline-block;
+    width: 28px; height: 28px;
+    line-height: 28px;
+    text-align: center;
+    background: var(--accent-2);
+    color: var(--bg);
+    border-radius: 50%;
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    nav.toc { position: static; height: auto; }
+    main { padding: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Computer Networking Handbook</h1>
+  <p>From electrons on a wire to the cloud — the complete reference, with diagrams</p>
+</header>
+
+<div class="layout">
+  <nav class="toc">
+    <h3>Foundations</h3>
+    <a href="#intro">1. What is a Network?</a>
+    <a href="#types">2. Types of Networks</a>
+    <a href="#topologies">3. Network Topologies</a>
+    <a href="#osi">4. OSI Model (7 Layers)</a>
+    <a href="#tcpip">5. TCP/IP Model</a>
+    <a href="#encapsulation">6. Encapsulation</a>
+
+    <h3>Physical &amp; Data Link</h3>
+    <a href="#physical">7. Physical Layer</a>
+    <a href="#datalink">8. Data Link &amp; Ethernet</a>
+    <a href="#mac">9. MAC Addresses &amp; ARP</a>
+    <a href="#switches">10. Switches, Hubs, Bridges</a>
+    <a href="#vlan">11. VLANs &amp; Trunking</a>
+    <a href="#wifi">12. Wi-Fi &amp; Wireless</a>
+
+    <h3>Network Layer</h3>
+    <a href="#ip">13. IPv4 Addressing</a>
+    <a href="#subnetting">14. Subnetting &amp; CIDR</a>
+    <a href="#ipv6">15. IPv6</a>
+    <a href="#nat">16. NAT &amp; Private IPs</a>
+    <a href="#routing">17. Routing &amp; Routers</a>
+    <a href="#routing-protocols">18. Routing Protocols</a>
+    <a href="#icmp">19. ICMP, Ping, Traceroute</a>
+
+    <h3>Transport Layer</h3>
+    <a href="#tcp">20. TCP — Deep Dive</a>
+    <a href="#udp">21. UDP</a>
+    <a href="#quic">22. QUIC</a>
+    <a href="#ports">23. Ports &amp; Sockets</a>
+
+    <h3>Application Layer</h3>
+    <a href="#dns">24. DNS — Deep Dive</a>
+    <a href="#http">25. HTTP / HTTPS</a>
+    <a href="#http2">26. HTTP/2 &amp; HTTP/3</a>
+    <a href="#tls">27. TLS &amp; Certificates</a>
+    <a href="#email">28. Email (SMTP, IMAP)</a>
+    <a href="#websocket">29. WebSocket &amp; SSE</a>
+    <a href="#dhcp">30. DHCP</a>
+    <a href="#more-protocols">30a. More Protocols Deep Dive</a>
+
+    <h3>Modern Internet</h3>
+    <a href="#cdn">31. CDN &amp; Edge</a>
+    <a href="#loadbalancer">32. Load Balancers</a>
+    <a href="#proxy">33. Proxies &amp; Reverse Proxies</a>
+    <a href="#vpn">34. VPN &amp; Tunneling</a>
+    <a href="#firewalls">35. Firewalls &amp; Security</a>
+    <a href="#sdn">36. SDN &amp; Cloud Networking</a>
+
+    <h3>Operations</h3>
+    <a href="#tools">37. Networking Tools</a>
+    <a href="#troubleshoot">38. Troubleshooting Playbook</a>
+    <a href="#performance">39. Latency, Throughput, BDP</a>
+
+    <h3>The Big Picture</h3>
+    <a href="#google">40. Typing google.com</a>
+  </nav>
+
+  <main>
+
+  <section id="intro">
+    <h2>1. What is a Network?</h2>
+    <p>A <strong>computer network</strong> is two or more devices connected together so they can exchange data. The connection may be a copper wire, an optical fiber, a radio wave, or even a satellite link. The shared rules that let those devices understand each other are called <strong>protocols</strong>.</p>
+    <p>The internet is the largest network in human history — billions of devices speaking a small handful of universal protocols (IP, TCP, UDP, DNS, HTTP), tied together by routers operated by tens of thousands of independent organizations.</p>
+
+    <div class="callout">
+      <strong>The fundamental question:</strong> "How does a packet of bits get from my laptop in Bangalore to a server in Oregon, in roughly a tenth of a second, reliably, securely, and cheaply?" Every chapter below answers a piece of that question.
+    </div>
+  </section>
+
+  <section id="types">
+    <h2>2. Types of Networks</h2>
+    <table>
+      <tr><th>Type</th><th>Scale</th><th>Example</th></tr>
+      <tr><td><strong>PAN</strong> — Personal Area Network</td><td>~10 m</td><td>Bluetooth headphones, AirDrop</td></tr>
+      <tr><td><strong>LAN</strong> — Local Area Network</td><td>Building / campus</td><td>Office Ethernet + Wi-Fi</td></tr>
+      <tr><td><strong>MAN</strong> — Metropolitan Area Network</td><td>City</td><td>City fiber rings, ISPs</td></tr>
+      <tr><td><strong>WAN</strong> — Wide Area Network</td><td>Country / globe</td><td>Internet, MPLS backbones</td></tr>
+      <tr><td><strong>SAN</strong> — Storage Area Network</td><td>Datacenter</td><td>Fibre Channel, iSCSI</td></tr>
+      <tr><td><strong>VPN</strong> — Virtual Private Network</td><td>Logical</td><td>Corp WireGuard tunnel</td></tr>
+      <tr><td><strong>Overlay</strong></td><td>Logical on top of IP</td><td>Kubernetes Calico, Tailscale</td></tr>
+    </table>
+  </section>
+
+  <section id="topologies">
+    <h2>3. Network Topologies</h2>
+    <p>The geometric arrangement of devices and links. Each shape has different cost, fault-tolerance, and latency characteristics.</p>
+
+    <svg class="diagram" width="100%" height="280" viewBox="0 0 720 280">
+      <g font-family="monospace" font-size="12" text-anchor="middle" fill="#e2e8f0">
+
+        <!-- Bus -->
+        <text x="80" y="20" fill="#a78bfa">BUS</text>
+        <line x1="20" y1="60" x2="160" y2="60" stroke="#94a3b8" stroke-width="3"/>
+        <g fill="#38bdf8" stroke="#0ea5e9">
+          <circle cx="40" cy="60" r="10"/><circle cx="70" cy="60" r="10"/>
+          <circle cx="100" cy="60" r="10"/><circle cx="130" cy="60" r="10"/>
+        </g>
+
+        <!-- Star -->
+        <text x="260" y="20" fill="#a78bfa">STAR</text>
+        <g stroke="#94a3b8" stroke-width="2">
+          <line x1="260" y1="60" x2="220" y2="30"/>
+          <line x1="260" y1="60" x2="300" y2="30"/>
+          <line x1="260" y1="60" x2="220" y2="90"/>
+          <line x1="260" y1="60" x2="300" y2="90"/>
+        </g>
+        <rect x="248" y="50" width="24" height="20" fill="#fbbf24" stroke="#fff"/>
+        <g fill="#38bdf8" stroke="#0ea5e9">
+          <circle cx="220" cy="30" r="8"/><circle cx="300" cy="30" r="8"/>
+          <circle cx="220" cy="90" r="8"/><circle cx="300" cy="90" r="8"/>
+        </g>
+
+        <!-- Ring -->
+        <text x="440" y="20" fill="#a78bfa">RING</text>
+        <circle cx="440" cy="60" r="40" fill="none" stroke="#94a3b8" stroke-width="2"/>
+        <g fill="#38bdf8" stroke="#0ea5e9">
+          <circle cx="440" cy="20" r="8"/><circle cx="480" cy="60" r="8"/>
+          <circle cx="440" cy="100" r="8"/><circle cx="400" cy="60" r="8"/>
+        </g>
+
+        <!-- Mesh -->
+        <text x="620" y="20" fill="#a78bfa">MESH</text>
+        <g stroke="#94a3b8" stroke-width="1.5">
+          <line x1="580" y1="30" x2="660" y2="30"/>
+          <line x1="580" y1="30" x2="580" y2="90"/>
+          <line x1="580" y1="30" x2="660" y2="90"/>
+          <line x1="660" y1="30" x2="580" y2="90"/>
+          <line x1="660" y1="30" x2="660" y2="90"/>
+          <line x1="580" y1="90" x2="660" y2="90"/>
+        </g>
+        <g fill="#38bdf8" stroke="#0ea5e9">
+          <circle cx="580" cy="30" r="8"/><circle cx="660" cy="30" r="8"/>
+          <circle cx="580" cy="90" r="8"/><circle cx="660" cy="90" r="8"/>
+        </g>
+
+        <!-- Tree -->
+        <text x="200" y="160" fill="#a78bfa">TREE</text>
+        <g stroke="#94a3b8" stroke-width="2">
+          <line x1="200" y1="180" x2="140" y2="220"/>
+          <line x1="200" y1="180" x2="260" y2="220"/>
+          <line x1="140" y1="220" x2="100" y2="260"/>
+          <line x1="140" y1="220" x2="180" y2="260"/>
+          <line x1="260" y1="220" x2="220" y2="260"/>
+          <line x1="260" y1="220" x2="300" y2="260"/>
+        </g>
+        <g fill="#38bdf8" stroke="#0ea5e9">
+          <circle cx="200" cy="180" r="9"/>
+          <circle cx="140" cy="220" r="9"/><circle cx="260" cy="220" r="9"/>
+          <circle cx="100" cy="260" r="8"/><circle cx="180" cy="260" r="8"/>
+          <circle cx="220" cy="260" r="8"/><circle cx="300" cy="260" r="8"/>
+        </g>
+
+        <!-- Hybrid -->
+        <text x="540" y="160" fill="#a78bfa">HYBRID (real datacenter)</text>
+        <g stroke="#94a3b8" stroke-width="1.5">
+          <line x1="500" y1="200" x2="540" y2="180"/>
+          <line x1="540" y1="180" x2="580" y2="200"/>
+          <line x1="500" y1="200" x2="500" y2="240"/>
+          <line x1="580" y1="200" x2="580" y2="240"/>
+          <line x1="500" y1="240" x2="540" y2="260"/>
+          <line x1="540" y1="260" x2="580" y2="240"/>
+          <line x1="500" y1="200" x2="580" y2="200"/>
+          <line x1="500" y1="240" x2="580" y2="240"/>
+        </g>
+        <g fill="#38bdf8" stroke="#0ea5e9">
+          <circle cx="540" cy="180" r="8"/><circle cx="540" cy="260" r="8"/>
+          <circle cx="500" cy="200" r="8"/><circle cx="580" cy="200" r="8"/>
+          <circle cx="500" cy="240" r="8"/><circle cx="580" cy="240" r="8"/>
+        </g>
+
+      </g>
+    </svg>
+
+    <table>
+      <tr><th>Topology</th><th>Pros</th><th>Cons</th></tr>
+      <tr><td>Bus</td><td>Cheap, simple</td><td>Single point of failure (cable), collisions</td></tr>
+      <tr><td>Star</td><td>Centralized, easy to add nodes</td><td>Switch failure kills the LAN</td></tr>
+      <tr><td>Ring</td><td>Predictable latency</td><td>Break in ring breaks the network</td></tr>
+      <tr><td>Mesh</td><td>Highly fault-tolerant</td><td>Expensive: O(n²) links</td></tr>
+      <tr><td>Tree</td><td>Hierarchical, scalable</td><td>Root bottleneck</td></tr>
+      <tr><td>Hybrid (Spine-Leaf, Fat-Tree)</td><td>Best of all — used in modern DCs</td><td>Complex to design</td></tr>
+    </table>
+  </section>
+
+  <section id="osi">
+    <h2>4. OSI Model — The 7 Layers</h2>
+    <p>The OSI (Open Systems Interconnection) reference model is the canonical mental model for understanding networking. Real protocols don't always follow it strictly — but every networking conversation uses its vocabulary.</p>
+
+    <svg class="diagram" width="100%" height="380" viewBox="0 0 760 380">
+      <g font-family="monospace" font-size="13" text-anchor="middle">
+        <g>
+          <rect x="40" y="20" width="320" height="42" fill="#a78bfa" rx="4"/>
+          <text x="200" y="46" fill="white">7 — Application (HTTP, DNS, SMTP, FTP)</text>
+          <rect x="40" y="68" width="320" height="42" fill="#8b5cf6" rx="4"/>
+          <text x="200" y="94" fill="white">6 — Presentation (TLS, encryption, MIME)</text>
+          <rect x="40" y="116" width="320" height="42" fill="#7c3aed" rx="4"/>
+          <text x="200" y="142" fill="white">5 — Session (sockets, RPC, NetBIOS)</text>
+          <rect x="40" y="164" width="320" height="42" fill="#0ea5e9" rx="4"/>
+          <text x="200" y="190" fill="white">4 — Transport (TCP, UDP, QUIC)</text>
+          <rect x="40" y="212" width="320" height="42" fill="#0284c7" rx="4"/>
+          <text x="200" y="238" fill="white">3 — Network (IP, ICMP, BGP, OSPF)</text>
+          <rect x="40" y="260" width="320" height="42" fill="#34d399" rx="4"/>
+          <text x="200" y="286" fill="#0f172a">2 — Data Link (Ethernet, MAC, ARP, Wi-Fi)</text>
+          <rect x="40" y="308" width="320" height="42" fill="#fbbf24" rx="4"/>
+          <text x="200" y="334" fill="#0f172a">1 — Physical (cables, fiber, radio, voltage)</text>
+        </g>
+        <g fill="#94a3b8" font-size="11" text-anchor="start">
+          <text x="380" y="46">User-facing services</text>
+          <text x="380" y="94">Data formatting / encryption</text>
+          <text x="380" y="142">Connection state</text>
+          <text x="380" y="190">End-to-end delivery</text>
+          <text x="380" y="238">Routing across networks</text>
+          <text x="380" y="286">Frames on a single link</text>
+          <text x="380" y="334">Bits on the wire</text>
+        </g>
+        <text x="380" y="370" fill="#a78bfa" font-size="12" text-anchor="start">Mnemonic: "All People Seem To Need Data Processing"</text>
+      </g>
+    </svg>
+
+    <h3>What each layer adds</h3>
+    <ul>
+      <li><strong>L1 Physical</strong> — defines voltages, modulation, connectors. Talks bits.</li>
+      <li><strong>L2 Data Link</strong> — frames, MAC addresses, local error detection. Talks frames.</li>
+      <li><strong>L3 Network</strong> — IP addressing and routing across networks. Talks packets.</li>
+      <li><strong>L4 Transport</strong> — end-to-end reliability, ports, multiplexing. Talks segments.</li>
+      <li><strong>L5 Session</strong> — establishing, managing, terminating sessions.</li>
+      <li><strong>L6 Presentation</strong> — encoding, compression, encryption.</li>
+      <li><strong>L7 Application</strong> — what the user actually interacts with.</li>
+    </ul>
+  </section>
+
+  <section id="tcpip">
+    <h2>5. TCP/IP Model — What the Internet Actually Uses</h2>
+    <p>The OSI model is academic. The internet runs on the simpler 4-layer TCP/IP model:</p>
+
+    <table>
+      <tr><th>TCP/IP Layer</th><th>OSI Equivalent</th><th>Examples</th></tr>
+      <tr><td>Application</td><td>5, 6, 7</td><td>HTTP, DNS, SSH, gRPC</td></tr>
+      <tr><td>Transport</td><td>4</td><td>TCP, UDP, QUIC</td></tr>
+      <tr><td>Internet</td><td>3</td><td>IPv4, IPv6, ICMP</td></tr>
+      <tr><td>Link (Network Access)</td><td>1, 2</td><td>Ethernet, Wi-Fi, PPP</td></tr>
+    </table>
+  </section>
+
+  <section id="encapsulation">
+    <h2>6. Encapsulation — How Layers Stack</h2>
+    <p>As data travels down the sender's stack, each layer wraps the previous payload in its own header (and sometimes trailer). On the receiving side, each layer unwraps its header and hands the payload up. This is called <strong>encapsulation</strong>.</p>
+
+    <svg class="diagram" width="100%" height="200" viewBox="0 0 760 200">
+      <g font-family="monospace" font-size="12" text-anchor="middle" fill="white">
+        <rect x="320" y="30" width="120" height="30" fill="#a78bfa"/>
+        <text x="380" y="50">HTTP payload</text>
+
+        <rect x="280" y="70" width="40" height="30" fill="#0ea5e9"/>
+        <text x="300" y="90">TCP</text>
+        <rect x="320" y="70" width="120" height="30" fill="#a78bfa"/>
+        <text x="380" y="90">payload</text>
+
+        <rect x="240" y="110" width="40" height="30" fill="#0284c7"/>
+        <text x="260" y="130">IP</text>
+        <rect x="280" y="110" width="40" height="30" fill="#0ea5e9"/>
+        <text x="300" y="130">TCP</text>
+        <rect x="320" y="110" width="120" height="30" fill="#a78bfa"/>
+        <text x="380" y="130">payload</text>
+
+        <rect x="200" y="150" width="40" height="30" fill="#34d399"/>
+        <text x="220" y="170" fill="#0f172a">Eth</text>
+        <rect x="240" y="150" width="40" height="30" fill="#0284c7"/>
+        <text x="260" y="170">IP</text>
+        <rect x="280" y="150" width="40" height="30" fill="#0ea5e9"/>
+        <text x="300" y="170">TCP</text>
+        <rect x="320" y="150" width="120" height="30" fill="#a78bfa"/>
+        <text x="380" y="170">payload</text>
+        <rect x="440" y="150" width="40" height="30" fill="#34d399"/>
+        <text x="460" y="170" fill="#0f172a">FCS</text>
+
+        <text x="160" y="50" text-anchor="end" fill="#94a3b8">L7 message</text>
+        <text x="160" y="90" text-anchor="end" fill="#94a3b8">L4 segment</text>
+        <text x="160" y="130" text-anchor="end" fill="#94a3b8">L3 packet</text>
+        <text x="160" y="170" text-anchor="end" fill="#94a3b8">L2 frame</text>
+      </g>
+    </svg>
+  </section>
+
+  <hr>
+
+  <section id="physical">
+    <h2>7. Physical Layer — The Wire</h2>
+    <p>Physically transmitting bits. Modulation, signaling, connectors.</p>
+
+    <h4>Common media</h4>
+    <ul>
+      <li><strong>Twisted pair (Cat5e/Cat6/Cat6a/Cat7):</strong> standard Ethernet copper, 100 m max, up to 10 Gbps.</li>
+      <li><strong>Coaxial cable:</strong> cable internet (DOCSIS), broadcast TV.</li>
+      <li><strong>Fiber optic:</strong> single-mode (long haul, lasers, kilometers) and multi-mode (short, LEDs). Speeds 10/40/100/400 Gbps and beyond.</li>
+      <li><strong>Wireless:</strong> Wi-Fi (2.4/5/6 GHz), cellular (4G/5G), Bluetooth, satellite.</li>
+    </ul>
+
+    <h4>Speeds — orders of magnitude</h4>
+    <table>
+      <tr><th>Standard</th><th>Speed</th></tr>
+      <tr><td>Old dial-up modem</td><td>56 kbps</td></tr>
+      <tr><td>Fast Ethernet</td><td>100 Mbps</td></tr>
+      <tr><td>Gigabit Ethernet</td><td>1 Gbps</td></tr>
+      <tr><td>10G / 100G / 400G fiber</td><td>10 Gbps – 400 Gbps</td></tr>
+      <tr><td>Wi-Fi 6 (802.11ax)</td><td>~9.6 Gbps theoretical</td></tr>
+      <tr><td>5G NR</td><td>~10 Gbps peak, &lt;1 ms latency</td></tr>
+    </table>
+  </section>
+
+  <section id="datalink">
+    <h2>8. Data Link Layer &amp; Ethernet</h2>
+    <p>Responsible for moving frames over a single physical link. Adds source/destination MAC addresses, error detection (FCS), and resolves contention on shared media (CSMA/CD historically).</p>
+
+    <h4>Ethernet frame format (IEEE 802.3)</h4>
+    <svg class="diagram" width="100%" height="80" viewBox="0 0 760 80">
+      <g font-family="monospace" font-size="11" text-anchor="middle" fill="white">
+        <rect x="20" y="20" width="60" height="40" fill="#0284c7"/><text x="50" y="40">Preamble</text><text x="50" y="55">7B</text>
+        <rect x="80" y="20" width="40" height="40" fill="#0284c7"/><text x="100" y="40">SFD</text><text x="100" y="55">1B</text>
+        <rect x="120" y="20" width="80" height="40" fill="#34d399"/><text x="160" y="40" fill="#0f172a">Dest MAC</text><text x="160" y="55" fill="#0f172a">6B</text>
+        <rect x="200" y="20" width="80" height="40" fill="#34d399"/><text x="240" y="40" fill="#0f172a">Src MAC</text><text x="240" y="55" fill="#0f172a">6B</text>
+        <rect x="280" y="20" width="60" height="40" fill="#a78bfa"/><text x="310" y="40">EtherType</text><text x="310" y="55">2B</text>
+        <rect x="340" y="20" width="280" height="40" fill="#fbbf24"/><text x="480" y="40" fill="#0f172a">Payload (46–1500B)</text>
+        <rect x="620" y="20" width="60" height="40" fill="#f87171"/><text x="650" y="40">FCS</text><text x="650" y="55">4B</text>
+      </g>
+    </svg>
+
+    <p>The <strong>EtherType</strong> field signals what's inside — <code>0x0800</code> = IPv4, <code>0x86DD</code> = IPv6, <code>0x0806</code> = ARP, <code>0x8100</code> = VLAN tag.</p>
+  </section>
+
+  <section id="mac">
+    <h2>9. MAC Addresses &amp; ARP</h2>
+    <p>A <strong>MAC address</strong> is a 48-bit identifier burned into a network interface card, written as six hex bytes: <code>3c:22:fb:1a:9b:7e</code>. The first 24 bits identify the manufacturer (OUI); the last 24 are unique per device.</p>
+
+    <p><strong>ARP (Address Resolution Protocol)</strong> maps an IP address to a MAC address on the local network. When you want to send to <code>192.168.1.10</code>, your computer broadcasts: <em>"Who has 192.168.1.10? Tell 192.168.1.5."</em> The owner replies with its MAC. Your OS caches the answer.</p>
+
+<pre><code>$ arp -a
+? (192.168.1.1) at b8:27:eb:1f:2d:9a [ether] on en0
+? (192.168.1.10) at 3c:22:fb:1a:9b:7e [ether] on en0</code></pre>
+
+    <div class="callout warn">
+      <strong>ARP spoofing</strong> is a classic attack: poison the cache so traffic to a victim's IP gets sent to the attacker's MAC instead. Mitigations: dynamic ARP inspection on switches, static ARP entries, 802.1X.
+    </div>
+  </section>
+
+  <section id="switches">
+    <h2>10. Switches, Hubs &amp; Bridges</h2>
+    <table>
+      <tr><th>Device</th><th>Layer</th><th>Behavior</th></tr>
+      <tr><td>Hub</td><td>L1</td><td>Repeats every bit out every port. Obsolete.</td></tr>
+      <tr><td>Bridge</td><td>L2</td><td>Old 2-port switch separating collision domains.</td></tr>
+      <tr><td>Switch</td><td>L2 (some L3)</td><td>Learns MAC↔port mapping, forwards frames only to the right port.</td></tr>
+      <tr><td>Router</td><td>L3</td><td>Forwards packets between different IP networks.</td></tr>
+      <tr><td>L3 Switch</td><td>L2 + L3</td><td>Hardware-accelerated routing inside a campus.</td></tr>
+    </table>
+
+    <h4>How a switch learns</h4>
+    <ol>
+      <li>Frame arrives on port 3 with source MAC <code>aa:bb:cc:00:00:01</code>.</li>
+      <li>Switch records <code>aa:bb:cc:00:00:01 → port 3</code> in its CAM table.</li>
+      <li>If destination MAC is known, forward only out that port. If unknown, <em>flood</em> to all ports except the source.</li>
+    </ol>
+  </section>
+
+  <section id="vlan">
+    <h2>11. VLANs &amp; Trunking</h2>
+    <p>A <strong>Virtual LAN</strong> logically partitions a single physical switch into multiple isolated LANs. Tags are added to Ethernet frames per the 802.1Q standard (4-byte tag with a 12-bit VLAN ID).</p>
+
+    <p><strong>Trunk port:</strong> carries multiple VLANs between switches, all tagged. <strong>Access port:</strong> connects an end device, usually one untagged VLAN.</p>
+
+    <p>Used to separate departments (HR, Engineering, Guest Wi-Fi) on the same physical infrastructure, isolate security zones, and reduce broadcast domains.</p>
+  </section>
+
+  <section id="wifi">
+    <h2>12. Wi-Fi &amp; Wireless</h2>
+    <table>
+      <tr><th>Standard</th><th>Year</th><th>Speed</th><th>Band</th></tr>
+      <tr><td>802.11b</td><td>1999</td><td>11 Mbps</td><td>2.4 GHz</td></tr>
+      <tr><td>802.11g</td><td>2003</td><td>54 Mbps</td><td>2.4 GHz</td></tr>
+      <tr><td>802.11n (Wi-Fi 4)</td><td>2009</td><td>600 Mbps</td><td>2.4/5 GHz</td></tr>
+      <tr><td>802.11ac (Wi-Fi 5)</td><td>2013</td><td>~3.5 Gbps</td><td>5 GHz</td></tr>
+      <tr><td>802.11ax (Wi-Fi 6/6E)</td><td>2019</td><td>~9.6 Gbps</td><td>2.4/5/6 GHz</td></tr>
+      <tr><td>802.11be (Wi-Fi 7)</td><td>2024</td><td>~46 Gbps</td><td>2.4/5/6 GHz, 320 MHz</td></tr>
+    </table>
+
+    <p><strong>Authentication:</strong> WPA2 (AES-CCMP) is widely deployed; WPA3 brings forward secrecy and SAE (replacing the broken PSK 4-way handshake). <strong>EAP/802.1X</strong> for enterprise.</p>
+  </section>
+
+  <hr>
+
+  <section id="ip">
+    <h2>13. IPv4 Addressing</h2>
+    <p>An IPv4 address is 32 bits, written as four dotted decimal octets: <code>192.168.1.10</code>. There are 2³² ≈ 4.3 billion addresses — exhausted years ago, hence NAT and IPv6.</p>
+
+    <h4>IPv4 packet header</h4>
+    <svg class="diagram" width="100%" height="220" viewBox="0 0 760 220">
+      <g font-family="monospace" font-size="11" text-anchor="middle" fill="white">
+        <rect x="20" y="20" width="60" height="30" fill="#0284c7"/><text x="50" y="38">Ver(4)</text>
+        <rect x="80" y="20" width="60" height="30" fill="#0284c7"/><text x="110" y="38">IHL</text>
+        <rect x="140" y="20" width="120" height="30" fill="#0284c7"/><text x="200" y="38">DSCP / ECN</text>
+        <rect x="260" y="20" width="220" height="30" fill="#0284c7"/><text x="370" y="38">Total Length (16)</text>
+
+        <rect x="20" y="50" width="220" height="30" fill="#0ea5e9"/><text x="130" y="68">Identification (16)</text>
+        <rect x="240" y="50" width="60" height="30" fill="#0ea5e9"/><text x="270" y="68">Flags</text>
+        <rect x="300" y="50" width="180" height="30" fill="#0ea5e9"/><text x="390" y="68">Fragment Offset (13)</text>
+
+        <rect x="20" y="80" width="100" height="30" fill="#0284c7"/><text x="70" y="98">TTL</text>
+        <rect x="120" y="80" width="120" height="30" fill="#0284c7"/><text x="180" y="98">Protocol</text>
+        <rect x="240" y="80" width="240" height="30" fill="#0284c7"/><text x="360" y="98">Header Checksum</text>
+
+        <rect x="20" y="110" width="460" height="30" fill="#34d399"/><text x="250" y="128" fill="#0f172a">Source IP Address (32)</text>
+        <rect x="20" y="140" width="460" height="30" fill="#34d399"/><text x="250" y="158" fill="#0f172a">Destination IP Address (32)</text>
+
+        <rect x="20" y="170" width="460" height="30" fill="#a78bfa"/><text x="250" y="188">Options (variable, often empty)</text>
+      </g>
+    </svg>
+
+    <p><strong>Key fields:</strong> TTL prevents infinite loops; Protocol identifies the L4 (6=TCP, 17=UDP, 1=ICMP); Fragmentation supports MTU mismatches.</p>
+
+    <h4>Address classes (legacy) and special ranges</h4>
+    <ul>
+      <li><strong>Loopback:</strong> <code>127.0.0.0/8</code> — the local machine (<code>127.0.0.1</code>).</li>
+      <li><strong>Private (RFC 1918):</strong> <code>10/8</code>, <code>172.16/12</code>, <code>192.168/16</code> — not routable on the internet.</li>
+      <li><strong>Link-local:</strong> <code>169.254/16</code> — auto-assigned when DHCP fails.</li>
+      <li><strong>CGNAT:</strong> <code>100.64/10</code> — used by ISPs for carrier-grade NAT.</li>
+      <li><strong>Multicast:</strong> <code>224.0.0.0/4</code>.</li>
+      <li><strong>Broadcast:</strong> <code>255.255.255.255</code>.</li>
+    </ul>
+  </section>
+
+  <section id="subnetting">
+    <h2>14. Subnetting &amp; CIDR</h2>
+    <p><strong>CIDR (Classless Inter-Domain Routing)</strong> notation: <code>192.168.1.0/24</code>. The number after <code>/</code> is how many leading bits identify the network. The remaining bits identify hosts.</p>
+
+    <table>
+      <tr><th>CIDR</th><th>Subnet mask</th><th>Hosts</th><th>Common use</th></tr>
+      <tr><td>/8</td><td>255.0.0.0</td><td>16,777,214</td><td>Massive (10/8 internal)</td></tr>
+      <tr><td>/16</td><td>255.255.0.0</td><td>65,534</td><td>Large enterprise</td></tr>
+      <tr><td>/24</td><td>255.255.255.0</td><td>254</td><td>Typical office LAN</td></tr>
+      <tr><td>/27</td><td>255.255.255.224</td><td>30</td><td>Small subnet</td></tr>
+      <tr><td>/30</td><td>255.255.255.252</td><td>2</td><td>Point-to-point link</td></tr>
+      <tr><td>/32</td><td>255.255.255.255</td><td>1</td><td>Single host route</td></tr>
+    </table>
+
+    <h4>Worked example — splitting <code>192.168.1.0/24</code> into 4 subnets</h4>
+<pre><code>192.168.1.0/26    →  hosts .1   – .62      (network .0,   broadcast .63)
+192.168.1.64/26   →  hosts .65  – .126     (network .64,  broadcast .127)
+192.168.1.128/26  →  hosts .129 – .190     (network .128, broadcast .191)
+192.168.1.192/26  →  hosts .193 – .254     (network .192, broadcast .255)</code></pre>
+
+    <div class="callout">
+      <strong>Tip:</strong> remember the powers of 2: /24 = 256 addresses, /25 = 128, /26 = 64, /27 = 32, /28 = 16, /29 = 8, /30 = 4. Subtract 2 for usable hosts (network + broadcast).
+    </div>
+  </section>
+
+  <section id="ipv6">
+    <h2>15. IPv6 — The Future (and Present)</h2>
+    <p>128-bit addresses written as 8 colon-separated hex groups: <code>2001:0db8:85a3:0000:0000:8a2e:0370:7334</code>. Consecutive zero groups can be compressed to <code>::</code> (once per address).</p>
+    <p>2¹²⁸ ≈ 3.4 × 10³⁸ — enough to give every grain of sand on Earth a planet's worth of addresses.</p>
+
+    <h4>Why IPv6 matters</h4>
+    <ul>
+      <li>No NAT needed — every device gets a globally routable address.</li>
+      <li>Stateless address autoconfiguration (SLAAC) — devices generate their own addresses from a router-advertised prefix.</li>
+      <li>Built-in IPsec support, simpler header, no header checksum (reduced router load).</li>
+      <li>Mandatory in modern mobile networks (T-Mobile, Reliance Jio).</li>
+    </ul>
+
+    <h4>Common prefixes</h4>
+    <ul>
+      <li><code>::1/128</code> — loopback</li>
+      <li><code>fe80::/10</code> — link-local</li>
+      <li><code>fc00::/7</code> — unique local (private)</li>
+      <li><code>2000::/3</code> — global unicast</li>
+    </ul>
+  </section>
+
+  <section id="nat">
+    <h2>16. NAT &amp; Private IPs</h2>
+    <p><strong>Network Address Translation</strong> lets many devices on a private network share a single public IP. Your home router rewrites outgoing packets to use its public IP and remembers the mapping so it can return inbound replies to the right device.</p>
+
+    <svg class="diagram" width="100%" height="200" viewBox="0 0 760 200">
+      <g font-family="monospace" font-size="12" text-anchor="middle" fill="white">
+        <rect x="20" y="80" width="120" height="40" fill="#34d399" rx="4"/>
+        <text x="80" y="100" fill="#0f172a">Laptop</text>
+        <text x="80" y="115" fill="#0f172a">192.168.1.10:54321</text>
+
+        <rect x="220" y="80" width="160" height="40" fill="#0ea5e9" rx="4"/>
+        <text x="300" y="100">NAT Router</text>
+        <text x="300" y="115">198.51.100.7</text>
+
+        <rect x="460" y="80" width="160" height="40" fill="#f87171" rx="4"/>
+        <text x="540" y="100">Web Server</text>
+        <text x="540" y="115">93.184.216.34:443</text>
+
+        <line x1="140" y1="100" x2="220" y2="100" stroke="#94a3b8" stroke-width="2" marker-end="url(#a3)"/>
+        <line x1="380" y1="100" x2="460" y2="100" stroke="#94a3b8" stroke-width="2" marker-end="url(#a3)"/>
+
+        <text x="180" y="80" fill="#94a3b8" font-size="10">src 192.168.1.10:54321</text>
+        <text x="420" y="80" fill="#94a3b8" font-size="10">src 198.51.100.7:60000</text>
+        <text x="300" y="160" fill="#a78bfa">NAT table: 192.168.1.10:54321 ↔ 198.51.100.7:60000</text>
+      </g>
+      <defs>
+        <marker id="a3" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+          <polygon points="0 0, 8 4, 0 8" fill="#94a3b8"/>
+        </marker>
+      </defs>
+    </svg>
+
+    <p><strong>Types:</strong> Static NAT (1:1), Dynamic NAT (pool), <strong>PAT/NAPT</strong> (port-mapped — what your home router does, also called "overloading").</p>
+    <p><strong>Tradeoffs:</strong> conserves IPv4 space and adds a security boundary, but breaks end-to-end principles, complicates VoIP / WebRTC, and requires NAT traversal techniques (STUN, TURN, ICE, hole punching).</p>
+  </section>
+
+  <section id="routing">
+    <h2>17. Routing &amp; Routers</h2>
+    <p>A <strong>router</strong> reads the destination IP of an incoming packet and forwards it out the appropriate interface based on its <strong>routing table</strong>. Each entry maps a destination prefix to a next-hop and outgoing interface.</p>
+
+<pre><code>$ ip route
+default via 192.168.1.1 dev wlan0   proto dhcp metric 600
+10.0.0.0/8 via 192.168.1.1 dev wlan0
+192.168.1.0/24 dev wlan0 proto kernel scope link src 192.168.1.10</code></pre>
+
+    <p><strong>Longest prefix match:</strong> if multiple routes match, the most specific (longest CIDR) wins. <code>10.5.0.0/16</code> beats <code>10.0.0.0/8</code> beats <code>0.0.0.0/0</code> (the default route).</p>
+
+    <h4>Forwarding vs Routing</h4>
+    <ul>
+      <li><strong>Routing:</strong> the control-plane process of building the table (BGP, OSPF, static).</li>
+      <li><strong>Forwarding:</strong> the data-plane act of moving each packet using that table — done in hardware in modern routers (ASIC).</li>
+    </ul>
+  </section>
+
+  <section id="routing-protocols">
+    <h2>18. Routing Protocols</h2>
+    <table>
+      <tr><th>Protocol</th><th>Type</th><th>Used for</th></tr>
+      <tr><td>RIP</td><td>Distance-vector (Bellman-Ford)</td><td>Tiny networks, mostly historical</td></tr>
+      <tr><td>OSPF</td><td>Link-state (Dijkstra)</td><td>Inside an enterprise (IGP)</td></tr>
+      <tr><td>IS-IS</td><td>Link-state</td><td>Large ISPs</td></tr>
+      <tr><td>EIGRP</td><td>Cisco hybrid</td><td>Cisco environments</td></tr>
+      <tr><td>BGP</td><td>Path-vector</td><td>Between ISPs (the internet itself)</td></tr>
+    </table>
+
+    <h3>BGP — the protocol that runs the internet</h3>
+    <p>The internet is ~75,000 <strong>autonomous systems</strong> (ASes) — independently administered networks identified by a number (AS15169 = Google). BGP is how they exchange reachability information: <em>"To reach prefix X, send packets through me; my path is AS-X → AS-Y → AS-Z."</em></p>
+
+    <p>BGP optimizes for <em>policy</em> (business contracts, peering agreements), not shortest path. A misconfigured BGP announcement can take down half the internet — see the Facebook outage of 2021, Pakistan's accidental hijacking of YouTube in 2008, Cloudflare's June 2022 outage.</p>
+  </section>
+
+  <section id="icmp">
+    <h2>19. ICMP, Ping &amp; Traceroute</h2>
+    <p><strong>ICMP (Internet Control Message Protocol)</strong> is the diagnostics layer for IP. Messages: Echo Request/Reply (ping), Destination Unreachable, Time Exceeded, Redirect.</p>
+
+    <h4>Ping</h4>
+<pre><code>$ ping -c 3 google.com
+PING google.com (142.250.192.78): 56 data bytes
+64 bytes from 142.250.192.78: icmp_seq=0 ttl=117 time=12.4 ms
+64 bytes from 142.250.192.78: icmp_seq=1 ttl=117 time=12.1 ms
+64 bytes from 142.250.192.78: icmp_seq=2 ttl=117 time=11.9 ms</code></pre>
+
+    <h4>Traceroute</h4>
+    <p>Sends packets with TTL=1, then TTL=2, etc. Each router decrements TTL by one; when it hits zero, the router sends back an ICMP Time Exceeded — and you learn its address. Repeating gives you the entire path.</p>
+<pre><code>$ traceroute google.com
+ 1  router.local       (192.168.1.1)    1.2 ms
+ 2  isp-gw.example.net (10.20.30.1)     8.4 ms
+ 3  *                                   *
+ 4  72.14.215.85                        12.1 ms
+ 5  142.251.49.43      (google peering) 11.9 ms
+ 6  142.250.192.78                      12.4 ms</code></pre>
+  </section>
+
+  <hr>
+
+  <section id="tcp">
+    <h2>20. TCP — The Reliable Workhorse</h2>
+    <p><strong>Transmission Control Protocol</strong> provides a reliable, ordered, byte-stream connection between two endpoints. It hides packet loss, reordering, duplication, and rate mismatches from applications.</p>
+
+    <h3>The 3-way handshake</h3>
+    <svg class="diagram" width="100%" height="240" viewBox="0 0 760 240">
+      <g font-family="monospace" font-size="13" text-anchor="middle" fill="#e2e8f0">
+        <rect x="100" y="20" width="120" height="30" fill="#0ea5e9"/><text x="160" y="40" fill="white">Client</text>
+        <rect x="540" y="20" width="120" height="30" fill="#a78bfa"/><text x="600" y="40" fill="white">Server</text>
+        <line x1="160" y1="50" x2="160" y2="220" stroke="#94a3b8" stroke-dasharray="4 4"/>
+        <line x1="600" y1="50" x2="600" y2="220" stroke="#94a3b8" stroke-dasharray="4 4"/>
+
+        <line x1="160" y1="80" x2="600" y2="100" stroke="#34d399" stroke-width="2" marker-end="url(#a4)"/>
+        <text x="380" y="76" fill="#34d399">SYN, seq=x</text>
+
+        <line x1="600" y1="130" x2="160" y2="150" stroke="#fbbf24" stroke-width="2" marker-end="url(#a4)"/>
+        <text x="380" y="126" fill="#fbbf24">SYN+ACK, seq=y, ack=x+1</text>
+
+        <line x1="160" y1="180" x2="600" y2="200" stroke="#34d399" stroke-width="2" marker-end="url(#a4)"/>
+        <text x="380" y="176" fill="#34d399">ACK, ack=y+1</text>
+
+        <text x="380" y="232" fill="#a78bfa">Connection established → data flows</text>
+      </g>
+      <defs>
+        <marker id="a4" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+          <polygon points="0 0, 8 4, 0 8" fill="#94a3b8"/>
+        </marker>
+      </defs>
+    </svg>
+
+    <h3>TCP segment header</h3>
+    <ul>
+      <li><strong>Source &amp; Destination ports</strong> (16 bits each)</li>
+      <li><strong>Sequence number</strong> &amp; <strong>Acknowledgement number</strong> (32 bits each)</li>
+      <li><strong>Flags:</strong> SYN, ACK, FIN, RST, PSH, URG</li>
+      <li><strong>Window size</strong> — flow control</li>
+      <li><strong>Checksum</strong></li>
+    </ul>
+
+    <h3>How TCP delivers reliability</h3>
+    <ul>
+      <li><strong>Sequence numbers</strong> let the receiver detect loss, duplicates, and reorder.</li>
+      <li><strong>Acknowledgements</strong> tell the sender what's been received.</li>
+      <li><strong>Retransmission</strong> after a timeout (RTO) or fast retransmit (3 duplicate ACKs).</li>
+      <li><strong>Sliding window</strong> for flow control — receiver advertises how much buffer it has.</li>
+      <li><strong>Congestion control</strong> — sender keeps a congestion window (cwnd) that grows slowly and shrinks on loss. Algorithms: <em>Reno</em>, <em>CUBIC</em> (default in Linux/macOS), <em>BBR</em> (Google, used by YouTube).</li>
+    </ul>
+
+    <h3>Connection termination — 4-way handshake</h3>
+    <p>Either side sends FIN, the other ACKs, then sends its own FIN, then the first ACKs. The closer enters <code>TIME_WAIT</code> (~60s) to absorb late packets.</p>
+
+    <h3>TCP states</h3>
+    <p><code>LISTEN → SYN_SENT/SYN_RCVD → ESTABLISHED → FIN_WAIT_1 → FIN_WAIT_2 → TIME_WAIT → CLOSED</code> (and the server-side sequence). Diagnose with <code>ss -tan</code> or <code>netstat -an</code>.</p>
+  </section>
+
+  <section id="udp">
+    <h2>21. UDP — Send and Forget</h2>
+    <p><strong>User Datagram Protocol</strong> is connectionless and unreliable: a tiny 8-byte header (source port, destination port, length, checksum) and that's it. No handshake, no retransmission, no ordering.</p>
+
+    <p>Why use it? When latency matters more than reliability, or when the application implements its own reliability:</p>
+    <ul>
+      <li>DNS queries (small, retry is cheap)</li>
+      <li>Video / voice streaming (a lost frame is better than a stalled stream)</li>
+      <li>Online games (timely is more important than complete)</li>
+      <li>QUIC (custom reliability + loss recovery on top of UDP)</li>
+      <li>NTP, SNMP, DHCP</li>
+    </ul>
+  </section>
+
+  <section id="quic">
+    <h2>22. QUIC — TCP's Modern Replacement</h2>
+    <p>Google designed QUIC to fix TCP's pain points without waiting decades for OS kernels to update. It runs over UDP in userspace.</p>
+    <ul>
+      <li><strong>0-RTT or 1-RTT handshakes</strong> (vs TCP+TLS taking 2-3 RTTs).</li>
+      <li><strong>Multiple streams in one connection</strong> — no head-of-line blocking like HTTP/2 over TCP.</li>
+      <li><strong>Connection migration</strong> — switch from Wi-Fi to 5G without dropping the connection (uses connection IDs, not IP+port).</li>
+      <li><strong>Always encrypted</strong> with TLS 1.3.</li>
+    </ul>
+    <p>QUIC is the transport for <strong>HTTP/3</strong>, used by Google, Facebook, Cloudflare, and increasingly the rest of the web.</p>
+  </section>
+
+  <section id="ports">
+    <h2>23. Ports &amp; Sockets — Deep Dive</h2>
+    <p>A <strong>port</strong> is a 16-bit unsigned integer (0–65535) that identifies a specific service or connection endpoint on a host. Ports give one IP address the ability to host dozens of simultaneous services. The same IP can serve HTTP on 80, SSH on 22, and a database on 5432 at the same time.</p>
+
+    <h3>Sockets — the OS abstraction</h3>
+    <p>A <strong>socket</strong> is the kernel's handle for a network endpoint. The pairing <code>(protocol, IP, port)</code> identifies a listening socket. A <strong>connected socket</strong> is uniquely identified by the <strong>5-tuple</strong>:</p>
+<pre><code>( protocol, src IP, src port, dst IP, dst port )
+  TCP        10.0.0.5  54321     142.250.192.78  443</code></pre>
+    <p>This 5-tuple uniqueness is why one server on port 443 can handle millions of concurrent clients — each connection is distinguished by the client's IP+port.</p>
+
+    <h3>Port number ranges (IANA)</h3>
+    <table>
+      <tr><th>Range</th><th>Name</th><th>Rules</th></tr>
+      <tr><td>0</td><td>Reserved</td><td>Never used on the wire</td></tr>
+      <tr><td>1 – 1023</td><td>Well-known / System</td><td>IANA-assigned; requires root/admin on Unix to bind</td></tr>
+      <tr><td>1024 – 49151</td><td>Registered / User</td><td>IANA-registered for vendor services; any user can bind</td></tr>
+      <tr><td>49152 – 65535</td><td>Dynamic / Ephemeral / Private</td><td>OS picks these for outgoing connections</td></tr>
+    </table>
+    <p>Linux actually uses <code>/proc/sys/net/ipv4/ip_local_port_range</code> (default 32768–60999) for ephemeral ports; Windows and BSDs differ. Exhausting this range causes the dreaded <code>EADDRINUSE</code> / <code>Cannot assign requested address</code> in high-connection-rate servers.</p>
+
+    <h3>Port states (what <code>nmap</code> tells you)</h3>
+    <table>
+      <tr><th>State</th><th>Meaning</th></tr>
+      <tr><td><strong>Open</strong></td><td>A process is listening and accepting connections</td></tr>
+      <tr><td><strong>Closed</strong></td><td>No process listening; host is reachable and replies RST</td></tr>
+      <tr><td><strong>Filtered</strong></td><td>Firewall silently drops — no reply at all</td></tr>
+      <tr><td><strong>Unfiltered</strong></td><td>Reachable but state can't be determined (nmap ACK scan)</td></tr>
+      <tr><td><strong>Open|Filtered</strong></td><td>Ambiguous — common for UDP</td></tr>
+    </table>
+
+    <h3>The socket life cycle (TCP server)</h3>
+<pre><code>socket()   → create a socket (returns a file descriptor)
+bind()     → associate with an IP and port
+listen()   → mark as passive, set accept queue depth
+accept()   → block until a client connects; returns new connected socket
+read()/write() or recv()/send() → exchange bytes
+close()   → tear down</code></pre>
+
+    <h3>Key socket options (production gotchas)</h3>
+    <ul>
+      <li><strong>SO_REUSEADDR</strong> — lets a server rebind to a port still in TIME_WAIT after a crash.</li>
+      <li><strong>SO_REUSEPORT</strong> — multiple processes can bind to the same port; kernel load-balances across them (NGINX uses this).</li>
+      <li><strong>TCP_NODELAY</strong> — disables Nagle's algorithm; critical for low-latency small-message protocols.</li>
+      <li><strong>SO_KEEPALIVE</strong> — periodic probes to detect dead peers.</li>
+      <li><strong>SO_LINGER</strong> — control behavior of close() when unsent data exists.</li>
+    </ul>
+
+    <h3>Ephemeral port exhaustion</h3>
+    <div class="callout danger">
+      <strong>Classic production bug:</strong> a load balancer opens millions of short-lived TCP connections to a backend. Each connection uses one source port. With ~28,000 available and TIME_WAIT holding them for 60 seconds, you cap at ~460 connections/sec per (src IP → dst IP:port). Fix: connection pooling, longer-lived connections, more source IPs, or <code>tcp_tw_reuse</code>.
+    </div>
+
+    <h3>Port forwarding &amp; publishing</h3>
+    <ul>
+      <li><strong>DNAT / port forwarding:</strong> router rewrites destination <code>public:80 → 192.168.1.10:80</code> to expose an internal server.</li>
+      <li><strong>UPnP / NAT-PMP:</strong> client asks router to auto-open a port (gaming consoles, BitTorrent).</li>
+      <li><strong>SSH tunneling:</strong> <code>ssh -L 8080:db.internal:5432 bastion</code> maps local 8080 to a remote internal port — classic DBA trick.</li>
+      <li><strong>Docker port publishing:</strong> <code>-p 8080:80</code> maps host 8080 → container 80 via iptables DNAT.</li>
+      <li><strong>Kubernetes NodePort:</strong> exposes a service on every node at a port in 30000–32767.</li>
+    </ul>
+
+    <h3>Comprehensive port reference</h3>
+    <table>
+      <tr><th>Port</th><th>Proto</th><th>Service</th></tr>
+      <tr><td>20 / 21</td><td>TCP</td><td>FTP data / control</td></tr>
+      <tr><td>22</td><td>TCP</td><td>SSH, SCP, SFTP</td></tr>
+      <tr><td>23</td><td>TCP</td><td>Telnet (insecure — avoid)</td></tr>
+      <tr><td>25</td><td>TCP</td><td>SMTP (server-to-server)</td></tr>
+      <tr><td>53</td><td>UDP/TCP</td><td>DNS</td></tr>
+      <tr><td>67 / 68</td><td>UDP</td><td>DHCP server / client</td></tr>
+      <tr><td>69</td><td>UDP</td><td>TFTP (net-boot, firmware)</td></tr>
+      <tr><td>80</td><td>TCP</td><td>HTTP</td></tr>
+      <tr><td>88</td><td>TCP/UDP</td><td>Kerberos</td></tr>
+      <tr><td>110</td><td>TCP</td><td>POP3</td></tr>
+      <tr><td>111</td><td>TCP/UDP</td><td>RPCbind / portmapper (NFS)</td></tr>
+      <tr><td>119</td><td>TCP</td><td>NNTP (Usenet)</td></tr>
+      <tr><td>123</td><td>UDP</td><td>NTP</td></tr>
+      <tr><td>135 / 139 / 445</td><td>TCP</td><td>Windows RPC / NetBIOS / SMB</td></tr>
+      <tr><td>143</td><td>TCP</td><td>IMAP</td></tr>
+      <tr><td>161 / 162</td><td>UDP</td><td>SNMP / SNMP trap</td></tr>
+      <tr><td>179</td><td>TCP</td><td>BGP</td></tr>
+      <tr><td>194</td><td>TCP</td><td>IRC</td></tr>
+      <tr><td>389</td><td>TCP</td><td>LDAP</td></tr>
+      <tr><td>443</td><td>TCP/UDP</td><td>HTTPS (TCP) / HTTP/3 QUIC (UDP)</td></tr>
+      <tr><td>465</td><td>TCP</td><td>SMTPS (implicit TLS, legacy)</td></tr>
+      <tr><td>500 / 4500</td><td>UDP</td><td>IKE / IPsec NAT-T</td></tr>
+      <tr><td>514</td><td>UDP</td><td>Syslog</td></tr>
+      <tr><td>520</td><td>UDP</td><td>RIP</td></tr>
+      <tr><td>587</td><td>TCP</td><td>SMTP submission (mail clients)</td></tr>
+      <tr><td>636</td><td>TCP</td><td>LDAPS</td></tr>
+      <tr><td>853</td><td>TCP</td><td>DNS over TLS (DoT)</td></tr>
+      <tr><td>873</td><td>TCP</td><td>rsync</td></tr>
+      <tr><td>993 / 995</td><td>TCP</td><td>IMAPS / POP3S</td></tr>
+      <tr><td>1194</td><td>UDP</td><td>OpenVPN</td></tr>
+      <tr><td>1433 / 1521</td><td>TCP</td><td>MS SQL Server / Oracle DB</td></tr>
+      <tr><td>1883 / 8883</td><td>TCP</td><td>MQTT / MQTT over TLS</td></tr>
+      <tr><td>1900</td><td>UDP</td><td>SSDP (UPnP discovery)</td></tr>
+      <tr><td>2049</td><td>TCP</td><td>NFS</td></tr>
+      <tr><td>2181</td><td>TCP</td><td>Zookeeper</td></tr>
+      <tr><td>3306</td><td>TCP</td><td>MySQL / MariaDB</td></tr>
+      <tr><td>3389</td><td>TCP</td><td>RDP (Windows remote desktop)</td></tr>
+      <tr><td>4789</td><td>UDP</td><td>VXLAN</td></tr>
+      <tr><td>5060 / 5061</td><td>UDP/TCP</td><td>SIP / SIP-TLS (VoIP)</td></tr>
+      <tr><td>5222 / 5223</td><td>TCP</td><td>XMPP client / TLS</td></tr>
+      <tr><td>5353</td><td>UDP</td><td>mDNS (Bonjour, Zeroconf)</td></tr>
+      <tr><td>5432</td><td>TCP</td><td>PostgreSQL</td></tr>
+      <tr><td>5672 / 5671</td><td>TCP</td><td>AMQP (RabbitMQ)</td></tr>
+      <tr><td>5900</td><td>TCP</td><td>VNC</td></tr>
+      <tr><td>6379</td><td>TCP</td><td>Redis</td></tr>
+      <tr><td>6443</td><td>TCP</td><td>Kubernetes API server</td></tr>
+      <tr><td>8080 / 8443</td><td>TCP</td><td>Alt HTTP / HTTPS (proxies, Tomcat)</td></tr>
+      <tr><td>8086</td><td>TCP</td><td>InfluxDB</td></tr>
+      <tr><td>9000</td><td>TCP</td><td>Common for PHP-FPM, SonarQube, MinIO</td></tr>
+      <tr><td>9042</td><td>TCP</td><td>Cassandra CQL</td></tr>
+      <tr><td>9090</td><td>TCP</td><td>Prometheus</td></tr>
+      <tr><td>9092</td><td>TCP</td><td>Kafka broker</td></tr>
+      <tr><td>9200 / 9300</td><td>TCP</td><td>Elasticsearch HTTP / transport</td></tr>
+      <tr><td>11211</td><td>TCP/UDP</td><td>Memcached</td></tr>
+      <tr><td>15672</td><td>TCP</td><td>RabbitMQ management UI</td></tr>
+      <tr><td>27017</td><td>TCP</td><td>MongoDB</td></tr>
+      <tr><td>50051</td><td>TCP</td><td>gRPC (common convention)</td></tr>
+    </table>
+
+    <div class="callout">
+      <strong>Pop quiz:</strong> why does DNS listen on both UDP and TCP port 53? UDP for normal queries (fast, fits in one datagram); TCP for zone transfers and responses over 512/4096 bytes (DNSSEC records are large). Modern DNS over TLS uses 853, DNS over HTTPS rides regular 443.
+    </div>
+
+    <h3>Port knocking &amp; security through obscurity</h3>
+    <p>A host keeps a service "invisible" (port filtered); only when a client sends connection attempts to a specific sequence of closed ports does the firewall open the real one. Defence in depth, not primary security.</p>
+  </section>
+
+  <hr>
+
+  <section id="dns">
+    <h2>24. DNS — The Internet's Phone Book</h2>
+    <p><strong>Domain Name System</strong> translates human-friendly names (<code>google.com</code>) into IP addresses (<code>142.250.192.78</code>). It's a hierarchical, distributed database queried over UDP/53 (TCP/53 for large responses, DoT 853, DoH 443).</p>
+
+    <svg class="diagram" width="100%" height="280" viewBox="0 0 760 280">
+      <g font-family="monospace" font-size="12" text-anchor="middle" fill="white">
+        <rect x="320" y="10" width="120" height="40" fill="#a78bfa" rx="4"/>
+        <text x="380" y="35">Root (.)</text>
+
+        <rect x="100" y="80" width="100" height="40" fill="#0ea5e9" rx="4"/><text x="150" y="105">.com</text>
+        <rect x="240" y="80" width="100" height="40" fill="#0ea5e9" rx="4"/><text x="290" y="105">.org</text>
+        <rect x="380" y="80" width="100" height="40" fill="#0ea5e9" rx="4"/><text x="430" y="105">.io</text>
+        <rect x="520" y="80" width="100" height="40" fill="#0ea5e9" rx="4"/><text x="570" y="105">.in</text>
+
+        <rect x="40" y="160" width="120" height="40" fill="#34d399" rx="4"/><text x="100" y="185" fill="#0f172a">google.com</text>
+        <rect x="180" y="160" width="120" height="40" fill="#34d399" rx="4"/><text x="240" y="185" fill="#0f172a">github.com</text>
+        <rect x="320" y="160" width="120" height="40" fill="#34d399" rx="4"/><text x="380" y="185" fill="#0f172a">amazon.com</text>
+
+        <rect x="40" y="230" width="160" height="40" fill="#fbbf24" rx="4"/><text x="120" y="255" fill="#0f172a">www.google.com</text>
+        <rect x="220" y="230" width="160" height="40" fill="#fbbf24" rx="4"/><text x="300" y="255" fill="#0f172a">mail.google.com</text>
+
+        <g stroke="#94a3b8" stroke-width="1.5">
+          <line x1="380" y1="50" x2="150" y2="80"/>
+          <line x1="380" y1="50" x2="290" y2="80"/>
+          <line x1="380" y1="50" x2="430" y2="80"/>
+          <line x1="380" y1="50" x2="570" y2="80"/>
+          <line x1="150" y1="120" x2="100" y2="160"/>
+          <line x1="150" y1="120" x2="240" y2="160"/>
+          <line x1="430" y1="120" x2="380" y2="160"/>
+          <line x1="100" y1="200" x2="120" y2="230"/>
+          <line x1="100" y1="200" x2="300" y2="230"/>
+        </g>
+      </g>
+    </svg>
+
+    <h3>DNS record types</h3>
+    <table>
+      <tr><th>Type</th><th>Purpose</th></tr>
+      <tr><td>A</td><td>IPv4 address</td></tr>
+      <tr><td>AAAA</td><td>IPv6 address</td></tr>
+      <tr><td>CNAME</td><td>Alias to another domain</td></tr>
+      <tr><td>MX</td><td>Mail server for the domain</td></tr>
+      <tr><td>NS</td><td>Authoritative nameservers</td></tr>
+      <tr><td>TXT</td><td>Arbitrary text — SPF, DKIM, domain verification</td></tr>
+      <tr><td>SRV</td><td>Service location (port + host)</td></tr>
+      <tr><td>PTR</td><td>Reverse DNS (IP → name)</td></tr>
+      <tr><td>SOA</td><td>Start of authority — zone metadata</td></tr>
+      <tr><td>CAA</td><td>Which CAs may issue certs</td></tr>
+    </table>
+
+    <h3>Resolution flow</h3>
+    <ol>
+      <li>Browser checks its cache, then OS cache (<code>nscd</code>, mDNS, <code>/etc/hosts</code>).</li>
+      <li>Asks the configured <strong>recursive resolver</strong> (your ISP, 1.1.1.1, 8.8.8.8).</li>
+      <li>Resolver checks its cache. If miss, queries a <strong>root server</strong> (one of 13 logical anycast clusters, A–M).</li>
+      <li>Root replies with TLD nameservers (e.g., <code>.com</code>).</li>
+      <li>Resolver queries the TLD server, gets authoritative nameservers for <code>google.com</code>.</li>
+      <li>Resolver queries the authoritative server, gets the A record.</li>
+      <li>Resolver caches and returns to the client (TTL applies).</li>
+    </ol>
+
+    <h3>Modern DNS</h3>
+    <ul>
+      <li><strong>DNSSEC</strong> — cryptographic signatures on DNS records.</li>
+      <li><strong>DoT (DNS over TLS, 853)</strong> and <strong>DoH (DNS over HTTPS, 443)</strong> — encrypted queries to prevent ISP snooping.</li>
+      <li><strong>EDNS Client Subnet</strong> — passes a portion of client IP to authoritatives so CDNs can return geo-optimized answers.</li>
+    </ul>
+
+    <h3>DNS message format</h3>
+    <p>Every DNS packet — query or response — has the same structure: a 12-byte header followed by four variable-length sections.</p>
+
+    <svg class="diagram" width="100%" height="240" viewBox="0 0 760 240">
+      <g font-family="monospace" font-size="11" text-anchor="middle" fill="white">
+        <rect x="20" y="20" width="720" height="30" fill="#0284c7"/>
+        <text x="380" y="40">Header (12 bytes) — ID | Flags | QDCOUNT | ANCOUNT | NSCOUNT | ARCOUNT</text>
+        <rect x="20" y="60" width="720" height="30" fill="#0ea5e9"/>
+        <text x="380" y="80">Question section — QNAME, QTYPE, QCLASS</text>
+        <rect x="20" y="100" width="720" height="30" fill="#34d399"/>
+        <text x="380" y="120" fill="#0f172a">Answer section — RR records matching the query</text>
+        <rect x="20" y="140" width="720" height="30" fill="#a78bfa"/>
+        <text x="380" y="160">Authority section — NS records for delegation</text>
+        <rect x="20" y="180" width="720" height="30" fill="#fbbf24"/>
+        <text x="380" y="200" fill="#0f172a">Additional section — glue records, EDNS0 OPT</text>
+      </g>
+    </svg>
+
+    <h4>Header flags — what they tell you</h4>
+    <ul>
+      <li><strong>QR</strong> — 0 = query, 1 = response</li>
+      <li><strong>OPCODE</strong> — standard query (0), inverse (1), status (2), notify (4), update (5)</li>
+      <li><strong>AA</strong> — authoritative answer</li>
+      <li><strong>TC</strong> — truncated (response is too big for UDP, retry over TCP)</li>
+      <li><strong>RD</strong> — recursion desired (set by resolvers)</li>
+      <li><strong>RA</strong> — recursion available (set by resolvers that support it)</li>
+      <li><strong>AD</strong> — authenticated data (DNSSEC-validated)</li>
+      <li><strong>CD</strong> — checking disabled (client handles validation)</li>
+      <li><strong>RCODE</strong> — 0 NOERROR, 2 SERVFAIL, 3 NXDOMAIN, 5 REFUSED, 9 NOTAUTH</li>
+    </ul>
+
+    <h3>Recursive vs iterative queries</h3>
+    <table>
+      <tr><th>Mode</th><th>Used by</th><th>Behavior</th></tr>
+      <tr><td><strong>Recursive</strong></td><td>Client → resolver</td><td>"Do whatever it takes, give me the final answer."</td></tr>
+      <tr><td><strong>Iterative</strong></td><td>Resolver → root/TLD/auth</td><td>Each server returns its best referral; resolver follows the chain.</td></tr>
+      <tr><td><strong>Forwarder</strong></td><td>Resolver → another resolver</td><td>Pass-through to a bigger, upstream resolver (e.g., corporate DNS → 8.8.8.8).</td></tr>
+    </table>
+
+    <svg class="diagram" width="100%" height="320" viewBox="0 0 760 320">
+      <g font-family="monospace" font-size="11" text-anchor="middle" fill="white">
+        <rect x="20" y="140" width="110" height="36" fill="#34d399" rx="4"/><text x="75" y="162" fill="#0f172a">Client</text>
+        <rect x="170" y="140" width="130" height="36" fill="#0ea5e9" rx="4"/><text x="235" y="162">Recursive Resolver</text>
+        <rect x="340" y="40" width="120" height="36" fill="#a78bfa" rx="4"/><text x="400" y="62">Root (.) NS</text>
+        <rect x="340" y="140" width="120" height="36" fill="#a78bfa" rx="4"/><text x="400" y="162">.com TLD NS</text>
+        <rect x="340" y="240" width="160" height="36" fill="#a78bfa" rx="4"/><text x="420" y="262">google.com Auth NS</text>
+
+        <g stroke="#94a3b8" stroke-width="1.5" fill="none">
+          <path d="M130 158 L170 158" marker-end="url(#a7)"/>
+          <path d="M300 150 Q340 100 400 76" marker-end="url(#a7)"/>
+          <path d="M340 76 Q300 120 300 140" stroke-dasharray="3 3" marker-end="url(#a7)"/>
+          <path d="M300 160 L340 160" marker-end="url(#a7)"/>
+          <path d="M340 170 Q300 180 300 165" stroke-dasharray="3 3" marker-end="url(#a7)"/>
+          <path d="M300 170 Q340 220 340 258" marker-end="url(#a7)"/>
+          <path d="M340 268 Q300 250 300 176" stroke-dasharray="3 3" marker-end="url(#a7)"/>
+          <path d="M170 172 L130 172" marker-end="url(#a7)"/>
+        </g>
+        <text x="150" y="136" fill="#34d399" font-size="10">1. recursive</text>
+        <text x="150" y="200" fill="#34d399" font-size="10">8. final answer</text>
+        <text x="340" y="100" fill="#a78bfa" font-size="10">2. ask root</text>
+        <text x="340" y="118" fill="#a78bfa" font-size="10">3. try .com</text>
+        <text x="320" y="200" fill="#a78bfa" font-size="10">4-7. ask TLD, auth</text>
+      </g>
+      <defs>
+        <marker id="a7" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+          <polygon points="0 0, 8 4, 0 8" fill="#94a3b8"/>
+        </marker>
+      </defs>
+    </svg>
+
+    <h3>Caching &amp; TTLs</h3>
+    <p>Every DNS record has a <strong>TTL</strong> (time to live) in seconds. Resolvers cache responses until TTL expires. Typical values:</p>
+    <ul>
+      <li><strong>Root / TLD delegations:</strong> ~2 days</li>
+      <li><strong>A / AAAA</strong> for websites: 300–3600 s (low for flexibility, high for efficiency)</li>
+      <li><strong>MX records:</strong> often 3600–86400 s</li>
+      <li><strong>Before a migration:</strong> drop TTL to 60 s a day ahead, then change, then raise back.</li>
+    </ul>
+
+    <h4>Negative caching (RFC 2308)</h4>
+    <p>"This name does not exist" is cached too — typically for the SOA's MINIMUM field (~5 minutes). That's why a newly created record can still return NXDOMAIN for a while after it's live.</p>
+
+    <h3>The 13 root servers (and why it's really thousands)</h3>
+    <p>There are 13 <em>logical</em> root server identities, labeled <strong>A</strong> through <strong>M</strong> (<code>a.root-servers.net</code> ... <code>m.root-servers.net</code>). 13 is the maximum that fit in a 512-byte UDP response. Each one is actually an <strong>anycast</strong> cluster of hundreds of physical servers around the world, all advertising the same IP via BGP. When you query "a root server," you hit whichever anycast instance is closest — currently over 1,500 root server instances total. That's how 13 identities serve the entire planet.</p>
+
+    <h3>Zones, delegation &amp; glue records</h3>
+    <ul>
+      <li>A <strong>zone</strong> is the slice of the DNS tree that one authoritative server administers (e.g., everything under <code>example.com</code> that isn't delegated out).</li>
+      <li><strong>Delegation:</strong> the parent zone (<code>.com</code>) publishes NS records pointing to the child zone's nameservers.</li>
+      <li><strong>Glue records:</strong> when a zone's nameservers live inside that zone itself (e.g. <code>ns1.example.com</code> for <code>example.com</code>), you have a chicken-and-egg problem. The parent returns "A record" glue along with the NS records to break the cycle.</li>
+    </ul>
+
+    <h3>Complete record type cheatsheet</h3>
+    <table>
+      <tr><th>Record</th><th>Purpose / example</th></tr>
+      <tr><td>A</td><td>IPv4: <code>google.com → 142.250.192.78</code></td></tr>
+      <tr><td>AAAA</td><td>IPv6: <code>google.com → 2607:f8b0:4005:80b::200e</code></td></tr>
+      <tr><td>CNAME</td><td>Alias: <code>www.example.com → example.com</code></td></tr>
+      <tr><td>ALIAS / ANAME</td><td>CNAME-at-apex emulation (cloud DNS only)</td></tr>
+      <tr><td>MX</td><td>Mail server + priority: <code>10 mx1.google.com</code></td></tr>
+      <tr><td>NS</td><td>Delegation: <code>example.com NS ns1.example.com</code></td></tr>
+      <tr><td>SOA</td><td>Zone metadata: primary NS, admin email, serial, refresh/retry/expire/minimum</td></tr>
+      <tr><td>TXT</td><td>Free text: SPF, DKIM, domain verification, ACME challenges</td></tr>
+      <tr><td>SRV</td><td>Service location: <code>_sip._tcp.example.com 10 5 5060 sip.example.com</code></td></tr>
+      <tr><td>PTR</td><td>Reverse DNS: <code>34.216.184.93.in-addr.arpa → example.com</code></td></tr>
+      <tr><td>CAA</td><td>Which CAs may issue certs: <code>example.com CAA 0 issue "letsencrypt.org"</code></td></tr>
+      <tr><td>HTTPS / SVCB</td><td>Service binding — ALPN, port, ECH keys, HTTP/3 discovery</td></tr>
+      <tr><td>DNSKEY / RRSIG / DS / NSEC(3)</td><td>DNSSEC signing chain</td></tr>
+      <tr><td>TLSA</td><td>DANE — pin a TLS cert via DNS</td></tr>
+      <tr><td>NAPTR</td><td>Regex-based rewrites (used by SIP/E.164)</td></tr>
+      <tr><td>LOC</td><td>Geographic location (rarely used)</td></tr>
+    </table>
+
+    <h3>Reading <code>dig</code> output</h3>
+<pre><code>$ dig +noall +answer +comments google.com A
+
+; &lt;&lt;&gt;&gt; DiG 9.18 &lt;&lt;&gt;&gt; +noall +answer +comments google.com A
+;; Got answer:
+;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 51423
+;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+google.com.    178    IN    A    142.250.192.78
+#              ^TTL         ^class ^type ^data</code></pre>
+
+    <p>Important flags to spot in the HEADER line:</p>
+    <ul>
+      <li><code>qr</code> — it's a response</li>
+      <li><code>rd</code> — recursion desired (you asked)</li>
+      <li><code>ra</code> — recursion available (the resolver supports it)</li>
+      <li><code>aa</code> — authoritative (missing → this was from a cache)</li>
+      <li><code>ad</code> — DNSSEC authenticated</li>
+      <li><code>tc</code> — truncated (retry over TCP)</li>
+    </ul>
+
+    <h4>Useful dig invocations</h4>
+<pre><code>dig google.com                   # default A lookup
+dig google.com ANY +noall +answer
+dig +trace google.com            # simulate the recursive walk yourself
+dig @8.8.8.8 google.com          # query a specific server
+dig -x 142.250.192.78            # reverse lookup
+dig MX gmail.com
+dig +short google.com            # just the answer
+dig +dnssec example.com          # show RRSIGs
+dig AXFR example.com @ns1.example.com   # zone transfer (usually refused)</code></pre>
+
+    <h3>DNS load balancing techniques</h3>
+    <ul>
+      <li><strong>Round-robin DNS:</strong> multiple A records for one name; resolvers rotate. Simple but no health checking.</li>
+      <li><strong>Weighted records:</strong> managed DNS providers return different records with different probabilities.</li>
+      <li><strong>Latency-based / Geo-based:</strong> Route 53, Cloud DNS return the IP of the closest region (using EDNS Client Subnet).</li>
+      <li><strong>Failover:</strong> provider health-checks backends, returns only healthy ones.</li>
+      <li><strong>Anycast:</strong> the real magic — one IP, many PoPs, BGP picks the closest. Used by root servers, 1.1.1.1, CDNs.</li>
+    </ul>
+
+    <h3>Split-horizon / split-brain DNS</h3>
+    <p>Same name, different answers depending on who's asking. <code>intranet.company.com</code> resolves to <code>10.0.0.50</code> when queried from inside the corporate network, and to a VPN login page externally. Implemented with DNS "views" (BIND) or separate authoritative zones for internal vs external.</p>
+
+    <h3>Dynamic DNS (DDNS)</h3>
+    <p>Clients (home routers, IoT devices, DHCP servers) update their A record dynamically when their IP changes. Protocols: RFC 2136 UPDATE messages with TSIG authentication. Services: No-IP, DuckDNS, Cloudflare API.</p>
+
+    <h3>DNS attacks &amp; defenses</h3>
+    <table>
+      <tr><th>Attack</th><th>How</th><th>Defense</th></tr>
+      <tr><td>Cache poisoning</td><td>Forge a response before the real one arrives</td><td>Source port randomization, 0x20 bit mixing, DNSSEC</td></tr>
+      <tr><td>Kaminsky bug (2008)</td><td>Birthday attack on transaction ID</td><td>Source port randomization (mandatory since)</td></tr>
+      <tr><td>DNS amplification DDoS</td><td>Spoof victim's IP, send small query, get huge response</td><td>Close open resolvers, rate limiting, BCP 38 ingress filtering</td></tr>
+      <tr><td>NXDOMAIN hijacking</td><td>ISP rewrites NXDOMAIN to an ad page</td><td>Use DoH/DoT to a third-party resolver, DNSSEC</td></tr>
+      <tr><td>DNS tunneling</td><td>Exfiltrate data via TXT queries to attacker's NS</td><td>Monitor query volumes/patterns, block unusual TLDs</td></tr>
+      <tr><td>Subdomain takeover</td><td>CNAME points to unclaimed cloud resource</td><td>Audit dangling CNAMEs regularly</td></tr>
+    </table>
+
+    <h3>DNSSEC in one paragraph</h3>
+    <p>Each zone signs its records with a private key (ZSK, Zone Signing Key). The public key is published as a DNSKEY record and its hash as a DS record in the parent zone. The parent's DS is signed by the parent's ZSK, which itself has a DS in its parent, forming a chain up to the root's Key Signing Key — which is the famous "internet root key" managed by IANA in signed ceremonies. Resolvers with a copy of the root KSK can validate any signed domain end-to-end. DNSSEC prevents tampering but not eavesdropping — for that you need DoT/DoH/DoQ.</p>
+
+    <h3>Encrypted DNS variants</h3>
+    <table>
+      <tr><th>Name</th><th>Port</th><th>Transport</th><th>Notes</th></tr>
+      <tr><td>Do53</td><td>53</td><td>UDP/TCP</td><td>The classic unencrypted DNS</td></tr>
+      <tr><td>DoT (DNS over TLS)</td><td>853</td><td>TCP + TLS</td><td>Private, distinct port — easy to block or allow</td></tr>
+      <tr><td>DoH (DNS over HTTPS)</td><td>443</td><td>HTTPS</td><td>Indistinguishable from web traffic</td></tr>
+      <tr><td>DoQ (DNS over QUIC)</td><td>853</td><td>UDP + QUIC</td><td>Lower latency, 0-RTT resumption</td></tr>
+      <tr><td>Oblivious DoH (ODoH)</td><td>443</td><td>HTTPS</td><td>Proxy hides client IP from resolver</td></tr>
+    </table>
+  </section>
+
+  <section id="http">
+    <h2>25. HTTP / HTTPS</h2>
+    <p><strong>HyperText Transfer Protocol</strong> is the request-response protocol of the web. Stateless: each request is independent (cookies and tokens give the illusion of state).</p>
+
+    <h4>Request</h4>
+<pre><code>GET /search?q=cats HTTP/1.1
+Host: www.google.com
+User-Agent: Mozilla/5.0
+Accept: text/html
+Accept-Encoding: gzip, br
+Cookie: SID=abc123</code></pre>
+
+    <h4>Response</h4>
+<pre><code>HTTP/1.1 200 OK
+Date: Fri, 24 Apr 2026 10:00:00 GMT
+Content-Type: text/html; charset=UTF-8
+Content-Length: 12345
+Cache-Control: private, max-age=0
+Set-Cookie: NID=xyz; Secure; HttpOnly
+
+&lt;!DOCTYPE html&gt;...</code></pre>
+
+    <h4>Methods</h4>
+    <table>
+      <tr><th>Method</th><th>Purpose</th><th>Idempotent</th></tr>
+      <tr><td>GET</td><td>Read</td><td>Yes</td></tr>
+      <tr><td>POST</td><td>Create / submit</td><td>No</td></tr>
+      <tr><td>PUT</td><td>Replace</td><td>Yes</td></tr>
+      <tr><td>PATCH</td><td>Partial update</td><td>No</td></tr>
+      <tr><td>DELETE</td><td>Delete</td><td>Yes</td></tr>
+      <tr><td>HEAD</td><td>Headers only</td><td>Yes</td></tr>
+      <tr><td>OPTIONS</td><td>Capabilities (CORS preflight)</td><td>Yes</td></tr>
+    </table>
+
+    <h4>Status codes</h4>
+    <ul>
+      <li><strong>1xx</strong> Informational (100 Continue, 101 Switching Protocols)</li>
+      <li><strong>2xx</strong> Success (200 OK, 201 Created, 204 No Content)</li>
+      <li><strong>3xx</strong> Redirect (301 Moved Permanently, 302 Found, 304 Not Modified)</li>
+      <li><strong>4xx</strong> Client error (400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found, 429 Too Many Requests)</li>
+      <li><strong>5xx</strong> Server error (500 Internal, 502 Bad Gateway, 503 Service Unavailable, 504 Gateway Timeout)</li>
+    </ul>
+  </section>
+
+  <section id="http2">
+    <h2>26. HTTP/2 &amp; HTTP/3</h2>
+
+    <h3>HTTP/1.1 (1997) — what we're improving on</h3>
+    <ul>
+      <li>Text-based, one request per connection at a time (head-of-line blocking).</li>
+      <li>Browsers open 6+ parallel TCP connections per origin to compensate.</li>
+      <li>Header repetition is wasteful.</li>
+    </ul>
+
+    <h3>HTTP/2 (2015)</h3>
+    <ul>
+      <li>Binary framing, single TCP connection.</li>
+      <li><strong>Multiplexing:</strong> many streams share one connection.</li>
+      <li><strong>HPACK</strong> header compression.</li>
+      <li><strong>Server push</strong> (mostly disabled by major browsers).</li>
+      <li>Still suffers TCP head-of-line blocking — one lost packet stalls every stream.</li>
+    </ul>
+
+    <h3>HTTP/3 (2022)</h3>
+    <ul>
+      <li>Runs over QUIC (UDP), eliminating TCP HoL blocking.</li>
+      <li>Faster connection setup (0-RTT resumption).</li>
+      <li>Connection migration across networks.</li>
+      <li>Mandatory encryption.</li>
+    </ul>
+  </section>
+
+  <section id="tls">
+    <h2>27. TLS &amp; Certificates</h2>
+    <p><strong>Transport Layer Security</strong> (the successor to SSL) provides three things over an unreliable network: confidentiality (encryption), integrity (MAC), and authentication (certificates).</p>
+
+    <h3>TLS 1.3 handshake (1-RTT)</h3>
+    <svg class="diagram" width="100%" height="240" viewBox="0 0 760 240">
+      <g font-family="monospace" font-size="12" text-anchor="middle" fill="#e2e8f0">
+        <rect x="100" y="20" width="120" height="30" fill="#0ea5e9"/><text x="160" y="40" fill="white">Client</text>
+        <rect x="540" y="20" width="120" height="30" fill="#a78bfa"/><text x="600" y="40" fill="white">Server</text>
+        <line x1="160" y1="50" x2="160" y2="220" stroke="#94a3b8" stroke-dasharray="4 4"/>
+        <line x1="600" y1="50" x2="600" y2="220" stroke="#94a3b8" stroke-dasharray="4 4"/>
+
+        <line x1="160" y1="80" x2="600" y2="80" stroke="#34d399" stroke-width="2" marker-end="url(#a5)"/>
+        <text x="380" y="74" fill="#34d399">ClientHello (versions, ciphers, key share, SNI)</text>
+
+        <line x1="600" y1="120" x2="160" y2="120" stroke="#fbbf24" stroke-width="2" marker-end="url(#a5)"/>
+        <text x="380" y="114" fill="#fbbf24">ServerHello + Certificate + Finished (encrypted)</text>
+
+        <line x1="160" y1="160" x2="600" y2="160" stroke="#34d399" stroke-width="2" marker-end="url(#a5)"/>
+        <text x="380" y="154" fill="#34d399">Finished (encrypted)</text>
+
+        <text x="380" y="200" fill="#a78bfa">Application data flows encrypted</text>
+      </g>
+      <defs>
+        <marker id="a5" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+          <polygon points="0 0, 8 4, 0 8" fill="#94a3b8"/>
+        </marker>
+      </defs>
+    </svg>
+
+    <h3>How certificates work</h3>
+    <ol>
+      <li>Server presents its <strong>X.509 certificate</strong> with its public key, signed by a Certificate Authority.</li>
+      <li>Client validates the certificate chain up to a root CA in its trust store.</li>
+      <li>Client &amp; server use <strong>(EC)DHE</strong> to derive a shared symmetric key with forward secrecy.</li>
+      <li>All subsequent traffic is encrypted with AES-GCM or ChaCha20-Poly1305.</li>
+    </ol>
+
+    <p><strong>Certificate Transparency</strong> logs publish every issued cert; browsers refuse certs not in CT logs. <strong>Let's Encrypt</strong> made TLS free with the <strong>ACME</strong> protocol.</p>
+
+    <p><strong>SNI (Server Name Indication)</strong> is the TLS extension that tells the server which hostname you want — necessary so one IP can host many HTTPS sites. <strong>ECH (Encrypted Client Hello)</strong> hides SNI from network observers.</p>
+  </section>
+
+  <section id="email">
+    <h2>28. Email Protocols</h2>
+    <table>
+      <tr><th>Protocol</th><th>Port</th><th>Purpose</th></tr>
+      <tr><td>SMTP</td><td>25 (server-to-server), 587 (submission), 465 (SMTPS)</td><td>Sending mail</td></tr>
+      <tr><td>POP3</td><td>110 / 995 (TLS)</td><td>Download &amp; delete from server</td></tr>
+      <tr><td>IMAP</td><td>143 / 993 (TLS)</td><td>Sync mailboxes across devices</td></tr>
+    </table>
+    <p>Anti-spam stack: <strong>SPF</strong> (allowed senders for a domain), <strong>DKIM</strong> (signed by sender's key), <strong>DMARC</strong> (policy + reporting).</p>
+  </section>
+
+  <section id="websocket">
+    <h2>29. WebSocket &amp; Server-Sent Events</h2>
+    <p><strong>WebSocket</strong> upgrades an HTTP connection (via <code>Upgrade: websocket</code>) into a persistent, full-duplex byte channel. Used for chat, live trading, multiplayer games, collaborative editors.</p>
+    <p><strong>Server-Sent Events (SSE)</strong> is a one-way stream from server to client over plain HTTP (<code>text/event-stream</code>). Simpler than WebSocket — used by ChatGPT-style streaming responses.</p>
+    <p><strong>WebRTC</strong> for browser-to-browser real-time audio, video, and data — uses STUN/TURN/ICE for NAT traversal and DTLS-SRTP for encryption.</p>
+  </section>
+
+  <section id="dhcp">
+    <h2>30. DHCP — Getting an IP Automatically</h2>
+    <p><strong>Dynamic Host Configuration Protocol</strong> (UDP 67/68) hands out IP addresses, gateway, DNS servers, and other config when you join a network. Four-step <strong>DORA</strong> exchange:</p>
+
+    <ol>
+      <li><strong>Discover:</strong> client broadcasts "any DHCP servers out there?"</li>
+      <li><strong>Offer:</strong> server replies with a candidate IP and lease.</li>
+      <li><strong>Request:</strong> client formally requests that IP.</li>
+      <li><strong>Acknowledge:</strong> server confirms.</li>
+    </ol>
+
+    <p>Lease has a TTL (e.g., 24h); client renews at half the lease time.</p>
+  </section>
+
+  <hr>
+
+  <section id="more-protocols">
+    <h2>30a. More Protocols — Deep Dive</h2>
+    <p>Beyond HTTP and DNS, the internet runs on dozens of protocols — each solving a specific problem. Here's what you'll meet in production.</p>
+
+    <h3>SSH — Secure Shell (TCP 22)</h3>
+    <p>Encrypted, authenticated remote login, replacement for Telnet/rlogin. Carries interactive shells, file transfer (SCP, SFTP), and arbitrary TCP tunnels.</p>
+    <ul>
+      <li><strong>Handshake:</strong> version exchange → key exchange (Curve25519 / ECDH) → server host-key verification → client auth (password, public key, keyboard-interactive, GSSAPI).</li>
+      <li><strong>Host key pinning:</strong> first connection stores the server's fingerprint in <code>~/.ssh/known_hosts</code>; mismatch on later connections is a loud warning (MITM detection).</li>
+      <li><strong>Channels:</strong> one SSH connection can carry many multiplexed channels — shell, exec, X11, port forwards.</li>
+    </ul>
+<pre><code># Generate a keypair
+ssh-keygen -t ed25519 -C "you@example.com"
+
+# Copy public key to remote host
+ssh-copy-id user@server
+
+# Local port forward — expose a remote DB on your laptop
+ssh -L 5432:db.internal:5432 bastion.example.com
+
+# Remote port forward — expose local service to the server
+ssh -R 8080:localhost:3000 jumphost
+
+# Dynamic SOCKS proxy — all traffic through the remote host
+ssh -D 1080 bastion.example.com</code></pre>
+
+    <h3>FTP / FTPS / SFTP (TCP 21 / 990 / 22)</h3>
+    <table>
+      <tr><th>Protocol</th><th>Security</th><th>Notes</th></tr>
+      <tr><td>FTP</td><td>None</td><td>Two channels (control 21, data 20). Passive vs active mode.</td></tr>
+      <tr><td>FTPS</td><td>TLS</td><td>FTP wrapped in TLS. Explicit (AUTH TLS on 21) or implicit (990).</td></tr>
+      <tr><td>SFTP</td><td>SSH</td><td>A subsystem of SSH, port 22. Totally different protocol from FTP. Recommended default.</td></tr>
+      <tr><td>SCP</td><td>SSH</td><td>Simple copy over SSH. Deprecated in OpenSSH 9+ in favor of SFTP.</td></tr>
+    </table>
+
+    <h3>Telnet (TCP 23) — Historical &amp; Debugging</h3>
+    <p>The original remote-login protocol (1969). Plaintext — a sniffer reads passwords. Do not use for login. Still handy to poke at text protocols:</p>
+<pre><code>$ telnet smtp.example.com 25
+220 smtp.example.com ESMTP Postfix
+HELO test
+250 smtp.example.com</code></pre>
+    <p>Modern equivalent: <code>nc</code> (netcat) or <code>openssl s_client</code> for TLS.</p>
+
+    <h3>NTP — Network Time Protocol (UDP 123)</h3>
+    <p>Synchronizes clocks across a network to within milliseconds over the internet, microseconds on a LAN. Without NTP, TLS certificates fail (clock skew), Kerberos tickets get rejected, distributed databases corrupt.</p>
+    <ul>
+      <li><strong>Stratum 0:</strong> reference clocks (GPS, atomic, cesium). Not network-accessible.</li>
+      <li><strong>Stratum 1:</strong> directly attached to stratum 0. These are the primary public NTP servers.</li>
+      <li><strong>Stratum 2–15:</strong> each level synchronizes from the one above.</li>
+      <li><strong>Stratum 16:</strong> unsynchronized (error).</li>
+    </ul>
+    <p>NTP corrects for network latency by sending four timestamps (T1 client send, T2 server recv, T3 server send, T4 client recv) and computing offset + round-trip. Public pool: <code>pool.ntp.org</code>. Linux client: <code>chronyd</code> (replacing older <code>ntpd</code>).</p>
+    <p><strong>PTP (Precision Time Protocol, IEEE 1588)</strong> goes further — sub-microsecond via hardware timestamping. Used in high-frequency trading and telecom.</p>
+
+    <h3>SNMP — Simple Network Management Protocol (UDP 161 / 162)</h3>
+    <p>Used to monitor and configure network gear (routers, switches, UPS units, printers). Agent on the device exposes a tree of values (MIB) indexed by OIDs (object identifiers).</p>
+    <ul>
+      <li><strong>GET / GETNEXT / GETBULK</strong> — read values (<code>sysUpTime</code>, <code>ifInOctets</code>).</li>
+      <li><strong>SET</strong> — modify config.</li>
+      <li><strong>TRAP / INFORM</strong> — agent pushes an unsolicited alert to the manager on port 162.</li>
+      <li><strong>v1/v2c</strong> — community-string auth (basically a password in the clear). <strong>v3</strong> adds USM auth + encryption.</li>
+    </ul>
+
+    <h3>Syslog (UDP 514, TCP 6514 for TLS)</h3>
+    <p>De-facto standard for log forwarding. Every Unix daemon, router, and firewall speaks it. Messages have a priority (facility × severity), timestamp, hostname, and free-form text.</p>
+    <ul>
+      <li><strong>Facilities:</strong> kern, mail, auth, cron, daemon, local0–local7, etc.</li>
+      <li><strong>Severities:</strong> emerg, alert, crit, err, warning, notice, info, debug.</li>
+      <li>Modern replacements: <code>rsyslog</code>, <code>syslog-ng</code>, <code>journald</code>, structured log pipelines (Fluentd, Vector, Loki).</li>
+    </ul>
+
+    <h3>LDAP — Lightweight Directory Access Protocol (TCP 389 / 636 TLS)</h3>
+    <p>Hierarchical directory for users, groups, devices, config. Foundation of corporate identity: Active Directory, FreeIPA, OpenLDAP. Bind to authenticate, search under a base DN, filter with LDAP queries.</p>
+<pre><code>dn: uid=alice,ou=People,dc=example,dc=com
+objectClass: inetOrgPerson
+cn: Alice Smith
+mail: alice@example.com
+uid: alice</code></pre>
+
+    <h3>Kerberos (TCP/UDP 88)</h3>
+    <p>Single sign-on via tickets. A client authenticates once to the KDC (Key Distribution Center), receives a TGT (Ticket-Granting Ticket), and then requests service tickets for individual servers. Clock skew &gt; 5 minutes kills Kerberos. Backbone of Active Directory auth.</p>
+
+    <h3>RADIUS (UDP 1812/1813) &amp; TACACS+ (TCP 49)</h3>
+    <p>Centralized authentication, authorization, accounting (AAA) for network equipment. VPNs, Wi-Fi enterprise login (WPA2-Enterprise / 802.1X), VPN concentrators, switches all forward credentials here.</p>
+
+    <h3>MQTT — Message Queuing Telemetry Transport (TCP 1883 / 8883)</h3>
+    <p>Tiny publish/subscribe protocol designed for IoT: sensors with 64 KB of RAM, flaky networks, battery-powered devices. Hierarchical topics (<code>home/kitchen/temperature</code>), QoS 0/1/2, last-will messages, retained messages.</p>
+    <p>Used by: AWS IoT, Azure IoT Hub, Home Assistant, Tesla cars, industrial SCADA.</p>
+
+    <h3>AMQP — Advanced Message Queuing Protocol (TCP 5672 / 5671)</h3>
+    <p>Full-featured enterprise messaging: exchanges, queues, bindings, routing keys, transactions. RabbitMQ's native protocol.</p>
+
+    <h3>gRPC &amp; HTTP/2 RPC (TCP 443 / 50051)</h3>
+    <p>Google's RPC framework: Protocol Buffers for schema and binary encoding, HTTP/2 for transport (multiplexed streams, header compression). Four call types: unary, server-streaming, client-streaming, bidirectional. Dominant for internal microservice-to-microservice traffic.</p>
+
+    <h3>SIP &amp; RTP — VoIP (UDP/TCP 5060, UDP dynamic)</h3>
+    <ul>
+      <li><strong>SIP (Session Initiation Protocol):</strong> signaling — who's calling, ringing, answered, hung up. Looks a lot like HTTP.</li>
+      <li><strong>SDP (Session Description Protocol):</strong> carried inside SIP messages, describes codecs and port numbers.</li>
+      <li><strong>RTP (Real-time Transport Protocol):</strong> actual audio/video streaming, usually UDP, with RTCP for stats.</li>
+      <li><strong>SRTP:</strong> encrypted RTP (DTLS-SRTP in WebRTC).</li>
+    </ul>
+
+    <h3>RDP — Remote Desktop Protocol (TCP 3389)</h3>
+    <p>Microsoft's pixel-streaming remote desktop. Moves screen updates, keyboard, mouse, clipboard, printing. Famous target for brute-force attacks — never expose to the internet without a VPN or gateway.</p>
+
+    <h3>NFS &amp; SMB — File Sharing</h3>
+    <table>
+      <tr><th>Protocol</th><th>Port</th><th>Origin</th><th>Notes</th></tr>
+      <tr><td>NFS (v3/v4)</td><td>2049</td><td>Sun Microsystems</td><td>Unix file sharing, stateless (v3) / stateful (v4). Kerberos for security.</td></tr>
+      <tr><td>SMB / CIFS</td><td>445</td><td>Microsoft</td><td>Windows file sharing. SMB3 adds encryption and multichannel. Also handles printing, named pipes.</td></tr>
+      <tr><td>AFP</td><td>548</td><td>Apple</td><td>Deprecated in favor of SMB since macOS 10.9.</td></tr>
+      <tr><td>iSCSI</td><td>3260</td><td>—</td><td>SCSI storage over TCP; treats remote disks as local block devices.</td></tr>
+      <tr><td>WebDAV</td><td>80/443</td><td>—</td><td>HTTP extensions for remote file editing (used by macOS, Windows Explorer).</td></tr>
+    </table>
+
+    <h3>BitTorrent</h3>
+    <p>Peer-to-peer file distribution. A <em>torrent</em> file (or magnet link) describes a set of pieces and their hashes. A tracker (or DHT) coordinates peers. Peers pull pieces from each other, verify hashes, and re-upload. Used legally for Linux ISOs, game patches, Twitter's archive, IPFS bootstrap, scientific datasets.</p>
+
+    <h3>rsync (TCP 873 or over SSH)</h3>
+    <p>Efficient file sync that transfers only the differences between source and destination using a rolling checksum. Backbone of backup scripts, CI deployments, mirror servers.</p>
+
+    <h3>IRC &amp; Matrix &amp; XMPP — Chat Protocols</h3>
+    <ul>
+      <li><strong>IRC (TCP 6667):</strong> 1988. Plaintext, simple, still running (Freenode → Libera.Chat).</li>
+      <li><strong>XMPP / Jabber (TCP 5222):</strong> XML-based, federated. Once used by Google Talk, Facebook Chat, WhatsApp internals.</li>
+      <li><strong>Matrix (HTTPS):</strong> modern federated chat with end-to-end encryption (Olm/Megolm). Element is the reference client.</li>
+    </ul>
+
+    <h3>NNTP (TCP 119 / 563)</h3>
+    <p>Usenet news transport, largely historical but still in use for flooding binary content across the net.</p>
+
+    <h3>TFTP (UDP 69)</h3>
+    <p>Trivial FTP. Zero-auth, zero-security, tiny. Used during PXE net-boot, router firmware upload, embedded device provisioning. Works only on the LAN.</p>
+
+    <h3>ARP / NDP (Layer 2 protocols)</h3>
+    <p>Already covered in §9 — ARP for IPv4, NDP (Neighbor Discovery Protocol, ICMPv6) for IPv6. NDP also handles router advertisements, stateless address autoconfiguration (SLAAC), and duplicate address detection.</p>
+
+    <h3>IGMP &amp; Multicast (IP protocol 2)</h3>
+    <p>IGMP lets hosts join/leave multicast groups. Routers use it to prune trees. Multicast is widely used inside datacenters (stock market feeds, IPTV) but rarely crosses the public internet.</p>
+
+    <h3>VXLAN, GRE, Geneve — Tunneling</h3>
+    <ul>
+      <li><strong>GRE (IP proto 47):</strong> generic encapsulation — wrap any L3 packet in another IP packet.</li>
+      <li><strong>IP-in-IP, SIT, 6in4:</strong> tunneling IPv6 over IPv4 for transition.</li>
+      <li><strong>VXLAN (UDP 4789):</strong> layer-2 over UDP for datacenter overlays (24-bit segment IDs → 16M VLANs).</li>
+      <li><strong>Geneve (UDP 6081):</strong> extensible successor to VXLAN, used in OVN and AWS VPC.</li>
+    </ul>
+
+    <h3>WebRTC building blocks</h3>
+    <ul>
+      <li><strong>STUN (UDP 3478):</strong> "what's my public IP?" — lets a client discover its NAT mapping.</li>
+      <li><strong>TURN (UDP/TCP 3478, TLS 5349):</strong> relay server when both peers are behind symmetric NAT.</li>
+      <li><strong>ICE:</strong> framework for trying every candidate path to find one that works.</li>
+      <li><strong>DTLS-SRTP:</strong> encryption for the media streams.</li>
+    </ul>
+
+    <h3>Protocol landscape at a glance</h3>
+    <table>
+      <tr><th>Domain</th><th>Protocols</th></tr>
+      <tr><td>Web</td><td>HTTP/1.1, HTTP/2, HTTP/3, WebSocket, SSE, WebRTC</td></tr>
+      <tr><td>Email</td><td>SMTP, SMTPS, IMAP, IMAPS, POP3, MIME</td></tr>
+      <tr><td>File transfer</td><td>FTP, FTPS, SFTP, SCP, rsync, WebDAV, HTTP</td></tr>
+      <tr><td>Remote access</td><td>SSH, Telnet, RDP, VNC, Mosh</td></tr>
+      <tr><td>Identity &amp; auth</td><td>Kerberos, LDAP, RADIUS, TACACS+, SAML, OAuth2, OIDC</td></tr>
+      <tr><td>Time</td><td>NTP, PTP, SNTP</td></tr>
+      <tr><td>Discovery</td><td>DNS, mDNS, SSDP, DNS-SD, LLDP, CDP</td></tr>
+      <tr><td>Real-time</td><td>SIP, RTP, SRTP, WebRTC, RTSP, RTMP</td></tr>
+      <tr><td>Messaging</td><td>MQTT, AMQP, STOMP, Kafka protocol, NATS</td></tr>
+      <tr><td>RPC</td><td>gRPC, Thrift, JSON-RPC, XML-RPC, SOAP, CORBA (legacy)</td></tr>
+      <tr><td>Storage</td><td>NFS, SMB, iSCSI, S3, FTP</td></tr>
+      <tr><td>Monitoring</td><td>SNMP, syslog, IPFIX/NetFlow, sFlow, Prometheus remote write</td></tr>
+      <tr><td>Routing</td><td>BGP, OSPF, IS-IS, RIP, EIGRP</td></tr>
+      <tr><td>Tunneling / VPN</td><td>IPsec, OpenVPN, WireGuard, GRE, VXLAN, Geneve, L2TP</td></tr>
+      <tr><td>IoT</td><td>MQTT, CoAP, LwM2M, Zigbee, BLE GATT</td></tr>
+    </table>
+
+    <div class="callout good">
+      <strong>Memorize shapes, not details:</strong> there are thousands of protocols but they all follow a handful of patterns — request/response (HTTP, DNS), pub/sub (MQTT, Kafka), streaming (RTP, gRPC), session-oriented (SSH, SIP), stateless datagrams (DNS, NTP), tunneling (GRE, VXLAN). Recognize the pattern and you'll understand new protocols fast.
+    </div>
+  </section>
+
+  <hr>
+
+  <section id="cdn">
+    <h2>31. CDN &amp; Edge Networks</h2>
+    <p>A <strong>Content Delivery Network</strong> caches static assets (images, JS, CSS, video, sometimes API responses) at hundreds of <strong>points of presence (PoPs)</strong> close to users. DNS resolution and BGP anycast steer users to the nearest PoP.</p>
+
+    <p><strong>How it works:</strong></p>
+    <ol>
+      <li>You configure your domain to use the CDN (CNAME or NS records).</li>
+      <li>The CDN's authoritative DNS returns the IP of the nearest edge.</li>
+      <li>The edge serves cached content; on cache miss, it fetches from your origin.</li>
+      <li>The edge applies image optimization, compression, TLS termination, WAF rules.</li>
+    </ol>
+
+    <p><strong>Major CDNs:</strong> Cloudflare, Akamai, Fastly, AWS CloudFront, Google Cloud CDN, Bunny.net.</p>
+    <p><strong>Edge compute:</strong> Cloudflare Workers, Fastly Compute@Edge, Vercel Edge Functions — run code at the PoP for sub-50ms global latency.</p>
+  </section>
+
+  <section id="loadbalancer">
+    <h2>32. Load Balancers</h2>
+    <p>Distribute incoming traffic across multiple backend servers for scale and fault tolerance.</p>
+
+    <table>
+      <tr><th>Type</th><th>Layer</th><th>Examples</th></tr>
+      <tr><td>L4 (TCP/UDP)</td><td>Transport</td><td>AWS NLB, Linux IPVS, HAProxy TCP mode</td></tr>
+      <tr><td>L7 (HTTP)</td><td>Application</td><td>NGINX, HAProxy, AWS ALB, Envoy, Traefik</td></tr>
+      <tr><td>DNS-based</td><td>—</td><td>Route 53 latency routing, AWS Global Accelerator</td></tr>
+      <tr><td>Anycast IP</td><td>Network</td><td>Cloudflare, Google, AWS Global Accelerator</td></tr>
+    </table>
+
+    <h4>Algorithms</h4>
+    <ul>
+      <li><strong>Round-robin</strong> — simple rotation.</li>
+      <li><strong>Least connections</strong> — to the server with fewest active.</li>
+      <li><strong>IP hash</strong> — sticky sessions based on client IP.</li>
+      <li><strong>Weighted</strong> — heavier servers get more traffic.</li>
+      <li><strong>Power of two choices</strong> — pick 2 random, send to less loaded (NGINX, Envoy).</li>
+      <li><strong>Consistent hashing</strong> — minimal redistribution on backend changes.</li>
+    </ul>
+
+    <h4>Health checks</h4>
+    <p>Active (LB pings backend periodically) or passive (LB observes failures from real traffic). Bad backends are removed from the pool until they recover.</p>
+  </section>
+
+  <section id="proxy">
+    <h2>33. Proxies &amp; Reverse Proxies</h2>
+    <ul>
+      <li><strong>Forward proxy:</strong> sits in front of clients, fetches the internet on their behalf. Used for caching, content filtering, anonymization, corporate egress control.</li>
+      <li><strong>Reverse proxy:</strong> sits in front of servers, accepts requests on their behalf. Used for TLS termination, load balancing, caching, request coalescing, A/B testing. NGINX, HAProxy, Envoy, Traefik.</li>
+      <li><strong>Service mesh sidecar:</strong> Envoy/Linkerd injected next to every microservice for L7 routing, mTLS, observability, retries.</li>
+      <li><strong>SOCKS proxy:</strong> generic byte-stream proxy (used by Tor).</li>
+    </ul>
+  </section>
+
+  <section id="vpn">
+    <h2>34. VPN &amp; Tunneling</h2>
+    <p>A <strong>VPN</strong> creates an encrypted tunnel over an untrusted network so endpoints behave as if they're on the same private LAN.</p>
+
+    <table>
+      <tr><th>Protocol</th><th>Notes</th></tr>
+      <tr><td>IPsec</td><td>Standardized, ubiquitous in site-to-site</td></tr>
+      <tr><td>OpenVPN</td><td>SSL/TLS-based, very flexible</td></tr>
+      <tr><td>WireGuard</td><td>Modern, fast, ~4000 lines of code, in-kernel on Linux</td></tr>
+      <tr><td>Tailscale / Nebula</td><td>Mesh overlay using WireGuard / Noise + control plane</td></tr>
+      <tr><td>L2TP / PPTP</td><td>Legacy, PPTP is broken — don't use</td></tr>
+    </table>
+
+    <p>Use cases: connecting branch offices (site-to-site), remote workers, escaping geo-restrictions, hiding traffic from local networks.</p>
+  </section>
+
+  <section id="firewalls">
+    <h2>35. Firewalls &amp; Network Security</h2>
+    <ul>
+      <li><strong>Stateless packet filter</strong> — accepts/rejects per packet by 5-tuple. Cheap, dumb.</li>
+      <li><strong>Stateful firewall</strong> — tracks connection state; allows return traffic for established connections. Linux <code>iptables</code> / <code>nftables</code>, BSD <code>pf</code>.</li>
+      <li><strong>NGFW (Next-gen firewall)</strong> — adds L7 inspection, IDS/IPS, app awareness, TLS interception.</li>
+      <li><strong>WAF (Web Application Firewall)</strong> — protects HTTP apps from OWASP Top 10 (SQLi, XSS, etc.).</li>
+      <li><strong>Cloud security groups</strong> — VPC-level stateful firewalls in AWS, GCP, Azure.</li>
+    </ul>
+
+    <h4>Common attacks</h4>
+    <ul>
+      <li><strong>DDoS:</strong> volumetric (UDP flood, amplification via DNS/NTP/Memcached) or application (Slowloris, HTTP flood).</li>
+      <li><strong>MITM:</strong> ARP spoofing, BGP hijacking, rogue Wi-Fi.</li>
+      <li><strong>DNS cache poisoning</strong> (mitigated by DNSSEC, source-port randomization).</li>
+      <li><strong>SYN flood</strong> (mitigated by SYN cookies).</li>
+    </ul>
+  </section>
+
+  <section id="sdn">
+    <h2>36. SDN &amp; Cloud Networking</h2>
+    <p><strong>Software-Defined Networking</strong> separates the control plane (deciding how to route) from the data plane (actually forwarding). A central controller programs switches via APIs (OpenFlow, P4, vendor SDKs).</p>
+
+    <h4>Cloud building blocks</h4>
+    <ul>
+      <li><strong>VPC</strong> — your own logically isolated network in the cloud. Subnets per AZ, route tables, IGW, NAT GW.</li>
+      <li><strong>Security groups &amp; NACLs</strong> — stateful + stateless filtering.</li>
+      <li><strong>Peering &amp; Transit Gateways</strong> — connect VPCs.</li>
+      <li><strong>Direct Connect / ExpressRoute / Interconnect</strong> — private fiber from your DC to the cloud.</li>
+      <li><strong>Service mesh</strong> — Istio, Linkerd for east-west microservice traffic.</li>
+      <li><strong>Container networking</strong> — Kubernetes CNI plugins (Calico, Cilium with eBPF, Flannel).</li>
+    </ul>
+  </section>
+
+  <hr>
+
+  <section id="tools">
+    <h2>37. Networking Tools — Your Toolbox</h2>
+    <table>
+      <tr><th>Tool</th><th>Purpose</th></tr>
+      <tr><td><code>ping</code></td><td>Reachability + RTT</td></tr>
+      <tr><td><code>traceroute</code> / <code>mtr</code></td><td>Path discovery</td></tr>
+      <tr><td><code>dig</code> / <code>nslookup</code> / <code>host</code></td><td>DNS queries</td></tr>
+      <tr><td><code>curl</code> / <code>wget</code> / <code>httpie</code></td><td>HTTP debugging</td></tr>
+      <tr><td><code>ip</code> / <code>ifconfig</code></td><td>Interface configuration</td></tr>
+      <tr><td><code>ss</code> / <code>netstat</code> / <code>lsof -i</code></td><td>Sockets &amp; listening ports</td></tr>
+      <tr><td><code>tcpdump</code> / <code>tshark</code></td><td>Packet capture from CLI</td></tr>
+      <tr><td><code>Wireshark</code></td><td>Packet inspection GUI</td></tr>
+      <tr><td><code>nmap</code></td><td>Port scanning, OS fingerprinting</td></tr>
+      <tr><td><code>iperf3</code></td><td>Throughput testing</td></tr>
+      <tr><td><code>openssl s_client</code></td><td>TLS debugging</td></tr>
+      <tr><td><code>nc</code> (netcat)</td><td>"Swiss army knife" of TCP/UDP</td></tr>
+      <tr><td><code>curl --resolve</code></td><td>Test against specific IP for an HTTPS hostname</td></tr>
+    </table>
+  </section>
+
+  <section id="troubleshoot">
+    <h2>38. Troubleshooting Playbook</h2>
+    <ol>
+      <li><strong>Layer 1:</strong> Cable plugged in? Link light on? <code>ip link</code>.</li>
+      <li><strong>Layer 2:</strong> Got an IP? <code>ip addr</code>. Can you ping the gateway?</li>
+      <li><strong>Layer 3:</strong> Default route present? <code>ip route</code>. Can you ping <code>1.1.1.1</code>?</li>
+      <li><strong>DNS:</strong> Does name resolve? <code>dig google.com</code>. Try a different resolver.</li>
+      <li><strong>Layer 4:</strong> Port reachable? <code>nc -zv host 443</code>. Firewall? Security group?</li>
+      <li><strong>TLS:</strong> <code>openssl s_client -connect host:443 -servername host</code>. Cert valid?</li>
+      <li><strong>L7:</strong> <code>curl -v https://host</code>. Check status, headers, body.</li>
+      <li><strong>Path:</strong> <code>mtr host</code> — packet loss at any hop?</li>
+      <li><strong>Capture:</strong> <code>tcpdump -nni any port 443</code>.</li>
+    </ol>
+    <p>The discipline: <em>start at the bottom of the stack and work up</em>. Don't tweak HTTP headers when your DNS is broken.</p>
+  </section>
+
+  <section id="performance">
+    <h2>39. Latency, Throughput &amp; Bandwidth-Delay Product</h2>
+    <ul>
+      <li><strong>Latency:</strong> time for one packet to travel one way (or RTT for round trip). Bound by speed of light: ~5 ms per 1000 km in fiber.</li>
+      <li><strong>Bandwidth:</strong> capacity of the link (bits per second).</li>
+      <li><strong>Throughput:</strong> actually achieved data rate. Always ≤ bandwidth.</li>
+      <li><strong>Jitter:</strong> variance in latency. Critical for real-time media.</li>
+      <li><strong>BDP (Bandwidth-Delay Product):</strong> bandwidth × RTT. The amount of "in-flight" data needed to saturate a link. TCP receive window must be ≥ BDP, otherwise you'll be stalled waiting for ACKs.</li>
+    </ul>
+
+    <div class="callout">
+      <strong>Worked example:</strong> 1 Gbps link, 100 ms RTT. BDP = 10⁹ × 0.1 / 8 = 12.5 MB. So both endpoints need TCP windows ≥ 12.5 MB to fully use that link. This is why <em>long-fat networks</em> require window scaling and modern congestion control.
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- ============================================================
+       THE GRAND FINALE
+       ============================================================ -->
+
+  <section id="google">
+    <h2>40. What Happens When You Type <code>google.com</code> and Hit Enter</h2>
+    <p>The classic interview question and the most beautiful tour through the entire stack. We'll go from your fingertip to a rendered page, naming every protocol and every box involved.</p>
+
+    <svg class="diagram" width="100%" height="380" viewBox="0 0 800 380">
+      <g font-family="monospace" font-size="11" text-anchor="middle" fill="white">
+        <rect x="20" y="20" width="100" height="40" fill="#34d399" rx="4"/><text x="70" y="45" fill="#0f172a">You (browser)</text>
+        <rect x="160" y="20" width="100" height="40" fill="#0ea5e9" rx="4"/><text x="210" y="45">DNS Resolver</text>
+        <rect x="300" y="20" width="100" height="40" fill="#0ea5e9" rx="4"/><text x="350" y="45">Root → TLD → Auth NS</text>
+        <rect x="440" y="20" width="100" height="40" fill="#a78bfa" rx="4"/><text x="490" y="45">Home Router</text>
+        <rect x="580" y="20" width="100" height="40" fill="#a78bfa" rx="4"/><text x="630" y="45">ISP / Backbone</text>
+
+        <rect x="20" y="180" width="100" height="40" fill="#fbbf24" rx="4"/><text x="70" y="205" fill="#0f172a">Anycast IP</text>
+        <rect x="160" y="180" width="100" height="40" fill="#fbbf24" rx="4"/><text x="210" y="205" fill="#0f172a">Edge LB</text>
+        <rect x="300" y="180" width="100" height="40" fill="#f87171" rx="4"/><text x="350" y="205">TLS 1.3</text>
+        <rect x="440" y="180" width="100" height="40" fill="#f87171" rx="4"/><text x="490" y="205">Frontend Server</text>
+        <rect x="580" y="180" width="100" height="40" fill="#f87171" rx="4"/><text x="630" y="205">Search Backends</text>
+
+        <rect x="160" y="320" width="100" height="40" fill="#34d399" rx="4"/><text x="210" y="345" fill="#0f172a">HTML / JS / CSS</text>
+        <rect x="300" y="320" width="120" height="40" fill="#34d399" rx="4"/><text x="360" y="345" fill="#0f172a">Render &amp; Paint</text>
+
+        <g stroke="#94a3b8" stroke-width="1.5" fill="none">
+          <path d="M120 40 L160 40" marker-end="url(#a6)"/>
+          <path d="M260 40 L300 40" marker-end="url(#a6)"/>
+          <path d="M120 50 Q90 100 70 180" marker-end="url(#a6)"/>
+          <path d="M120 200 L160 200" marker-end="url(#a6)"/>
+          <path d="M260 200 L300 200" marker-end="url(#a6)"/>
+          <path d="M400 200 L440 200" marker-end="url(#a6)"/>
+          <path d="M540 200 L580 200" marker-end="url(#a6)"/>
+          <path d="M210 220 L210 320" marker-end="url(#a6)"/>
+          <path d="M260 340 L300 340" marker-end="url(#a6)"/>
+        </g>
+      </g>
+      <defs>
+        <marker id="a6" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+          <polygon points="0 0, 8 4, 0 8" fill="#94a3b8"/>
+        </marker>
+      </defs>
+    </svg>
+
+    <div class="step"><span class="num">1</span><strong>Keystroke &amp; URL parsing</strong> — Browser parses what you typed. Is it a URL? A search query? Is the scheme HTTPS implied? Does it match a previously visited site? It also checks its <strong>HSTS preload list</strong> — for <code>google.com</code>, HTTPS is mandatory; HTTP requests are upgraded to HTTPS in the browser before any network call.</div>
+
+    <div class="step"><span class="num">2</span><strong>Browser cache check</strong> — The browser checks its own HTTP cache, service worker cache, and disk cache. Nothing fresh enough? Continue.</div>
+
+    <div class="step"><span class="num">3</span><strong>DNS resolution</strong> — The browser needs the IP for <code>google.com</code>. It checks, in order:
+      <ul>
+        <li>Browser DNS cache</li>
+        <li>OS resolver cache (<code>nscd</code>, <code>systemd-resolved</code>, mDNS)</li>
+        <li><code>/etc/hosts</code> file</li>
+        <li>If no hit, ask the configured recursive resolver (often via DHCP — your router, or 1.1.1.1 / 8.8.8.8).</li>
+      </ul>
+      The recursive resolver (if it has no cache) walks: <strong>root</strong> servers (.) → <strong>.com</strong> TLD servers → <strong>google.com</strong> authoritative nameservers (<code>ns1.google.com</code> etc.) → returns the A record (e.g. <code>142.250.192.78</code>) and AAAA (IPv6).</div>
+
+    <div class="step"><span class="num">4</span><strong>ARP (or IPv6 NDP)</strong> — Now your OS has a destination IP, but to leave the LAN it must send the packet to your default gateway (your home router). It looks up the gateway IP in the ARP cache. If unknown, it broadcasts <em>"Who has 192.168.1.1?"</em>; the router replies with its MAC.</div>
+
+    <div class="step"><span class="num">5</span><strong>Packet leaves your machine</strong> — The OS constructs:
+      <ul>
+        <li>Ethernet frame, dst MAC = router, src MAC = your NIC</li>
+        <li>IP packet, dst IP = Google's IP, src IP = your private 192.168.x.x</li>
+        <li>TCP SYN segment, dst port 443, src port = some ephemeral port</li>
+      </ul>
+      The frame goes over Wi-Fi (802.11) or Ethernet to your router.</div>
+
+    <div class="step"><span class="num">6</span><strong>NAT at the home router</strong> — The router rewrites the source IP from your private address to its public IP, and the source port to a free port. It records the mapping so it can route the reply back to you. The packet is then forwarded to your ISP via the WAN interface.</div>
+
+    <div class="step"><span class="num">7</span><strong>The internet — many hops</strong> — Your packet travels through your ISP's access network, into their core network, and out via BGP-selected routes. It hops through dozens of routers (each decrementing TTL), peering or transit links, sometimes undersea fiber. Many large sites use <strong>Anycast IP</strong>: the same IP is advertised by hundreds of PoPs worldwide; BGP routes you to the geographically/network-topologically nearest one.</div>
+
+    <div class="step"><span class="num">8</span><strong>Edge server / CDN PoP</strong> — Your packet arrives at the nearest Google edge — often within 30 ms of you. A load balancer here (Maglev / Google Front End) accepts the connection on Anycast IP <code>142.250.192.78:443</code>.</div>
+
+    <div class="step"><span class="num">9</span><strong>TCP 3-way handshake</strong> — SYN → SYN+ACK → ACK. Took one round trip (the RTT). Now you have a TCP connection. <em>(For HTTP/3 you'd skip TCP entirely — UDP + QUIC.)</em></div>
+
+    <div class="step"><span class="num">10</span><strong>TLS 1.3 handshake</strong> — Client sends ClientHello with supported ciphers, key share, and SNI = <code>google.com</code>. Server replies with ServerHello, its certificate chain, and Finished. Both derive a shared symmetric key via ECDHE. One more RTT (or zero if resuming with PSK / 0-RTT). All subsequent application data is encrypted with AES-GCM or ChaCha20-Poly1305.</div>
+
+    <div class="step"><span class="num">11</span><strong>HTTP request</strong> — Inside the encrypted tunnel:
+<pre><code>GET / HTTP/2
+:authority: google.com
+:scheme: https
+:method: GET
+user-agent: Mozilla/5.0 ...
+accept-encoding: gzip, br, zstd
+cookie: NID=...
+</code></pre>
+    Sent as one stream over an HTTP/2 (or HTTP/3) connection.</div>
+
+    <div class="step"><span class="num">12</span><strong>Edge processing</strong> — Google's frontend may serve a cached response, route to a regional datacenter, evaluate experiments, log telemetry, and apply rate limiting / abuse detection. For a full search, it forwards to query-serving infrastructure (a fan-out across thousands of leaves indexing a slice of the web).</div>
+
+    <div class="step"><span class="num">13</span><strong>Backend work</strong> — The query is parsed, rewritten, and dispatched to many backends in parallel: web index, knowledge graph, ads, news, images, spell-check, personalization. Results are scored and merged. Total budget: ~200 ms.</div>
+
+    <div class="step"><span class="num">14</span><strong>HTTP response</strong> — The frontend builds the HTML response:
+<pre><code>HTTP/2 200
+content-type: text/html; charset=UTF-8
+content-encoding: br
+cache-control: private, max-age=0
+strict-transport-security: max-age=31536000
+content-security-policy: ...
+set-cookie: NID=...; Secure; HttpOnly
+
+&lt;!DOCTYPE html&gt;...
+</code></pre>
+    Compressed with Brotli, encrypted by TLS, segmented by TCP, packetized by IP, framed by Ethernet, sent back across the same path (or a different one — IP is connectionless).</div>
+
+    <div class="step"><span class="num">15</span><strong>Browser receives bytes</strong> — TCP reassembles segments in order. TLS decrypts. HTTP/2 decodes the stream. The browser starts <strong>streaming HTML parsing</strong> immediately — it doesn't wait for the full document.</div>
+
+    <div class="step"><span class="num">16</span><strong>Subresource fetching</strong> — As the parser encounters <code>&lt;link&gt;</code>, <code>&lt;script&gt;</code>, <code>&lt;img&gt;</code>, the preload scanner kicks in and fires off parallel requests for CSS, JS, fonts, images. Each may go to a different origin (CDN, static asset host). HTTP/2 multiplexes them on existing connections; HTTP/3 starts new QUIC streams. DNS, TCP, TLS again for any new origin (warmed by <code>preconnect</code> hints).</div>
+
+    <div class="step"><span class="num">17</span><strong>Render pipeline</strong> — DOM tree built from HTML. CSSOM tree built from stylesheets. Together they form the render tree. Layout computes positions and sizes. Paint generates display lists. Compositor uploads layers to GPU. JavaScript may modify the DOM, triggering reflows.</div>
+
+    <div class="step"><span class="num">18</span><strong>Page is interactive</strong> — Scripts run, event handlers attach, service workers activate, the page becomes responsive. From keystroke to first paint can be under 100 ms on a fast network — a tour through every protocol we just covered, hidden behind a single search box.</div>
+
+    <div class="callout good">
+      <strong>The big picture:</strong> a single page load touches DNS, ARP, Ethernet, IP, TCP (or UDP+QUIC), TLS, HTTP, HTML/CSS/JS, and dozens of independent organizations' routers. The internet works because each layer does one thing well and trusts the others to do their part — exactly what the OSI model promised in 1984.
+    </div>
+
+  </section>
+
+  <hr>
+
+  <p style="text-align:center; color: var(--muted); margin: 40px 0;">
+    Single self-contained reference covering all networking from L1 to L7 — bookmark and revisit. Happy packet-pushing.
+  </p>
+
+  </main>
+</div>
+
+</body>
+</html>

@@ -359,8 +359,14 @@
   .tech-meta span:first-child::before { content: ""; margin-right: 0; }
 
   /* Learning */
+  .learning-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 14px;
+  }
   .learning-card {
-    display: block;
+    display: flex;
+    flex-direction: column;
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius);
@@ -409,6 +415,8 @@
     gap: 6px;
     margin-bottom: 16px;
     position: relative;
+    flex: 1;
+    align-content: flex-start;
   }
   .learning-topics .skill-pill { font-size: 11px; padding: 3px 9px; }
   .learning-cta {
@@ -870,31 +878,99 @@
   <!-- LEARNING -->
   <section class="reveal" id="learning">
     <h2>Learning</h2>
-    <a class="learning-card" href="content/design_patterns_handbook.html" target="_blank" rel="noopener">
-      <div class="learning-head">
-        <div>
-          <div class="learning-title">Distributed Systems &amp; Design Patterns Handbook</div>
-          <div class="learning-sub">A personal deep-dive notebook — 13 chapters, 60+ patterns, with diagrams &amp; trade-offs.</div>
+    <div class="learning-grid">
+      <a class="learning-card" href="content/design_patterns_handbook.html" target="_blank" rel="noopener">
+        <div class="learning-head">
+          <div>
+            <div class="learning-title">Distributed Systems &amp; Design Patterns</div>
+            <div class="learning-sub">13 chapters, 60+ patterns — with diagrams &amp; trade-offs.</div>
+          </div>
+          <div class="learning-meta">Handbook</div>
         </div>
-        <div class="learning-meta">Self-study · HTML</div>
-      </div>
-      <div class="learning-topics">
-        <span class="skill-pill">Distributed Transactions</span>
-        <span class="skill-pill">Consistency &amp; Replication</span>
-        <span class="skill-pill">Event-Driven Patterns</span>
-        <span class="skill-pill">Reliability &amp; Resilience</span>
-        <span class="skill-pill">Communication &amp; Integration</span>
-        <span class="skill-pill">Architecture</span>
-        <span class="skill-pill">Caching</span>
-        <span class="skill-pill">Storage &amp; Sharding</span>
-        <span class="skill-pill">Scalability</span>
-        <span class="skill-pill">Coordination &amp; Consensus</span>
-        <span class="skill-pill">Migration &amp; Modernization</span>
-        <span class="skill-pill">Observability</span>
-        <span class="skill-pill">Security</span>
-      </div>
-      <div class="learning-cta">Read the handbook →</div>
-    </a>
+        <div class="learning-topics">
+          <span class="skill-pill">Saga &amp; 2PC</span>
+          <span class="skill-pill">CAP / PACELC</span>
+          <span class="skill-pill">Event Sourcing</span>
+          <span class="skill-pill">CQRS</span>
+          <span class="skill-pill">Circuit Breaker</span>
+          <span class="skill-pill">Outbox / Inbox</span>
+          <span class="skill-pill">DDD</span>
+          <span class="skill-pill">Sharding</span>
+          <span class="skill-pill">Raft</span>
+          <span class="skill-pill">Observability</span>
+        </div>
+        <div class="learning-cta">Read the handbook →</div>
+      </a>
+
+      <a class="learning-card" href="content/system_design_architecture.html" target="_blank" rel="noopener">
+        <div class="learning-head">
+          <div>
+            <div class="learning-title">Generic System Design Architecture</div>
+            <div class="learning-sub">End-to-end blueprint for handling millions of requests/day.</div>
+          </div>
+          <div class="learning-meta">Handbook</div>
+        </div>
+        <div class="learning-topics">
+          <span class="skill-pill">DNS &amp; Anycast</span>
+          <span class="skill-pill">CDN</span>
+          <span class="skill-pill">Load Balancer</span>
+          <span class="skill-pill">API Gateway</span>
+          <span class="skill-pill">Sync vs Async</span>
+          <span class="skill-pill">Caching</span>
+          <span class="skill-pill">Databases</span>
+          <span class="skill-pill">Search &amp; Analytics</span>
+          <span class="skill-pill">Observability</span>
+          <span class="skill-pill">Capacity Math</span>
+        </div>
+        <div class="learning-cta">Read the handbook →</div>
+      </a>
+
+      <a class="learning-card" href="content/networking_handbook.html" target="_blank" rel="noopener">
+        <div class="learning-head">
+          <div>
+            <div class="learning-title">Computer Networking Handbook</div>
+            <div class="learning-sub">From cables to cloud — 40+ chapters covering the full stack.</div>
+          </div>
+          <div class="learning-meta">Handbook</div>
+        </div>
+        <div class="learning-topics">
+          <span class="skill-pill">OSI &amp; TCP/IP</span>
+          <span class="skill-pill">TCP / UDP</span>
+          <span class="skill-pill">QUIC</span>
+          <span class="skill-pill">DNS</span>
+          <span class="skill-pill">HTTP/2 &amp; /3</span>
+          <span class="skill-pill">TLS</span>
+          <span class="skill-pill">Subnetting &amp; CIDR</span>
+          <span class="skill-pill">Routing &amp; NAT</span>
+          <span class="skill-pill">Load Balancers</span>
+          <span class="skill-pill">VPN &amp; Firewalls</span>
+        </div>
+        <div class="learning-cta">Read the handbook →</div>
+      </a>
+
+      <a class="learning-card" href="content/graph_dsa_complete.html" target="_blank" rel="noopener">
+        <div class="learning-head">
+          <div>
+            <div class="learning-title">Graph Data Structures &amp; Algorithms</div>
+            <div class="learning-sub">24 topics from BFS basics to PageRank &amp; max-flow.</div>
+          </div>
+          <div class="learning-meta">Guide</div>
+        </div>
+        <div class="learning-topics">
+          <span class="skill-pill">BFS &amp; DFS</span>
+          <span class="skill-pill">Topological Sort</span>
+          <span class="skill-pill">Union-Find</span>
+          <span class="skill-pill">SCC</span>
+          <span class="skill-pill">Dijkstra</span>
+          <span class="skill-pill">Bellman-Ford</span>
+          <span class="skill-pill">MST</span>
+          <span class="skill-pill">Max Flow</span>
+          <span class="skill-pill">A* Search</span>
+          <span class="skill-pill">PageRank</span>
+        </div>
+        <div class="learning-cta">Read the guide →</div>
+      </a>
+    </div>
   </section>
 
   <!-- TECH CONTENT -->

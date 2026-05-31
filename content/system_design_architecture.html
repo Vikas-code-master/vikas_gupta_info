@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Generic System Design Architecture — Handling Millions of Requests</title>
+<style>
+  :root {
+    --bg: #0b1020;
+    --panel: #121a33;
+    --panel-2: #182245;
+    --ink: #e8ecf8;
+    --muted: #a9b3d1;
+    --accent: #6cf0c2;
+    --accent-2: #7aa2ff;
+    --warn: #ffb86b;
+    --danger: #ff7a90;
+    --line: #2a3460;
+    --code-bg: #0a1330;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: linear-gradient(180deg, #0a0f24 0%, #0b1020 100%);
+    color: var(--ink);
+    line-height: 1.6;
+  }
+  header {
+    padding: 36px 24px 18px;
+    text-align: center;
+    border-bottom: 1px solid var(--line);
+    background: radial-gradient(1200px 400px at 50% -100px, rgba(122,162,255,0.18), transparent 60%);
+  }
+  header h1 {
+    margin: 0 0 8px;
+    font-size: 30px;
+    letter-spacing: 0.3px;
+  }
+  header p { margin: 0; color: var(--muted); font-size: 15px; }
+  .container { max-width: 1180px; margin: 0 auto; padding: 28px 24px 80px; }
+  nav.toc {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-bottom: 28px;
+  }
+  nav.toc h3 { margin: 0 0 10px; font-size: 14px; color: var(--accent); letter-spacing: 1px; text-transform: uppercase; }
+  nav.toc ol { margin: 0; padding-left: 20px; columns: 2; column-gap: 30px; }
+  nav.toc a { color: var(--ink); text-decoration: none; }
+  nav.toc a:hover { color: var(--accent); }
+
+  section {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 24px 26px;
+    margin-bottom: 22px;
+  }
+  section h2 {
+    margin: 0 0 8px;
+    font-size: 22px;
+    color: var(--accent);
+  }
+  section h3 {
+    color: var(--accent-2);
+    font-size: 16px;
+    margin: 18px 0 6px;
+  }
+  section p, section li { color: var(--ink); }
+  section .muted { color: var(--muted); font-size: 14px; }
+  ul, ol { padding-left: 22px; }
+  code {
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 13px;
+    color: #c8eaff;
+  }
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--line);
+    padding: 14px 16px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 13px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+    font-size: 14px;
+  }
+  th, td {
+    border: 1px solid var(--line);
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th { background: var(--panel-2); color: var(--accent); font-weight: 600; }
+  tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+  .scale-box {
+    background: var(--panel-2);
+    border-left: 4px solid var(--accent);
+    padding: 12px 16px;
+    margin: 14px 0;
+    border-radius: 6px;
+  }
+  .scale-box strong { color: var(--accent); }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 720px) {
+    .grid-2 { grid-template-columns: 1fr; }
+    nav.toc ol { columns: 1; }
+  }
+
+  .pill {
+    display: inline-block;
+    background: rgba(108,240,194,0.12);
+    color: var(--accent);
+    border: 1px solid rgba(108,240,194,0.35);
+    padding: 2px 9px;
+    border-radius: 999px;
+    font-size: 12px;
+    margin-right: 6px;
+  }
+
+  /* Architecture diagram */
+  .diagram {
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 18px;
+    overflow-x: auto;
+  }
+  .diagram pre {
+    background: transparent;
+    border: 0;
+    color: #cfe2ff;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 12.5px;
+    line-height: 1.45;
+    padding: 0;
+    margin: 0;
+  }
+
+  .layer {
+    border: 1px dashed var(--line);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin: 8px 0;
+    background: rgba(122,162,255,0.04);
+  }
+  .layer h4 { margin: 0 0 4px; color: var(--accent-2); font-size: 14px; }
+
+  footer {
+    text-align: center;
+    color: var(--muted);
+    padding: 16px;
+    font-size: 13px;
+    border-top: 1px solid var(--line);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Generic System Design Architecture</h1>
+  <p>A reference blueprint covering every layer that powers an internet-scale system handling millions of requests per second.</p>
+</header>
+
+<div class="container">
+
+<nav class="toc">
+  <h3>Table of Contents</h3>
+  <ol>
+    <li><a href="#overview">High-Level Architecture</a></li>
+    <li><a href="#client">Client Layer</a></li>
+    <li><a href="#dns">DNS &amp; Anycast</a></li>
+    <li><a href="#cdn">CDN (Edge Cache)</a></li>
+    <li><a href="#lb">Load Balancer</a></li>
+    <li><a href="#gateway">API Gateway</a></li>
+    <li><a href="#proxy">Reverse / Forward Proxy</a></li>
+    <li><a href="#service">Application / Service Layer</a></li>
+    <li><a href="#sync">Synchronous Communication</a></li>
+    <li><a href="#async">Asynchronous Communication</a></li>
+    <li><a href="#cache">Caching Layer</a></li>
+    <li><a href="#db">Databases (SQL &amp; NoSQL)</a></li>
+    <li><a href="#search">Search &amp; Analytics</a></li>
+    <li><a href="#storage">Object &amp; Blob Storage</a></li>
+    <li><a href="#observability">Observability</a></li>
+    <li><a href="#security">Security &amp; Auth</a></li>
+    <li><a href="#capacity">Capacity Math &amp; Scaling Rules</a></li>
+    <li><a href="#multinode">Multi-Node Services in Action (Order &amp; User)</a></li>
+  </ol>
+</nav>
+
+<!-- =================== OVERVIEW =================== -->
+<section id="overview">
+  <h2>1. High-Level Architecture</h2>
+  <p class="muted">A request travels through many layers before it touches a database. Each layer exists to <strong>reduce</strong> the load that hits the next one.</p>
+
+  <div class="diagram">
+<pre>
+                          ┌──────────────────────────┐
+                          │        Client (Web,      │
+                          │     Mobile, IoT, API)    │
+                          └────────────┬─────────────┘
+                                       │ HTTPS
+                                       ▼
+                          ┌──────────────────────────┐
+                          │    DNS (GeoDNS / Anycast)│
+                          └────────────┬─────────────┘
+                                       ▼
+                          ┌──────────────────────────┐
+                          │  CDN  (Cloudflare /       │
+                          │  Akamai / CloudFront)     │  ← absorbs 70–90% reads
+                          └────────────┬─────────────┘
+                                       ▼
+                          ┌──────────────────────────┐
+                          │ Global / L4 Load Balancer│  ← TCP, TLS termination
+                          └────────────┬─────────────┘
+                                       ▼
+                          ┌──────────────────────────┐
+                          │   L7 LB / Reverse Proxy  │  ← NGINX, Envoy, HAProxy
+                          └────────────┬─────────────┘
+                                       ▼
+                          ┌──────────────────────────┐
+                          │       API Gateway        │  ← AuthN, rate-limit, routing
+                          └────────────┬─────────────┘
+                                       ▼
+        ┌───────────────────────────────────────────────────────────┐
+        │                  Microservices Mesh (k8s)                 │
+        │  ┌──────────┐   ┌──────────┐   ┌──────────┐   ┌──────────┐│
+        │  │  Auth    │   │  Orders  │   │ Payments │   │  Users   ││
+        │  └────┬─────┘   └─────┬────┘   └────┬─────┘   └────┬─────┘│
+        └───────┼───────────────┼─────────────┼──────────────┼──────┘
+                │ sync (gRPC)   │ async (Kafka/SQS)          │
+                ▼               ▼                            ▼
+        ┌──────────────┐  ┌──────────────┐           ┌──────────────┐
+        │   Cache      │  │ Message Queue│           │  Workers /   │
+        │ Redis Cluster│  │  Kafka/Rabbit│──────────▶│ Async Jobs   │
+        └──────┬───────┘  └──────┬───────┘           └──────┬───────┘
+               ▼                 ▼                          ▼
+        ┌──────────────────────────────────────────────────────────┐
+        │               Storage / Persistence Layer                │
+        │  Primary DB (PostgreSQL/MySQL)  •  NoSQL (Cassandra,     │
+        │  DynamoDB, Mongo)  •  Search (Elasticsearch)  •  Object  │
+        │  Storage (S3)  •  Data Warehouse (Snowflake/BigQuery)    │
+        └──────────────────────────────────────────────────────────┘
+                                       ▲
+                                       │
+                          ┌──────────────────────────┐
+                          │  Observability + Security│
+                          │  Logs • Metrics • Traces │
+                          │  WAF • IAM • Secrets Mgr │
+                          └──────────────────────────┘
+</pre>
+  </div>
+
+  <div class="scale-box">
+    <strong>Golden rule of scale:</strong> the closer a layer is to the user, the cheaper it is to absorb traffic there. Push reads to the edge, push writes to async queues, and protect the database with caches.
+  </div>
+</section>
+
+<!-- =================== CLIENT =================== -->
+<section id="client">
+  <h2>2. Client Layer</h2>
+  <p>Browsers, mobile apps, third-party API consumers, and IoT devices.</p>
+  <h3>How it scales</h3>
+  <ul>
+    <li><strong>HTTP/2 &amp; HTTP/3 (QUIC):</strong> multiplexing reduces connection setup cost — critical at millions of concurrent users.</li>
+    <li><strong>Client-side caching:</strong> ETag, Cache-Control, IndexedDB, service workers — avoid hitting the network at all.</li>
+    <li><strong>Exponential backoff &amp; jitter</strong> on retries to prevent thundering-herd after an outage.</li>
+    <li><strong>Connection reuse / keep-alive</strong> drastically cuts TCP+TLS handshakes.</li>
+  </ul>
+  <div class="scale-box"><strong>Impact at 1M RPS:</strong> a 200ms cache TTL on the client side can reduce backend hits by 30–50% on hot endpoints.</div>
+</section>
+
+<!-- =================== DNS =================== -->
+<section id="dns">
+  <h2>3. DNS &amp; Anycast Routing</h2>
+  <p>The first stop. DNS resolves <code>api.example.com</code> to an IP — and at scale, it does much more than that.</p>
+  <h3>Capabilities</h3>
+  <ul>
+    <li><strong>GeoDNS:</strong> route Indian users to <code>ap-south-1</code>, US users to <code>us-east-1</code>.</li>
+    <li><strong>Anycast IPs:</strong> the same IP is announced from many POPs; BGP routes the user to the nearest one.</li>
+    <li><strong>Latency-based routing &amp; health checks</strong> for automatic failover.</li>
+  </ul>
+  <h3>How it handles millions</h3>
+  <p>DNS is hierarchical and heavily cached at OS, browser, and resolver levels. Providers like Route 53 / Cloudflare DNS handle <strong>trillions</strong> of queries/day because resolution is stateless and the TTL (e.g. 60s) means most queries never reach the authoritative servers.</p>
+</section>
+
+<!-- =================== CDN =================== -->
+<section id="cdn">
+  <h2>4. CDN — Content Delivery Network</h2>
+  <p>Geographically distributed edge servers cache static and (increasingly) dynamic content close to the user.</p>
+  <h3>What lives at the edge</h3>
+  <ul>
+    <li>Static assets: JS, CSS, images, video segments (HLS/DASH).</li>
+    <li>API responses with public/cacheable headers.</li>
+    <li>Edge functions / workers (Cloudflare Workers, Lambda@Edge) for personalization and A/B routing.</li>
+  </ul>
+  <h3>How it handles millions</h3>
+  <ul>
+    <li>A typical CDN absorbs <strong>70–95%</strong> of total traffic for a content-heavy site.</li>
+    <li>Hierarchical caching: edge POP → regional shield → origin, so even a cache miss rarely hits the origin.</li>
+    <li>TLS termination and DDoS scrubbing happen at the edge — origin sees a clean stream.</li>
+  </ul>
+  <div class="scale-box"><strong>Cache hit ratio</strong> is the single most important CDN metric. Target ≥ 90% for media; ≥ 60% for cacheable APIs.</div>
+</section>
+
+<!-- =================== LOAD BALANCER =================== -->
+<section id="lb">
+  <h2>5. Load Balancer</h2>
+  <p>Distributes incoming requests across many backend servers so no single instance is overwhelmed.</p>
+
+  <h3>Where the Application Load Balancer (ALB / L7 LB) sits</h3>
+  <p>An Application Load Balancer is an <strong>L7 (HTTP-aware) load balancer</strong>. In the request path it sits <strong>after the CDN and the L4 / Network Load Balancer, and just before the API Gateway and the application services</strong>. It is the first component in the stack that actually parses HTTP — so it can route by host, path, header, or cookie.</p>
+
+  <div class="diagram">
+<pre>
+Client  ──▶  DNS  ──▶  CDN  ──▶  L4 / Network LB (TCP, TLS termination)
+                                          │
+                                          ▼
+                          ┌──────────────────────────────┐
+                          │  Application Load Balancer   │  ◀── you are here
+                          │  (AWS ALB / NGINX / Envoy /  │      • L7 / HTTP
+                          │   GCP HTTPS LB / Azure AGW)  │      • path & host routing
+                          └───────────────┬──────────────┘      • WAF, sticky sessions
+                                          ▼
+                                  API Gateway
+                                          ▼
+                          Microservices (Orders, Users, …)
+</pre>
+  </div>
+
+  <p class="muted">In smaller deployments the L4 LB is often skipped and the ALB is exposed directly to the internet (behind the CDN). In a Kubernetes cluster, the ALB usually maps to an <code>Ingress</code> controller (AWS ALB Ingress, NGINX Ingress, Istio Gateway) sitting at the cluster edge — the public entry point for every service inside the cluster.</p>
+
+  <h3>Types</h3>
+  <table>
+    <tr><th>Layer</th><th>Operates on</th><th>Examples</th><th>Use</th></tr>
+    <tr><td>L4 (Transport)</td><td>TCP/UDP, IP+port</td><td>AWS NLB, IPVS</td><td>Ultra-fast, millions of connections, no payload inspection</td></tr>
+    <tr><td>L7 (Application)</td><td>HTTP/gRPC headers, paths</td><td>NGINX, Envoy, AWS ALB, HAProxy</td><td>Path/host routing, sticky sessions, header rewriting</td></tr>
+    <tr><td>Global (DNS-based)</td><td>Region selection</td><td>AWS Route 53, GCP GLB</td><td>Multi-region failover</td></tr>
+  </table>
+
+  <h3>Algorithms</h3>
+  <ul>
+    <li><strong>Round Robin</strong> — simple, ignores server load.</li>
+    <li><strong>Least Connections</strong> — best for long-lived connections.</li>
+    <li><strong>Weighted</strong> — heterogeneous instance sizes.</li>
+    <li><strong>Consistent Hashing</strong> — for sticky cache routing (e.g. by user_id).</li>
+    <li><strong>EWMA / Power-of-Two-Choices</strong> — modern, picks 2 random servers and sends to the less-loaded.</li>
+  </ul>
+
+  <h3>How it handles millions</h3>
+  <ul>
+    <li>Hardware-offloaded LBs (AWS NLB) handle <strong>tens of millions of TCP flows</strong> per LB.</li>
+    <li>Health checks remove unhealthy nodes in seconds → graceful degradation.</li>
+    <li>Auto-scales horizontally; behind a global anycast IP it appears as a single endpoint.</li>
+    <li>SSL termination offloads CPU-heavy crypto from app servers.</li>
+  </ul>
+  <div class="scale-box"><strong>Pattern:</strong> always run the LB in <em>at least</em> two AZs; a single LB is a single point of failure.</div>
+
+  <h3>ALB vs NLB — in plain language</h3>
+  <p>Both spread traffic across backend servers. The difference is <strong>how deeply they look inside the traffic</strong>.</p>
+
+  <div class="grid-2">
+    <div class="layer">
+      <h4>NLB — Network Load Balancer (Layer 4)</h4>
+      <p><em>A doorman who only checks your ticket number, not what's inside your bag.</em></p>
+      <ul>
+        <li>Works at <strong>TCP / UDP</strong> level — sees IPs and ports, nothing else.</li>
+        <li>Does <strong>not</strong> read the HTTP request, headers, URL, or cookies.</li>
+        <li>Just forwards raw packets to a backend server.</li>
+        <li>Insanely fast and cheap — almost no work per packet.</li>
+      </ul>
+      <p><strong>Use when:</strong> raw speed (millions of conn/sec), non-HTTP traffic (game servers, MQTT, databases), need a static IP for whitelisting.</p>
+      <p class="muted"><em>Analogy:</em> a highway toll booth — just lets cars through, doesn't care where they're going.</p>
+    </div>
+    <div class="layer">
+      <h4>ALB — Application Load Balancer (Layer 7)</h4>
+      <p><em>A smart receptionist who reads your form and sends you to the right department.</em></p>
+      <ul>
+        <li>Works at <strong>HTTP / HTTPS</strong> level — actually parses the request.</li>
+        <li>Routes by URL path (<code>/orders/*</code>), hostname, header, cookie, query string.</li>
+        <li>Handles HTTPS termination, sticky sessions, WebSockets, redirects.</li>
+        <li>Slower than NLB (parsing costs CPU) but much smarter.</li>
+      </ul>
+      <p><strong>Use when:</strong> web apps, REST APIs, microservices needing path-based routing, sticky sessions, or WAF integration.</p>
+      <p class="muted"><em>Analogy:</em> hospital reception — reads your symptoms and sends you to Cardiology vs Orthopedics.</p>
+    </div>
+  </div>
+
+  <h3>Side-by-side</h3>
+  <table>
+    <tr><th>Feature</th><th>NLB (Layer 4)</th><th>ALB (Layer 7)</th></tr>
+    <tr><td>Sees</td><td>IP + Port</td><td>Full HTTP request</td></tr>
+    <tr><td>Routes by</td><td>IP / Port</td><td>URL, host, header, cookie</td></tr>
+    <tr><td>Speed</td><td>Blazing fast</td><td>Fast, but slower than NLB</td></tr>
+    <tr><td>Protocols</td><td>TCP, UDP, TLS</td><td>HTTP, HTTPS, WebSocket, gRPC</td></tr>
+    <tr><td>Static IP</td><td>✅ Yes</td><td>❌ No (DNS only)</td></tr>
+    <tr><td>Best for</td><td>Gaming, IoT, databases, raw TCP</td><td>Web apps, microservices, APIs</td></tr>
+    <tr><td>Cost</td><td>Cheaper</td><td>Slightly costlier</td></tr>
+  </table>
+
+  <div class="scale-box">
+    <strong>One-line summary:</strong> NLB = dumb but fast packet forwarder. ALB = smart HTTP-aware traffic router.
+    In big systems you often use <em>both</em> — NLB at the very edge (firehose + static IP), then forwarding to ALBs that do the smart routing into microservices.
+  </div>
+</section>
+
+<!-- =================== API GATEWAY =================== -->
+<section id="gateway">
+  <h2>6. API Gateway</h2>
+  <p>The single entry point for all client API traffic to your microservice fleet. It is <em>not</em> the same thing as a load balancer — though it sits next to one.</p>
+
+  <h3>Responsibilities</h3>
+  <ul>
+    <li><strong>Routing &amp; composition</strong> — map <code>/orders/*</code> to the orders service, fan-out to multiple services and aggregate.</li>
+    <li><strong>Authentication / Authorization</strong> — JWT / OAuth2 / API-key validation before traffic hits services.</li>
+    <li><strong>Rate limiting &amp; quotas</strong> — token bucket / leaky bucket per user / API key / IP.</li>
+    <li><strong>Request / response transformation</strong> — protocol bridging (REST ↔ gRPC, GraphQL).</li>
+    <li><strong>Caching</strong> of idempotent GETs.</li>
+    <li><strong>Circuit breaking, retries, timeouts</strong> centralized.</li>
+    <li><strong>Schema validation &amp; WAF</strong> integration.</li>
+  </ul>
+
+  <h3>Examples</h3>
+  <p>Kong, AWS API Gateway, Apigee, Tyk, Envoy + Istio, Spring Cloud Gateway.</p>
+
+  <h3>How it handles millions</h3>
+  <ul>
+    <li>Stateless &amp; horizontally scalable behind the L7 LB — add more pods as RPS grows.</li>
+    <li>Rate limiters use a fast shared store (Redis) with token-bucket counters; each check is O(1).</li>
+    <li>Centralizing cross-cutting concerns means each microservice becomes simpler and faster.</li>
+    <li>Connection pooling to upstream services keeps tail-latency predictable.</li>
+  </ul>
+  <div class="scale-box"><strong>Trap:</strong> a fat gateway becomes a SPOF. Keep custom logic minimal; push business logic into services.</div>
+
+  <h3>How a "single" API Gateway handles all traffic from the ALB</h3>
+  <p>The "single API Gateway" is a <strong>logical</strong> entry point, not a single machine. Physically it's a horizontally-scaled fleet of stateless gateway instances sitting behind the ALB.</p>
+
+  <div class="diagram">
+<pre>
+                          ALB (L7)
+                            │
+          ┌─────────────────┼─────────────────┐
+          ▼                 ▼                 ▼
+     gateway-pod-1    gateway-pod-2  …  gateway-pod-N
+</pre>
+  </div>
+
+  <ol>
+    <li><strong>ALB fans out to many gateway instances.</strong> Round-robin / least-conn picks one pod per request. A single Kong / Envoy / AWS API Gateway pod handles 20k–100k RPS; 50 pods → millions of RPS.</li>
+    <li><strong>Gateway instances are stateless.</strong> No session, no in-memory user data. Any pod can serve any request — that is <em>why</em> you can have N of them behind one ALB.</li>
+    <li><strong>Shared state lives in fast external stores.</strong>
+      <ul>
+        <li>Rate-limit counters → Redis (atomic <code>INCR</code> with TTL, O(1) per check).</li>
+        <li>JWT validation → stateless (verify signature with cached public keys).</li>
+        <li>Auth / session lookups → Redis cache; DB only on miss.</li>
+        <li>Routing config → loaded at boot, refreshed via control plane (e.g. xDS for Envoy).</li>
+      </ul>
+    </li>
+    <li><strong>Async, non-blocking I/O.</strong> Gateways like Envoy / NGINX / Kong use event loops — one pod can hold tens of thousands of in-flight requests because each is just a file descriptor, not a thread.</li>
+    <li><strong>Connection pooling to upstreams.</strong> Gateway holds a small pool of HTTP/2 / gRPC connections per downstream service, multiplexing many requests onto each. 100k incoming RPS does <em>not</em> mean 100k outgoing TCP connections.</li>
+    <li><strong>Auto-scaling on the right signal.</strong> HPA scales replicas on RPS, p95 latency, or active connections — not just CPU. New pods register with discovery in 10–30s.</li>
+    <li><strong>The ALB itself is also distributed.</strong> AWS ALB / GCP HTTPS LB are multi-AZ, auto-scaled fleets behind a single anycast IP — never a bottleneck.</li>
+  </ol>
+
+  <div class="scale-box">
+    <strong>Mental model:</strong> "API Gateway" = a logical role. Capacity = <code>replicas × per-pod RPS</code>. The only true singletons are the <em>config</em> (routes, policies) and the <em>external state</em> (Redis, auth provider) — and both are themselves clustered.
+  </div>
+
+  <h3>Multiple API Gateways — when one isn't enough</h3>
+  <p>In real systems you almost always have <strong>multiple gateways</strong>, in two different senses.</p>
+
+  <h4 style="color: var(--accent-2); margin-top: 16px;">1. Multiple instances of the same gateway (horizontal scaling)</h4>
+  <p>One logical gateway, many pods behind the ALB. Same config, same routes, just more copies for capacity and HA — exactly what was described above.</p>
+
+  <h4 style="color: var(--accent-2); margin-top: 16px;">2. Multiple different gateways (specialized per audience — the BFF pattern)</h4>
+  <p>Different client types have very different needs, so big systems run <strong>separate gateways</strong> for each. This is the <strong>Backend-for-Frontend (BFF)</strong> pattern.</p>
+
+  <div class="diagram">
+<pre>
+   Mobile App        Web App         Partner B2B       Internal Admin
+       │               │                  │                  │
+       ▼               ▼                  ▼                  ▼
+  ┌─────────┐    ┌─────────┐       ┌─────────────┐   ┌─────────────┐
+  │ Mobile  │    │  Web    │       │  Partner    │   │  Internal   │
+  │ Gateway │    │ Gateway │       │  Gateway    │   │  Gateway    │
+  └────┬────┘    └────┬────┘       └──────┬──────┘   └──────┬──────┘
+       │              │                   │                  │
+       └──────────────┴────────┬──────────┴──────────────────┘
+                               ▼
+                    Microservices fleet
+                (Orders, Users, Payments, …)
+</pre>
+  </div>
+
+  <table>
+    <tr><th>Gateway</th><th>Audience</th><th>Why it's separate</th></tr>
+    <tr><td>Mobile Gateway</td><td>iOS / Android apps</td><td>Slim payloads, aggregates many calls into one (saves battery + data); REST or GraphQL</td></tr>
+    <tr><td>Web Gateway</td><td>Browser SPA</td><td>CORS, cookies, session handling, larger payloads OK</td></tr>
+    <tr><td>Partner / Public API</td><td>Third-party developers</td><td>Strict rate limits, API keys, OAuth, versioning, billing meters, stricter WAF</td></tr>
+    <tr><td>Internal Admin</td><td>Employees / ops tools</td><td>SSO/SAML, IP allowlist, fewer rate limits, more permissive</td></tr>
+    <tr><td>gRPC / Mesh Gateway</td><td>Internal services</td><td>gRPC, mTLS, no public exposure</td></tr>
+  </table>
+
+  <p>Each gateway has its <strong>own config, own auth rules, own rate limits, own scaling profile</strong> — but they all talk to the <strong>same underlying microservices</strong>.</p>
+
+  <h4 style="color: var(--accent-2); margin-top: 16px;">How traffic gets routed to the right gateway</h4>
+  <p>Usually by <strong>hostname</strong> at the ALB:</p>
+  <pre>api.example.com         → Public / Partner Gateway
+m.api.example.com       → Mobile Gateway
+app.example.com/api/*   → Web Gateway
+admin.example.com       → Internal Gateway</pre>
+
+  <h4 style="color: var(--accent-2); margin-top: 16px;">Why not just one giant gateway for everyone?</h4>
+  <ul>
+    <li><strong>Blast radius:</strong> a bad config push for partner APIs shouldn't break the mobile app.</li>
+    <li><strong>Different scaling needs:</strong> mobile traffic spikes at 9 AM; partner APIs are steady all day. Scale them independently.</li>
+    <li><strong>Different security postures:</strong> partner gateway needs strict mTLS + WAF; internal gateway just needs SSO.</li>
+    <li><strong>Different teams own them:</strong> mobile team owns mobile gateway, platform team owns partner gateway.</li>
+    <li><strong>Independent deploys:</strong> ship a change to one without redeploying the others.</li>
+  </ul>
+
+  <div class="scale-box">
+    <strong>Summary:</strong> A "single API Gateway" is a <em>logical</em> role, not a single box. In practice you have <strong>N instances of M different gateways</strong>, each tailored to a specific audience, all fronting the same shared microservices.
+  </div>
+</section>
+
+<!-- =================== PROXY =================== -->
+<section id="proxy">
+  <h2>7. Reverse &amp; Forward Proxies</h2>
+
+  <div class="grid-2">
+    <div class="layer">
+      <h4>Reverse Proxy</h4>
+      <p>Sits in front of servers; clients don't know which backend served them.</p>
+      <ul>
+        <li>TLS termination, gzip/brotli compression.</li>
+        <li>Static-file serving, caching, request buffering.</li>
+        <li>Examples: NGINX, Envoy, HAProxy, Caddy.</li>
+        <li>Often combined with the L7 load balancer role.</li>
+      </ul>
+    </div>
+    <div class="layer">
+      <h4>Forward Proxy</h4>
+      <p>Sits in front of clients; servers don't know who the real client is.</p>
+      <ul>
+        <li>Egress control from corporate networks.</li>
+        <li>Outbound rate-limiting to third-party APIs.</li>
+        <li>Examples: Squid, corporate egress gateway, sidecar Envoy.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>When you need a proxy beyond an LB</h3>
+  <ul>
+    <li><strong>Service Mesh sidecar (Envoy/Linkerd):</strong> mTLS, retries, traffic shifting between every pair of services. Essential at 100s of microservices.</li>
+    <li><strong>Egress proxy</strong> for outbound calls to flaky third-party APIs (payment gateways, SMS providers) — adds retries and circuit breakers without polluting service code.</li>
+  </ul>
+
+  <h3>How it handles millions</h3>
+  <p>A single Envoy/NGINX instance can sustain <strong>50k–200k RPS</strong> on commodity hardware with keep-alive. Add instances horizontally; mesh sidecars scale linearly with pods.</p>
+</section>
+
+<!-- =================== SERVICE LAYER =================== -->
+<section id="service">
+  <h2>8. Application / Service Layer</h2>
+  <p>Where business logic lives — typically as microservices, each owning a bounded context.</p>
+
+  <h3>Design principles</h3>
+  <ul>
+    <li><strong>Stateless services</strong> → any instance can serve any request → trivial horizontal scale.</li>
+    <li><strong>Single responsibility</strong> per service (Auth, Orders, Inventory, Notifications…).</li>
+    <li><strong>Database per service</strong> — no shared DB between services; cross-service data via APIs or events.</li>
+    <li><strong>Idempotent endpoints</strong> with idempotency keys → safe retries.</li>
+    <li><strong>Graceful degradation</strong> — feature flags, fallbacks (e.g. show stale data if recommendations fail).</li>
+  </ul>
+
+  <h3>Runtime</h3>
+  <p>Containers on Kubernetes (or ECS / Nomad). Horizontal Pod Autoscaler scales on CPU, memory, or custom metrics (e.g. queue depth, RPS). Cluster Autoscaler adds nodes as pods can't be scheduled.</p>
+
+  <div class="scale-box"><strong>Rule of thumb:</strong> if you can't kill any single pod without an alert firing, your service isn't horizontally scalable yet.</div>
+</section>
+
+<!-- =================== SYNC =================== -->
+<section id="sync">
+  <h2>9. Synchronous Communication</h2>
+  <p>Caller waits for a response. Used when the client genuinely needs the result before continuing.</p>
+
+  <h3>Protocols</h3>
+  <table>
+    <tr><th>Protocol</th><th>When to use</th><th>Pros</th><th>Cons</th></tr>
+    <tr><td>REST / HTTP/JSON</td><td>Public APIs, browsers</td><td>Universal, cacheable, debuggable</td><td>Verbose, no schema enforcement</td></tr>
+    <tr><td>gRPC (HTTP/2 + Protobuf)</td><td>Internal service-to-service</td><td>Fast binary, streaming, schema</td><td>Browser support needs grpc-web</td></tr>
+    <tr><td>GraphQL</td><td>Client-driven aggregation</td><td>One round trip, no over-fetch</td><td>N+1, caching complexity</td></tr>
+    <tr><td>WebSockets / SSE</td><td>Real-time push</td><td>Low latency, bidirectional</td><td>Stateful — sticky LB needed</td></tr>
+  </table>
+
+  <h3>Resilience patterns (non-negotiable at scale)</h3>
+  <ul>
+    <li><strong>Timeouts:</strong> every call must have one — never wait forever.</li>
+    <li><strong>Retries with exponential backoff + jitter</strong> on idempotent operations only.</li>
+    <li><strong>Circuit breaker</strong> (Hystrix / Resilience4j / Envoy): trip after N failures, fail fast for a cool-off period.</li>
+    <li><strong>Bulkhead</strong>: dedicated thread/connection pools per dependency so one slow service can't drown the rest.</li>
+    <li><strong>Hedged requests</strong>: send a duplicate after p99 to cut tail latency.</li>
+  </ul>
+
+  <h3>How it handles millions</h3>
+  <p>Connection pooling + HTTP/2 multiplexing keeps connection counts manageable. Service mesh sidecars enforce timeouts/retries uniformly. But synchronous chains amplify failures — keep them <strong>short</strong> (≤ 3 hops).</p>
+
+  <!-- ==================== gRPC DEEP DIVE ==================== -->
+  <h3 style="margin-top:28px;">9.1 Deep Dive: gRPC <span class="pill">internal RPC</span></h3>
+
+  <p>
+    <strong>gRPC</strong> is an open-source, high-performance RPC framework released by Google in 2015 and now governed by the CNCF. It is the de-facto choice for east–west (service-to-service) communication in modern microservice stacks. The "g" originally stood for Google; today it is reinterpreted differently in every release.
+  </p>
+
+  <h4 style="color:var(--accent-2); margin:14px 0 6px;">Why gRPC instead of REST/JSON?</h4>
+  <table>
+    <tr><th>Property</th><th>gRPC</th><th>REST + JSON</th></tr>
+    <tr><td>Transport</td><td>HTTP/2 (multiplexed, header-compressed)</td><td>HTTP/1.1 (typically)</td></tr>
+    <tr><td>Payload</td><td>Protocol Buffers (binary, 3–10× smaller)</td><td>JSON text</td></tr>
+    <tr><td>Schema / Contract</td><td>Mandatory <code>.proto</code> file — strongly typed, code-generated</td><td>Optional (OpenAPI), hand-written DTOs</td></tr>
+    <tr><td>Streaming</td><td>First-class: server, client &amp; bidirectional streams</td><td>SSE / WebSockets bolted on</td></tr>
+    <tr><td>Browser support</td><td>Needs <code>grpc-web</code> proxy</td><td>Native</td></tr>
+    <tr><td>Latency at p99</td><td>Lower (binary + HTTP/2 + persistent connections)</td><td>Higher</td></tr>
+    <tr><td>Tooling</td><td>Stubs in 10+ languages from one <code>.proto</code></td><td>Hand-write or generate from OpenAPI</td></tr>
+  </table>
+
+  <h4 style="color:var(--accent-2); margin:14px 0 6px;">The 4 RPC types</h4>
+  <ul>
+    <li><strong>Unary</strong> — classic request/response. <code>rpc GetUser(GetUserRequest) returns (User);</code></li>
+    <li><strong>Server streaming</strong> — client sends one request, server replies with a stream. Good for paginated results, live tickers, log tails.</li>
+    <li><strong>Client streaming</strong> — client uploads a stream, server returns one response. Good for chunked uploads, telemetry batches.</li>
+    <li><strong>Bidirectional streaming</strong> — both sides stream independently over a single HTTP/2 connection. Good for chat, real-time gaming state, mutual telemetry.</li>
+  </ul>
+
+  <h4 style="color:var(--accent-2); margin:14px 0 6px;">1. Define the contract — <code>user.proto</code></h4>
+  <pre>syntax = "proto3";
+
+package com.example.user;
+
+option java_multiple_files = true;
+option java_package = "com.example.user.grpc";
+option java_outer_classname = "UserProto";
+
+service UserService {
+  // Unary
+  rpc GetUser (GetUserRequest) returns (User);
+
+  // Server streaming — emit one User per matching record
+  rpc SearchUsers (SearchRequest) returns (stream User);
+
+  // Client streaming — bulk upload then summary
+  rpc BulkCreate (stream User) returns (BulkCreateResponse);
+
+  // Bidirectional — live presence channel
+  rpc Presence (stream PresenceEvent) returns (stream PresenceEvent);
+}
+
+message GetUserRequest { string user_id = 1; }
+
+message User {
+  string user_id = 1;
+  string email   = 2;
+  string name    = 3;
+  int64  created_at_epoch_ms = 4;
+}
+
+message SearchRequest { string query = 1; int32 limit = 2; }
+
+message BulkCreateResponse { int32 created = 1; int32 failed = 2; }
+
+message PresenceEvent {
+  string user_id = 1;
+  enum Status { OFFLINE = 0; ONLINE = 1; AWAY = 2; }
+  Status status = 2;
+}
+</pre>
+
+  <p class="muted">
+    The Protobuf compiler (<code>protoc</code>) + the gRPC Java plugin turn this <code>.proto</code> into Java classes:
+    request/response POJOs, a server abstract base class (<code>UserServiceGrpc.UserServiceImplBase</code>), and three client stubs (blocking, async, future).
+  </p>
+
+  <h4 style="color:var(--accent-2); margin:14px 0 6px;">2. Maven setup (excerpt)</h4>
+  <pre>&lt;dependencies&gt;
+  &lt;dependency&gt;
+    &lt;groupId&gt;io.grpc&lt;/groupId&gt;
+    &lt;artifactId&gt;grpc-netty-shaded&lt;/artifactId&gt;
+    &lt;version&gt;1.62.2&lt;/version&gt;
+  &lt;/dependency&gt;
+  &lt;dependency&gt;
+    &lt;groupId&gt;io.grpc&lt;/groupId&gt;
+    &lt;artifactId&gt;grpc-protobuf&lt;/artifactId&gt;
+    &lt;version&gt;1.62.2&lt;/version&gt;
+  &lt;/dependency&gt;
+  &lt;dependency&gt;
+    &lt;groupId&gt;io.grpc&lt;/groupId&gt;
+    &lt;artifactId&gt;grpc-stub&lt;/artifactId&gt;
+    &lt;version&gt;1.62.2&lt;/version&gt;
+  &lt;/dependency&gt;
+&lt;/dependencies&gt;
+
+&lt;build&gt;
+  &lt;extensions&gt;
+    &lt;extension&gt;
+      &lt;groupId&gt;kr.motd.maven&lt;/groupId&gt;
+      &lt;artifactId&gt;os-maven-plugin&lt;/artifactId&gt;
+      &lt;version&gt;1.7.1&lt;/version&gt;
+    &lt;/extension&gt;
+  &lt;/extensions&gt;
+  &lt;plugins&gt;
+    &lt;plugin&gt;
+      &lt;groupId&gt;org.xolstice.maven.plugins&lt;/groupId&gt;
+      &lt;artifactId&gt;protobuf-maven-plugin&lt;/artifactId&gt;
+      &lt;version&gt;0.6.1&lt;/version&gt;
+      &lt;configuration&gt;
+        &lt;protocArtifact&gt;com.google.protobuf:protoc:3.25.1:exe:${os.detected.classifier}&lt;/protocArtifact&gt;
+        &lt;pluginId&gt;grpc-java&lt;/pluginId&gt;
+        &lt;pluginArtifact&gt;io.grpc:protoc-gen-grpc-java:1.62.2:exe:${os.detected.classifier}&lt;/pluginArtifact&gt;
+      &lt;/configuration&gt;
+      &lt;executions&gt;&lt;execution&gt;&lt;goals&gt;
+        &lt;goal&gt;compile&lt;/goal&gt;&lt;goal&gt;compile-custom&lt;/goal&gt;
+      &lt;/goals&gt;&lt;/execution&gt;&lt;/executions&gt;
+    &lt;/plugin&gt;
+  &lt;/plugins&gt;
+&lt;/build&gt;
+</pre>
+
+  <h4 style="color:var(--accent-2); margin:14px 0 6px;">3. Server implementation (Java)</h4>
+  <pre>package com.example.user.grpc;
+
+import io.grpc.Server;
+import io.grpc.ServerBuilder;
+import io.grpc.Status;
+import io.grpc.stub.StreamObserver;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+public class UserServer {
+
+  // In-memory store for illustration
+  private static final Map&lt;String, User&gt; STORE = new ConcurrentHashMap&lt;&gt;();
+
+  static class UserServiceImpl extends UserServiceGrpc.UserServiceImplBase {
+
+    // -------- Unary --------
+    @Override
+    public void getUser(GetUserRequest req, StreamObserver&lt;User&gt; resp) {
+      User u = STORE.get(req.getUserId());
+      if (u == null) {
+        resp.onError(Status.NOT_FOUND
+            .withDescription("user " + req.getUserId() + " not found")
+            .asRuntimeException());
+        return;
+      }
+      resp.onNext(u);
+      resp.onCompleted();
+    }
+
+    // -------- Server streaming --------
+    @Override
+    public void searchUsers(SearchRequest req, StreamObserver&lt;User&gt; resp) {
+      int sent = 0;
+      for (User u : STORE.values()) {
+        if (u.getName().toLowerCase().contains(req.getQuery().toLowerCase())) {
+          resp.onNext(u);                  // push each match
+          if (++sent &gt;= req.getLimit()) break;
+        }
+      }
+      resp.onCompleted();
+    }
+
+    // -------- Client streaming --------
+    @Override
+    public StreamObserver&lt;User&gt; bulkCreate(StreamObserver&lt;BulkCreateResponse&gt; resp) {
+      return new StreamObserver&lt;&gt;() {
+        int ok = 0, bad = 0;
+        @Override public void onNext(User u) {
+          if (u.getUserId().isEmpty()) { bad++; return; }
+          STORE.put(u.getUserId(), u);
+          ok++;
+        }
+        @Override public void onError(Throwable t) { /* log */ }
+        @Override public void onCompleted() {
+          resp.onNext(BulkCreateResponse.newBuilder()
+              .setCreated(ok).setFailed(bad).build());
+          resp.onCompleted();
+        }
+      };
+    }
+
+    // -------- Bidirectional streaming --------
+    @Override
+    public StreamObserver&lt;PresenceEvent&gt; presence(StreamObserver&lt;PresenceEvent&gt; resp) {
+      return new StreamObserver&lt;&gt;() {
+        @Override public void onNext(PresenceEvent ev) {
+          // echo back to all subscribers in real code — simplified here
+          resp.onNext(ev);
+        }
+        @Override public void onError(Throwable t) { resp.onError(t); }
+        @Override public void onCompleted()        { resp.onCompleted(); }
+      };
+    }
+  }
+
+  public static void main(String[] args) throws Exception {
+    Server server = ServerBuilder.forPort(9090)
+        .addService(new UserServiceImpl())
+        .build()
+        .start();
+    System.out.println("gRPC UserService listening on 9090");
+    Runtime.getRuntime().addShutdownHook(
+        new Thread(server::shutdown));
+    server.awaitTermination();
+  }
+}
+</pre>
+
+  <h4 style="color:var(--accent-2); margin:14px 0 6px;">4. Client — three stub flavors</h4>
+  <pre>package com.example.user.grpc;
+
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
+import io.grpc.stub.StreamObserver;
+
+import java.util.Iterator;
+import java.util.concurrent.TimeUnit;
+
+public class UserClient {
+
+  public static void main(String[] args) throws Exception {
+    ManagedChannel channel = ManagedChannelBuilder
+        .forAddress("users.svc", 9090)
+        .usePlaintext()           // TLS turned off for local demo
+        .keepAliveTime(30, TimeUnit.SECONDS)
+        .build();
+
+    // -------- Blocking stub (unary) --------
+    var blocking = UserServiceGrpc.newBlockingStub(channel)
+        .withDeadlineAfter(200, TimeUnit.MILLISECONDS);   // per-call timeout
+
+    User u = blocking.getUser(GetUserRequest.newBuilder()
+        .setUserId("u-42").build());
+    System.out.println("Got: " + u.getEmail());
+
+    // -------- Blocking stub (server streaming) --------
+    Iterator&lt;User&gt; it = blocking.searchUsers(
+        SearchRequest.newBuilder().setQuery("ali").setLimit(50).build());
+    while (it.hasNext()) System.out.println(it.next().getName());
+
+    // -------- Async stub (client streaming) --------
+    var async = UserServiceGrpc.newStub(channel);
+    StreamObserver&lt;User&gt; sink = async.bulkCreate(new StreamObserver&lt;&gt;() {
+      @Override public void onNext(BulkCreateResponse r)  {
+        System.out.println("created=" + r.getCreated());
+      }
+      @Override public void onError(Throwable t)          { t.printStackTrace(); }
+      @Override public void onCompleted()                 { /* done */ }
+    });
+    for (int i = 0; i &lt; 1000; i++) {
+      sink.onNext(User.newBuilder()
+          .setUserId("u-" + i).setName("user " + i).build());
+    }
+    sink.onCompleted();
+
+    channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
+  }
+}
+</pre>
+
+  <div class="scale-box">
+    <strong>Stub flavors:</strong>
+    <em>Blocking</em> — simplest, OK for unary &amp; server-streaming.
+    <em>Async</em> — callback-based, required for client/bidirectional streaming.
+    <em>Future</em> — returns <code>ListenableFuture</code>, handy when composing several calls in parallel without going fully reactive.
+  </div>
+
+  <h4 style="color:var(--accent-2); margin:14px 0 6px;">5. Deadlines &amp; cancellation</h4>
+  <p>
+    Every call should carry a <strong>deadline</strong> — an absolute wall-clock instant by which the response must arrive. Deadlines propagate automatically across hops (User → Order → Inventory), so if the client gives up, every downstream call is canceled too. This is the single most effective defense against cascading failures.
+  </p>
+<pre>// Deadline on a single call
+blocking.withDeadlineAfter(150, TimeUnit.MILLISECONDS)
+        .getUser(req);
+
+// Deadline on every call made through this stub
+var fastStub = UserServiceGrpc.newBlockingStub(channel)
+        .withDeadlineAfter(150, TimeUnit.MILLISECONDS);
+</pre>
+
+  <h4 style="color:var(--accent-2); margin:14px 0 6px;">6. Interceptors — auth, logging, tracing</h4>
+  <p>Interceptors are gRPC's middleware. They run for every RPC and are the right place to attach JWTs, emit metrics, or propagate trace IDs.</p>
+<pre>// --- Client-side: attach a bearer token to every call ---
+public class AuthInterceptor implements ClientInterceptor {
+  private final String token;
+  public AuthInterceptor(String token) { this.token = token; }
+
+  @Override
+  public &lt;Req, Res&gt; ClientCall&lt;Req, Res&gt; interceptCall(
+      MethodDescriptor&lt;Req, Res&gt; method, CallOptions opts, Channel next) {
+    return new ForwardingClientCall.SimpleForwardingClientCall&lt;&gt;(
+        next.newCall(method, opts)) {
+      @Override public void start(Listener&lt;Res&gt; r, Metadata headers) {
+        headers.put(Metadata.Key.of("authorization",
+            Metadata.ASCII_STRING_MARSHALLER), "Bearer " + token);
+        super.start(r, headers);
+      }
+    };
+  }
+}
+
+ManagedChannel secured = ManagedChannelBuilder
+    .forAddress("users.svc", 9090)
+    .useTransportSecurity()
+    .intercept(new AuthInterceptor(jwt))
+    .build();
+
+// --- Server-side: validate the same header ---
+public class AuthServerInterceptor implements ServerInterceptor {
+  @Override
+  public &lt;Req, Res&gt; ServerCall.Listener&lt;Req&gt; interceptCall(
+      ServerCall&lt;Req, Res&gt; call, Metadata headers,
+      ServerCallHandler&lt;Req, Res&gt; next) {
+    String auth = headers.get(Metadata.Key.of(
+        "authorization", Metadata.ASCII_STRING_MARSHALLER));
+    if (auth == null || !auth.startsWith("Bearer ")) {
+      call.close(Status.UNAUTHENTICATED.withDescription("missing token"),
+                 new Metadata());
+      return new ServerCall.Listener&lt;&gt;() {};
+    }
+    return next.startCall(call, headers);
+  }
+}
+</pre>
+
+  <h4 style="color:var(--accent-2); margin:14px 0 6px;">7. TLS / mTLS</h4>
+<pre>// Server with TLS
+Server tlsServer = NettyServerBuilder.forPort(9090)
+    .useTransportSecurity(new File("server.crt"), new File("server.key"))
+    .addService(new UserServiceImpl())
+    .build()
+    .start();
+
+// Client with mTLS — present a client cert
+ManagedChannel mtlsChannel = NettyChannelBuilder
+    .forAddress("users.svc", 9090)
+    .sslContext(GrpcSslContexts.forClient()
+        .trustManager(new File("ca.crt"))
+        .keyManager(new File("client.crt"), new File("client.key"))
+        .build())
+    .build();
+</pre>
+
+  <h4 style="color:var(--accent-2); margin:14px 0 6px;">8. Built-in load balancing &amp; service discovery</h4>
+  <p>
+    Unlike REST, where the client opens a fresh HTTP/1.1 connection per request, gRPC keeps a <em>persistent</em> HTTP/2 connection — which would normally pin a client to one backend. gRPC solves this with <strong>name resolvers</strong> and <strong>load-balancing policies</strong> baked into the client.
+  </p>
+<pre>ManagedChannel channel = ManagedChannelBuilder
+    .forTarget("dns:///users.svc.cluster.local:9090")  // resolves all A records
+    .defaultLoadBalancingPolicy("round_robin")          // built-in policy
+    .build();
+</pre>
+  <p class="muted">
+    In Kubernetes the <code>dns:///</code> resolver picks up every pod IP behind a headless Service, so requests are spread across replicas without an external L7 LB. For richer policies (locality-aware, weighted, outlier ejection) plug in an <strong>Envoy / Istio sidecar</strong> and let it do xDS-driven LB.
+  </p>
+
+  <h4 style="color:var(--accent-2); margin:14px 0 6px;">9. Status codes &amp; error handling</h4>
+  <p>gRPC defines a fixed set of <code>Status</code> codes (the same in every language) — use them deliberately:</p>
+  <table>
+    <tr><th>Code</th><th>Meaning</th><th>Client should retry?</th></tr>
+    <tr><td><code>OK</code> (0)</td><td>Success</td><td>—</td></tr>
+    <tr><td><code>INVALID_ARGUMENT</code> (3)</td><td>Bad input</td><td>No</td></tr>
+    <tr><td><code>NOT_FOUND</code> (5)</td><td>Entity missing</td><td>No</td></tr>
+    <tr><td><code>ALREADY_EXISTS</code> (6)</td><td>Duplicate key</td><td>No</td></tr>
+    <tr><td><code>PERMISSION_DENIED</code> (7)</td><td>AuthZ failure</td><td>No</td></tr>
+    <tr><td><code>RESOURCE_EXHAUSTED</code> (8)</td><td>Quota / rate limit</td><td>Yes — with backoff</td></tr>
+    <tr><td><code>FAILED_PRECONDITION</code> (9)</td><td>System not in required state</td><td>Usually no</td></tr>
+    <tr><td><code>ABORTED</code> (10)</td><td>Optimistic concurrency conflict</td><td>Yes</td></tr>
+    <tr><td><code>UNAVAILABLE</code> (14)</td><td>Transient — service down</td><td>Yes — with backoff</td></tr>
+    <tr><td><code>DEADLINE_EXCEEDED</code> (4)</td><td>Timed out</td><td>Idempotent only</td></tr>
+    <tr><td><code>UNAUTHENTICATED</code> (16)</td><td>Missing/invalid credentials</td><td>No — fix token</td></tr>
+  </table>
+
+  <h4 style="color:var(--accent-2); margin:14px 0 6px;">10. Practical scaling notes</h4>
+  <ul>
+    <li><strong>One channel per upstream, not per call.</strong> <code>ManagedChannel</code> is thread-safe and multiplexes thousands of in-flight RPCs over a single HTTP/2 connection.</li>
+    <li><strong>Watch the 4 MB default message size.</strong> Override with <code>.maxInboundMessageSize(N)</code> if you legitimately need bigger — otherwise stream.</li>
+    <li><strong>Enable keepalives</strong> (<code>keepAliveTime</code> / <code>keepAliveTimeout</code>) so dead connections get detected before they swallow requests.</li>
+    <li><strong>Always set a deadline</strong> — Java gRPC will not time out on its own.</li>
+    <li><strong>Use server reflection + <code>grpcurl</code></strong> in non-prod for easy debugging without writing client code.</li>
+    <li><strong>For browsers / mobile-web</strong>, terminate at an <code>grpc-web</code> proxy (Envoy filter) or expose a REST gateway.</li>
+  </ul>
+
+  <div class="scale-box">
+    <strong>Rule of thumb:</strong> if both sides of a call are your own services and live inside the same trust boundary, <em>default to gRPC</em>. Keep REST for public APIs, third-party integrations, and browsers.
+  </div>
+</section>
+
+<!-- =================== ASYNC =================== -->
+<section id="async">
+  <h2>10. Asynchronous Communication</h2>
+  <p>Caller hands off the work and returns immediately. The receiver processes when ready. This is how internet-scale systems absorb spikes.</p>
+
+  <h3>Patterns</h3>
+  <ul>
+    <li><strong>Message Queue</strong> (point-to-point) — RabbitMQ, AWS SQS. One consumer gets each message.</li>
+    <li><strong>Pub/Sub / Event Bus</strong> — Kafka, Google Pub/Sub, NATS. Many consumers, each gets a copy.</li>
+    <li><strong>Event Streaming</strong> — Kafka with retention; replayable history. Powers event sourcing &amp; CDC.</li>
+    <li><strong>Webhooks</strong> — async outbound notifications to third parties.</li>
+  </ul>
+
+  <h3>Why async at scale</h3>
+  <ul>
+    <li><strong>Decoupling:</strong> producer doesn't know or care about consumers. Add new consumers without touching producers.</li>
+    <li><strong>Buffering / load smoothing:</strong> Black Friday spike of 10× → queue absorbs it; consumers drain at their pace.</li>
+    <li><strong>Resilience:</strong> if a downstream service is down, messages wait in the queue instead of being lost.</li>
+    <li><strong>Parallelism:</strong> partition the topic by key (e.g. user_id), scale consumers horizontally per partition.</li>
+  </ul>
+
+  <h3>Critical concerns</h3>
+  <ul>
+    <li><strong>Delivery semantics:</strong> at-most-once, at-least-once (most common — needs idempotent consumers), exactly-once (Kafka transactions, expensive).</li>
+    <li><strong>Ordering:</strong> guaranteed only within a partition — pick the partition key carefully.</li>
+    <li><strong>Dead-Letter Queue (DLQ):</strong> messages that fail after N retries land here for manual investigation.</li>
+    <li><strong>Backpressure &amp; lag monitoring:</strong> alert on consumer lag growing.</li>
+    <li><strong>Outbox pattern:</strong> write to DB and outbox table in one transaction; a relay publishes to the broker — prevents lost events.</li>
+  </ul>
+
+  <h3>How it handles millions</h3>
+  <p>Kafka commodity clusters routinely sustain <strong>millions of messages/sec</strong>. Throughput scales by adding partitions and consumer-group members. SQS scales transparently to nearly unlimited TPS.</p>
+
+  <div class="scale-box"><strong>Heuristic:</strong> if the user doesn't need the answer <em>right now</em> (emails, analytics, fanout, image processing, search indexing), make it async. The synchronous path stays fast and the system stays resilient.</div>
+</section>
+
+<!-- =================== CACHE =================== -->
+<section id="cache">
+  <h2>11. Caching Layer</h2>
+  <p>Caches exist at every layer — browser, CDN, gateway, application, database. Each level is 10–100× faster than the next.</p>
+
+  <h3>Distributed cache (Redis / Memcached)</h3>
+  <ul>
+    <li><strong>Redis Cluster</strong>: sharded by hash slot, replicas per shard, sub-ms latency.</li>
+    <li>Used for: session stores, rate-limit counters, leaderboards, hot-row caching, pub/sub.</li>
+    <li>Single Redis node ≈ 100k ops/sec; a 16-shard cluster ≈ 1.5M+ ops/sec.</li>
+  </ul>
+
+  <h3>Cache strategies</h3>
+  <table>
+    <tr><th>Strategy</th><th>Behavior</th><th>Best for</th></tr>
+    <tr><td>Cache-aside (lazy)</td><td>App reads cache; on miss, reads DB, writes cache</td><td>Read-heavy, tolerant of staleness</td></tr>
+    <tr><td>Read-through</td><td>Cache itself reads from DB on miss</td><td>Simpler app code</td></tr>
+    <tr><td>Write-through</td><td>Writes go to cache + DB synchronously</td><td>Strong consistency</td></tr>
+    <tr><td>Write-behind</td><td>Writes to cache; flushed to DB async</td><td>Write-heavy, can lose writes on crash</td></tr>
+  </table>
+
+  <h3>Pitfalls</h3>
+  <ul>
+    <li><strong>Thundering herd / cache stampede:</strong> on TTL expiry, many requests hit DB at once → use single-flight or probabilistic early refresh (XFetch).</li>
+    <li><strong>Cache penetration:</strong> queries for non-existent keys hit DB → cache negative results or use a Bloom filter.</li>
+    <li><strong>Hot keys:</strong> one celebrity's profile drowns one shard → replicate hot keys, use local in-process LRU as L1.</li>
+    <li><strong>Invalidation</strong> is genuinely the hardest problem — prefer short TTLs over fancy invalidation.</li>
+  </ul>
+</section>
+
+<!-- =================== DB =================== -->
+<section id="db">
+  <h2>12. Databases</h2>
+
+  <h3>Pick the right tool</h3>
+  <table>
+    <tr><th>Type</th><th>Examples</th><th>Best for</th></tr>
+    <tr><td>Relational (OLTP)</td><td>PostgreSQL, MySQL, Aurora</td><td>Transactional data, joins, ACID</td></tr>
+    <tr><td>Wide-column</td><td>Cassandra, ScyllaDB, DynamoDB, HBase</td><td>Massive write throughput, time-series</td></tr>
+    <tr><td>Document</td><td>MongoDB, DynamoDB, Couchbase</td><td>Flexible schema, JSON-shaped data</td></tr>
+    <tr><td>Key-Value</td><td>Redis, DynamoDB, etcd</td><td>Sub-ms lookups, sessions, configs</td></tr>
+    <tr><td>Graph</td><td>Neo4j, JanusGraph, Neptune</td><td>Relationship-heavy queries</td></tr>
+    <tr><td>Time-series</td><td>InfluxDB, TimescaleDB, Prometheus</td><td>Metrics, IoT data</td></tr>
+    <tr><td>OLAP / Warehouse</td><td>Snowflake, BigQuery, Redshift, ClickHouse</td><td>Analytics on large volumes</td></tr>
+  </table>
+
+  <h3>Scaling techniques</h3>
+  <ul>
+    <li><strong>Vertical scale (scale-up):</strong> bigger box. Easy, finite.</li>
+    <li><strong>Read replicas:</strong> stream WAL/binlog to replicas; route reads to them. Beware replication lag → eventual consistency.</li>
+    <li><strong>Sharding (horizontal partitioning):</strong> split data by key (range, hash, geo). Each shard is its own primary. Cross-shard queries become hard.</li>
+    <li><strong>Federation:</strong> split DBs by domain (users-db, orders-db).</li>
+    <li><strong>Multi-region active-active:</strong> Spanner, CockroachDB, DynamoDB Global Tables, Cassandra. Offers cross-region writes; pay in latency.</li>
+    <li><strong>CQRS:</strong> separate write model (normalized) from read model (denormalized projections).</li>
+  </ul>
+
+  <h3>CAP &amp; PACELC</h3>
+  <p>Under a network partition, you choose Consistency or Availability. Even when there is no partition (PACELC), you trade latency vs. consistency.</p>
+  <ul>
+    <li><strong>CP:</strong> Spanner, HBase, ZooKeeper, etcd — refuse writes if quorum unreachable.</li>
+    <li><strong>AP:</strong> Cassandra, DynamoDB (default), Couchbase — accept writes; reconcile later.</li>
+  </ul>
+
+  <h3>How a DB handles millions</h3>
+  <ul>
+    <li>Most reads served from cache; the DB sees only the misses + writes.</li>
+    <li>Connection pool (PgBouncer / RDS Proxy) → 100k clients share 200 DB connections.</li>
+    <li>Indexes on access paths; avoid full scans in OLTP.</li>
+    <li>Async commits and group commits amortize fsync cost.</li>
+    <li>Heavy workloads partitioned across many shards (e.g. Instagram on Postgres, Discord on ScyllaDB).</li>
+  </ul>
+
+  <div class="scale-box"><strong>Rule:</strong> the database is your most expensive and least scalable component. Every layer above exists to protect it.</div>
+</section>
+
+<!-- =================== SEARCH =================== -->
+<section id="search">
+  <h2>13. Search &amp; Analytics</h2>
+  <ul>
+    <li><strong>Search:</strong> Elasticsearch / OpenSearch / Solr. Inverted index, distributed across shards. Updated via CDC or Kafka pipeline.</li>
+    <li><strong>Real-time analytics:</strong> Druid, Pinot, ClickHouse — sub-second aggregations over billions of rows.</li>
+    <li><strong>Batch analytics / DWH:</strong> BigQuery, Snowflake, Redshift, Spark. Fed by ETL/ELT from operational DBs.</li>
+    <li><strong>Stream processing:</strong> Flink, Kafka Streams, Spark Streaming for windowed aggregations and joins.</li>
+  </ul>
+  <p>Don't run analytical queries on the OLTP database — replicate data into a system designed for it.</p>
+</section>
+
+<!-- =================== STORAGE =================== -->
+<section id="storage">
+  <h2>14. Object &amp; Blob Storage</h2>
+  <ul>
+    <li><strong>S3 / GCS / Azure Blob</strong> for images, videos, backups, ML models, logs.</li>
+    <li>11-nines durability, virtually unlimited scale, pay-per-GB.</li>
+    <li>Serve user uploads via <strong>pre-signed URLs</strong> — clients upload directly to S3 without going through your servers, saving bandwidth and CPU.</li>
+    <li>Front it with a CDN for read-heavy assets.</li>
+  </ul>
+</section>
+
+<!-- =================== OBSERVABILITY =================== -->
+<section id="observability">
+  <h2>15. Observability</h2>
+  <p>You can't operate a distributed system you can't see. The three pillars:</p>
+  <ul>
+    <li><strong>Metrics</strong> — Prometheus, Datadog, CloudWatch. Numeric time-series. RED (Rate, Errors, Duration), USE (Utilization, Saturation, Errors).</li>
+    <li><strong>Logs</strong> — ELK / Loki / Splunk. Structured JSON, sampled in hot paths.</li>
+    <li><strong>Traces</strong> — Jaeger / Tempo / X-Ray with OpenTelemetry. Follow a single request across every service.</li>
+  </ul>
+  <p>Plus: <strong>SLOs &amp; error budgets</strong>, alerting on symptoms (not causes), and synthetic + real-user monitoring.</p>
+</section>
+
+<!-- =================== SECURITY =================== -->
+<section id="security">
+  <h2>16. Security &amp; Auth</h2>
+  <ul>
+    <li><strong>Edge:</strong> WAF (Cloudflare, AWS WAF), DDoS scrubbing, bot management.</li>
+    <li><strong>Transport:</strong> TLS 1.3 everywhere, mTLS between services (service mesh).</li>
+    <li><strong>AuthN:</strong> OAuth 2.0 / OIDC (Auth0, Cognito, Keycloak), short-lived JWTs, refresh tokens.</li>
+    <li><strong>AuthZ:</strong> RBAC, ABAC; centralized policy engines like OPA.</li>
+    <li><strong>Secrets:</strong> Vault, AWS Secrets Manager, KMS — never in env files committed to git.</li>
+    <li><strong>Defense in depth:</strong> rate-limit at gateway, validate at service, parameterize queries at DB. Assume any single layer can fail.</li>
+  </ul>
+</section>
+
+<!-- =================== CAPACITY =================== -->
+<section id="capacity">
+  <h2>17. Capacity Math &amp; Scaling Rules of Thumb</h2>
+  <p>Quick numbers an architect should have in their head when sizing a system for "millions of users".</p>
+
+  <h3>Translating users → RPS</h3>
+  <p>1M DAU × ~20 actions/day ÷ 86,400 s ≈ <strong>230 RPS average</strong>. Peak ≈ 5×–10× average → ~2,000 RPS. Ten million DAU → ~20k RPS peak.</p>
+
+  <h3>Useful latency numbers</h3>
+  <table>
+    <tr><th>Operation</th><th>Approx latency</th></tr>
+    <tr><td>L1 cache reference</td><td>~1 ns</td></tr>
+    <tr><td>Main memory reference</td><td>~100 ns</td></tr>
+    <tr><td>SSD random read</td><td>~100 µs</td></tr>
+    <tr><td>Round trip in same DC</td><td>~500 µs</td></tr>
+    <tr><td>Redis GET (same DC)</td><td>~1 ms</td></tr>
+    <tr><td>DB indexed query</td><td>1–10 ms</td></tr>
+    <tr><td>Cross-region RTT (US ↔ EU)</td><td>~80–100 ms</td></tr>
+  </table>
+
+  <h3>Single-instance ballparks</h3>
+  <ul>
+    <li>NGINX / Envoy: ~50–100k RPS reverse-proxying.</li>
+    <li>Modern Java/Go service: 5–20k RPS depending on logic.</li>
+    <li>PostgreSQL on good hardware: 10–50k simple reads/sec; ~5–10k writes/sec single primary.</li>
+    <li>Redis single shard: ~100k ops/sec.</li>
+    <li>Kafka per broker: 100k–1M messages/sec depending on size and acks.</li>
+  </ul>
+
+  <h3>Scaling checklist</h3>
+  <ol>
+    <li>Make services <strong>stateless</strong>; push state to caches/DBs.</li>
+    <li>Cache aggressively at every layer — but invalidate predictably.</li>
+    <li>Move non-critical work to <strong>async queues</strong>.</li>
+    <li><strong>Shard</strong> the database before it becomes urgent.</li>
+    <li>Eliminate <strong>SPOFs</strong>: every component multi-AZ, every dependency has a circuit breaker.</li>
+    <li>Design for <strong>graceful degradation</strong>, not perfection.</li>
+    <li>Measure first, optimize what's actually slow (the p99, not the mean).</li>
+  </ol>
+
+  <div class="scale-box">
+    <strong>Final principle:</strong> good architecture isn't about handling load — it's about handling load <em>and</em> failure <em>and</em> change, simultaneously, while a 3 a.m. on-call engineer can still understand it.
+  </div>
+</section>
+
+</section>
+
+<!-- =================== MULTI-NODE =================== -->
+<section id="multinode">
+  <h2>18. Multi-Node Services in Action — Order &amp; User</h2>
+  <p class="muted">Concrete walkthrough: <code>OrderService</code> runs on 5 pods, <code>UserService</code> runs on 8 pods. A user clicks "Place Order". What actually happens?</p>
+
+  <div class="diagram">
+<pre>
+                 ┌──────────────────────────────┐
+                 │         API Gateway          │
+                 └───────────────┬──────────────┘
+                                 │  POST /orders
+                                 ▼
+                 ┌──────────────────────────────┐
+                 │ Service Discovery (k8s DNS / │
+                 │ Consul / Eureka)             │
+                 │  orders.svc → [10 pod IPs]   │
+                 │  users.svc  → [ 8 pod IPs]   │
+                 └──────────────────────────────┘
+                                 │
+                                 ▼
+   ┌──────────────────── OrderService (ClusterIP / LB) ────────────────────┐
+   │                                                                        │
+   │   ┌────────┐   ┌────────┐   ┌────────┐   ┌────────┐   ┌────────┐      │
+   │   │ pod-1  │   │ pod-2  │   │ pod-3  │   │ pod-4  │   │ pod-5  │      │
+   │   └───┬────┘   └───┬────┘   └───┬────┘   └───┬────┘   └───┬────┘      │
+   └───────┼────────────┼────────────┼────────────┼────────────┼────────────┘
+           │            │            │            │            │
+           │  pod-2 picked by L4 LB (least-conn / round-robin) │
+           ▼
+   ┌────────────────────────────────────────────────────────────────────────┐
+   │  Inside order pod-2:                                                   │
+   │   1. validate request                                                  │
+   │   2. gRPC call → users.svc:8080  (needs user profile, address)         │
+   │   3. write to orders DB                                                │
+   │   4. publish OrderCreated event → Kafka                                │
+   └────────────────────────────────┬───────────────────────────────────────┘
+                                    │
+                                    ▼
+   ┌──────────────── UserService (ClusterIP / LB) ─────────────────────────┐
+   │ pod-A  pod-B  pod-C  pod-D  pod-E  pod-F  pod-G  pod-H                 │
+   │ ▲ pod-D picked (consistent hash on user_id → cache locality)          │
+   └─────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+                         ┌──────────────────┐
+                         │ Redis (shared)   │  ← any pod hits the same cache
+                         │ Postgres         │
+                         └──────────────────┘
+</pre>
+  </div>
+
+  <h3>Step-by-step: how the request finds a healthy pod</h3>
+  <ol>
+    <li><strong>API Gateway → OrderService:</strong> the gateway resolves the logical name <code>orders.svc.cluster.local</code> via service discovery and gets a list of pod IPs.</li>
+    <li><strong>Load balancing:</strong> a Kubernetes Service (kube-proxy / iptables / IPVS) or an Envoy sidecar picks one of the 5 pods using round-robin, least-connection, or EWMA.</li>
+    <li><strong>Health check:</strong> only pods passing readiness probes are in the pool. A failing pod is removed in seconds; in-flight requests retry to a healthy peer.</li>
+    <li><strong>OrderService pod-2 → UserService:</strong> the same dance — discovery + LB picks one of the 8 user pods.</li>
+    <li><strong>Persistence:</strong> any pod writes to the same shared database / Redis. Pods are interchangeable workers — the data lives outside.</li>
+  </ol>
+
+  <h3>The non-negotiables that make this work</h3>
+
+  <div class="grid-2">
+    <div class="layer">
+      <h4>1. Statelessness</h4>
+      <p>No pod stores anything that another pod would need. Sessions, carts, idempotency tokens → Redis. Files → S3. If pod-2 dies mid-request, the client retries and pod-4 serves it identically.</p>
+    </div>
+    <div class="layer">
+      <h4>2. Service Discovery</h4>
+      <p>Pods are ephemeral — IPs change every deploy. Discovery (k8s DNS, Consul, Eureka) maintains a live registry. Clients (or sidecars) refresh this list every few seconds.</p>
+    </div>
+    <div class="layer">
+      <h4>3. Client-side or sidecar LB</h4>
+      <p>For internal service-to-service traffic, an L7 LB on every hop adds latency. Modern stacks use either a client library (gRPC's built-in LB) or an <strong>Envoy sidecar</strong> per pod that does discovery + LB + retries locally.</p>
+    </div>
+    <div class="layer">
+      <h4>4. Shared State Externalized</h4>
+      <p>Database, cache, message broker — all clustered themselves and reachable from every pod. The 5 order pods all talk to the same Postgres primary (or the same Redis cluster). Consistency lives in the data layer, not the service layer.</p>
+    </div>
+    <div class="layer">
+      <h4>5. Idempotency &amp; Retries</h4>
+      <p>If pod-2 crashes after writing the order but before responding, the client retries — and pod-4 might process it. The order endpoint must use an <strong>idempotency key</strong> (<code>Idempotency-Key</code> header) so the same order isn't created twice.</p>
+    </div>
+    <div class="layer">
+      <h4>6. Connection Pooling</h4>
+      <p>Each order pod opens a small pool of HTTP/2 or gRPC connections to user pods (multiplexed) and to the DB (via PgBouncer). Without pooling, 5 × 8 = 40 fresh TCP+TLS handshakes per second is wasted CPU.</p>
+    </div>
+  </div>
+
+  <h3>Concurrency &amp; data correctness across pods</h3>
+  <p>Multiple order pods can process two requests for the <em>same user</em> at the same time. That's where things break if you're not careful:</p>
+  <ul>
+    <li><strong>Race conditions:</strong> two pods both check "stock &gt; 0" and both decrement. Fix with DB-level row locks (<code>SELECT … FOR UPDATE</code>), optimistic concurrency (<code>version</code> column + <code>WHERE version = ?</code>), or an atomic operation (<code>UPDATE … SET stock = stock - 1 WHERE stock &gt; 0</code>).</li>
+    <li><strong>Distributed locks</strong> when DB-level isn't enough: Redis Redlock or ZooKeeper for "only one pod processes this user's checkout at a time".</li>
+    <li><strong>Event ordering:</strong> publish to Kafka with <code>partition_key = user_id</code> so all events for one user land on the same partition and are consumed in order — even though producers are spread across pods.</li>
+    <li><strong>Cache coherence:</strong> when pod-3 updates a user's profile, pod-7 may still serve a stale cache entry. Mitigate with short TTLs, cache-invalidation events on Kafka, or a write-through cache.</li>
+  </ul>
+
+  <h3>Sticky sessions — when (and when not) to use them</h3>
+  <p>Most stateless services don't need stickiness. You need it when:</p>
+  <ul>
+    <li><strong>WebSocket / SSE</strong> connections — the user's open socket lives on one pod.</li>
+    <li><strong>In-memory rate-limit counters</strong> per user (cheaper than Redis at extreme scale).</li>
+    <li><strong>Cache locality:</strong> route the same user_id to the same pod via consistent hashing so its in-process LRU stays warm.</li>
+  </ul>
+  <p>Use a hash of <code>user_id</code> at the LB; falls back to another pod if the chosen one is unhealthy. Avoid IP-based stickiness — corporate NATs collapse thousands of users into one IP.</p>
+
+  <h3>Auto-scaling: how 5 pods become 50</h3>
+  <ul>
+    <li>Kubernetes <strong>HPA</strong> watches CPU / memory / custom metrics (RPS, p95 latency, queue depth). Scales pod replicas in/out.</li>
+    <li>If no node has room, the <strong>Cluster Autoscaler</strong> spins up a new VM.</li>
+    <li>New pods register with discovery → traffic flows to them within ~10–30 seconds.</li>
+    <li><strong>Scale on the right signal:</strong> CPU is fine for compute-bound services; for I/O-bound ones, scale on RPS or active-connection count instead.</li>
+    <li><strong>PodDisruptionBudgets</strong> prevent the autoscaler/k8s upgrade from killing too many pods at once.</li>
+  </ul>
+
+  <h3>Failure modes specific to multi-node</h3>
+  <table>
+    <tr><th>Failure</th><th>What goes wrong</th><th>Mitigation</th></tr>
+    <tr><td>Single pod crashes</td><td>In-flight requests fail</td><td>Health checks + client retry to another pod</td></tr>
+    <tr><td>Slow pod ("gray failure")</td><td>It still passes health checks but is at p99 = 5s</td><td>Outlier detection in Envoy; eject misbehaving pods automatically</td></tr>
+    <tr><td>Rolling deploy</td><td>Old + new versions live simultaneously</td><td>Backward-compatible APIs &amp; DB migrations; canary first</td></tr>
+    <tr><td>Network partition between pods</td><td>OrderService can't reach UserService</td><td>Circuit breaker → fall back to cached profile or fail fast</td></tr>
+    <tr><td>Thundering herd after pod restart</td><td>New pod gets full traffic instantly, GC kicks in, pod is killed</td><td>Slow-start LB + warmup probes + JIT pre-warm</td></tr>
+    <tr><td>Stale service-discovery list</td><td>Client sends to a dead pod IP</td><td>Short DNS TTL; sidecar refreshes endpoints every few seconds</td></tr>
+    <tr><td>Two pods process same message</td><td>Duplicate side effects (charge user twice)</td><td>Idempotency keys + dedup table</td></tr>
+  </table>
+
+  <h3>Putting it together</h3>
+  <div class="scale-box">
+    <strong>The mental model:</strong> a multi-node service is a <em>pool of identical, disposable workers</em> behind a load balancer. Any pod can serve any request. State lives in the data layer. Coordination happens through the database, the cache, or the message broker — never in pod memory. Add or kill pods freely; the system absorbs it because no single pod is special.
+  </div>
+
+  <h3>What changes as you scale further</h3>
+  <ul>
+    <li><strong>10 pods → 100 pods:</strong> connection counts to the DB explode → introduce PgBouncer / RDS Proxy.</li>
+    <li><strong>100 pods → 1000 pods:</strong> service mesh becomes worth the complexity (mTLS, traffic shifting, observability uniformity).</li>
+    <li><strong>One region → multi-region:</strong> each region runs its own pod fleet + cache + DB replica. Use latency-based DNS to pick a region; reconcile writes via async replication or CRDTs.</li>
+    <li><strong>Hot tenant problem:</strong> one customer floods 30% of traffic to one pod via consistent hashing → split into "cells" (shuffle sharding) so noisy neighbors only affect a fraction of pods.</li>
+  </ul>
+</section>
+
+</div>
+
+<footer>
+  Generic System Design Reference · Built for engineers who design and operate internet-scale systems.
+</footer>
+
+</body>
+</html>
