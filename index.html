@@ -7,7 +7,7 @@
 <meta name="description" content="Portfolio of Vikas Kumar Gupta — Software Developer at Onsurity. Java, Spring Boot, distributed systems, backend." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
 <style>
   :root {
     --bg: #ffffff;
@@ -19,7 +19,11 @@
     --fg-muted: #555555;
     --fg-subtle: #888888;
     --accent: #2563eb;
+    --accent-2: #8b5cf6;
+    --accent-3: #ec4899;
     --accent-soft: rgba(37, 99, 235, 0.08);
+    --accent-glow: rgba(99, 102, 241, 0.16);
+    --font-display: 'Space Grotesk', 'Inter', sans-serif;
     --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
     --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
     --shadow-lg: 0 12px 32px rgba(0,0,0,0.10);
@@ -38,7 +42,10 @@
     --fg-muted: #a3a3a3;
     --fg-subtle: #6b6b6b;
     --accent: #60a5fa;
+    --accent-2: #c084fc;
+    --accent-3: #f472b6;
     --accent-soft: rgba(96, 165, 250, 0.12);
+    --accent-glow: rgba(192, 132, 252, 0.24);
     --shadow-sm: 0 1px 2px rgba(0,0,0,0.30);
     --shadow-md: 0 4px 16px rgba(0,0,0,0.40);
     --shadow-lg: 0 12px 32px rgba(0,0,0,0.50);
@@ -77,11 +84,20 @@
     gap: 16px;
   }
   .nav-brand {
+    font-family: var(--font-display);
     font-weight: 700;
-    font-size: 15px;
-    letter-spacing: -0.01em;
+    font-size: 16px;
+    letter-spacing: -0.02em;
   }
-  .nav-brand span { color: var(--accent); }
+  .nav-brand span {
+    color: var(--accent);
+    display: inline-block;
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.55; transform: scale(1.25); }
+  }
   .nav-links {
     display: flex;
     gap: 4px;
@@ -142,20 +158,22 @@
   main { max-width: var(--maxw); margin: 0 auto; padding: 48px 24px 96px; }
   section { margin-bottom: 72px; scroll-margin-top: 80px; }
   section h2 {
+    font-family: var(--font-display);
     font-size: 13px;
     font-weight: 600;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--fg-subtle);
+    color: var(--fg-muted);
     margin-bottom: 24px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
   }
   section h2::before {
     content: "";
-    width: 18px; height: 1px;
-    background: var(--fg-subtle);
+    width: 32px; height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    border-radius: 999px;
   }
 
   /* Hero */
@@ -165,28 +183,85 @@
     gap: 28px;
     align-items: center;
     margin-bottom: 48px;
+    position: relative;
+    isolation: isolate;
+  }
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: -80px -40px;
+    z-index: -1;
+    background:
+      radial-gradient(36% 50% at 15% 30%, var(--accent-glow), transparent 60%),
+      radial-gradient(36% 50% at 85% 70%, rgba(236, 72, 153, 0.10), transparent 60%);
+    filter: blur(20px);
+    animation: heroFloat 22s ease-in-out infinite alternate;
+    pointer-events: none;
+  }
+  @keyframes heroFloat {
+    0%   { transform: translate(0, 0) scale(1); }
+    50%  { transform: translate(36px, -18px) scale(1.06); }
+    100% { transform: translate(-24px, 12px) scale(0.96); }
   }
   .avatar {
     width: 120px; height: 120px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 55%, var(--accent-3) 100%);
+    background-size: 200% 200%;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 44px;
+    font-family: var(--font-display);
+    font-size: 48px;
     font-weight: 700;
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow-lg), 0 0 60px var(--accent-glow);
     border: 3px solid var(--bg);
     user-select: none;
+    animation: avatarShift 9s ease-in-out infinite alternate;
+  }
+  @keyframes avatarShift {
+    0%   { background-position: 0% 0%; }
+    100% { background-position: 100% 100%; }
   }
   .hero h1 {
-    font-size: 36px;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    line-height: 1.1;
-    margin-bottom: 8px;
+    font-family: var(--font-display);
+    font-size: 44px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    margin-bottom: 10px;
   }
+  .name-grad {
+    background: linear-gradient(120deg,
+      var(--fg) 0%,
+      var(--fg) 25%,
+      var(--accent) 45%,
+      var(--accent-2) 55%,
+      var(--accent-3) 65%,
+      var(--fg) 85%,
+      var(--fg) 100%);
+    background-size: 220% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 8s linear infinite;
+  }
+  @keyframes shimmer {
+    0%   { background-position: 0% center; }
+    100% { background-position: -220% center; }
+  }
+  .cursor {
+    display: inline-block;
+    width: 4px;
+    height: 0.78em;
+    margin-left: 8px;
+    background: var(--accent);
+    border-radius: 1px;
+    vertical-align: -0.02em;
+    animation: blink 1.1s steps(2, end) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
   .hero .title {
     color: var(--fg-muted);
     font-size: 15px;
@@ -236,10 +311,14 @@
     box-shadow: var(--shadow-md);
   }
   .stat-value {
-    font-size: 28px;
+    font-family: var(--font-display);
+    font-size: 30px;
     font-weight: 700;
-    letter-spacing: -0.02em;
-    color: var(--fg);
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, var(--fg) 20%, var(--accent) 85%, var(--accent-2) 110%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
     font-variant-numeric: tabular-nums;
   }
   .stat-label {
@@ -841,10 +920,47 @@
   /* Scroll reveal */
   .reveal {
     opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
+    transform: translateY(24px);
+    transition:
+      opacity 0.75s cubic-bezier(0.2, 0.65, 0.3, 1),
+      transform 0.75s cubic-bezier(0.2, 0.65, 0.3, 1);
   }
   .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* Card spotlight */
+  .work-item,
+  .project,
+  .learning-card,
+  .tech-item,
+  .stat {
+    position: relative;
+  }
+  .card-glow {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(440px circle at var(--mx, -200px) var(--my, -200px),
+                                var(--accent-soft), transparent 45%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .work-item:hover .card-glow,
+  .project:hover .card-glow,
+  .learning-card:hover .card-glow,
+  .tech-item:hover .card-glow,
+  .stat:hover .card-glow { opacity: 1; }
+
+  /* Display-font headings inside cards */
+  .work-company,
+  .role-project-title,
+  .learning-title,
+  .project h3,
+  .tech-title {
+    font-family: var(--font-display);
+    letter-spacing: -0.015em;
+  }
 
   /* Responsive */
   @media (max-width: 640px) {
@@ -891,7 +1007,7 @@
   <section class="hero reveal" id="about">
     <div class="avatar">V</div>
     <div>
-      <h1>Vikas Kumar Gupta</h1>
+      <h1><span class="name-grad">Vikas Kumar Gupta</span><span class="cursor" aria-hidden="true"></span></h1>
       <div class="title">
         Software Developer
         <span class="sep">·</span> SDE-2 @ Onsurity
@@ -1498,6 +1614,25 @@
     });
   }, { threshold: 0.12 });
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // ---------- Card spotlight ----------
+  const spotlightTargets = document.querySelectorAll(
+    '.work-item, .project, .learning-card, .tech-item, .stat'
+  );
+  spotlightTargets.forEach(card => {
+    const glow = document.createElement('div');
+    glow.className = 'card-glow';
+    card.prepend(glow);
+    card.addEventListener('pointermove', (e) => {
+      const r = card.getBoundingClientRect();
+      card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+      card.style.setProperty('--my', (e.clientY - r.top) + 'px');
+    });
+    card.addEventListener('pointerleave', () => {
+      card.style.removeProperty('--mx');
+      card.style.removeProperty('--my');
+    });
+  });
 
   // ---------- Gallery ----------
   const track = document.getElementById('galleryTrack');
