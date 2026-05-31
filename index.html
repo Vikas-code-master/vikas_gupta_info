@@ -317,6 +317,111 @@
     font-family: 'JetBrains Mono', monospace;
   }
 
+  /* Tech content */
+  .tech-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+  .tech-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    transition: all var(--transition);
+  }
+  .tech-item:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  .tech-icon {
+    width: 42px; height: 42px;
+    flex-shrink: 0;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .tech-body { flex: 1; min-width: 0; }
+  .tech-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+  .tech-desc { font-size: 13px; color: var(--fg-muted); margin-bottom: 8px; line-height: 1.5; }
+  .tech-meta {
+    font-size: 11px;
+    color: var(--fg-subtle);
+    font-family: 'JetBrains Mono', monospace;
+    display: flex; gap: 10px; flex-wrap: wrap;
+  }
+  .tech-meta span::before { content: "·"; margin-right: 10px; color: var(--border-strong); }
+  .tech-meta span:first-child::before { content: ""; margin-right: 0; }
+
+  /* Learning */
+  .learning-card {
+    display: block;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    text-decoration: none;
+    color: inherit;
+    transition: all var(--transition);
+    position: relative;
+    overflow: hidden;
+  }
+  .learning-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--accent-soft) 0%, transparent 55%);
+    opacity: 0;
+    transition: opacity var(--transition);
+    pointer-events: none;
+  }
+  .learning-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  .learning-card:hover::before { opacity: 1; }
+  .learning-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 14px;
+    position: relative;
+  }
+  .learning-title { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 4px; }
+  .learning-sub { font-size: 13px; color: var(--fg-muted); }
+  .learning-meta {
+    font-size: 11px;
+    color: var(--fg-subtle);
+    font-family: 'JetBrains Mono', monospace;
+    white-space: nowrap;
+  }
+  .learning-topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .learning-topics .skill-pill { font-size: 11px; padding: 3px 9px; }
+  .learning-cta {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+  }
+  .learning-card:hover .learning-cta { gap: 10px; }
+
   /* Skills */
   .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
   .skill-group {
@@ -608,6 +713,8 @@
       <li><a href="#work">Work</a></li>
       <li><a href="#education">Education</a></li>
       <li><a href="#projects">Projects</a></li>
+      <li><a href="#learning">Learning</a></li>
+      <li><a href="#tech-content">Tech</a></li>
       <li><a href="#skills">Skills</a></li>
       <li><a href="#awards">Awards</a></li>
       <li><a href="#contact">Contact</a></li>
@@ -757,6 +864,55 @@
         <p>Customer, Hotel, and Rating services with Eureka service discovery, API Gateway, and inter-service communication using Spring Cloud.</p>
         <div class="project-tags"><span class="tag">Spring Boot</span><span class="tag">Eureka</span><span class="tag">API Gateway</span></div>
       </a>
+    </div>
+  </section>
+
+  <!-- LEARNING -->
+  <section class="reveal" id="learning">
+    <h2>Learning</h2>
+    <a class="learning-card" href="content/design_patterns_handbook.html" target="_blank" rel="noopener">
+      <div class="learning-head">
+        <div>
+          <div class="learning-title">Distributed Systems &amp; Design Patterns Handbook</div>
+          <div class="learning-sub">A personal deep-dive notebook — 13 chapters, 60+ patterns, with diagrams &amp; trade-offs.</div>
+        </div>
+        <div class="learning-meta">Self-study · HTML</div>
+      </div>
+      <div class="learning-topics">
+        <span class="skill-pill">Distributed Transactions</span>
+        <span class="skill-pill">Consistency &amp; Replication</span>
+        <span class="skill-pill">Event-Driven Patterns</span>
+        <span class="skill-pill">Reliability &amp; Resilience</span>
+        <span class="skill-pill">Communication &amp; Integration</span>
+        <span class="skill-pill">Architecture</span>
+        <span class="skill-pill">Caching</span>
+        <span class="skill-pill">Storage &amp; Sharding</span>
+        <span class="skill-pill">Scalability</span>
+        <span class="skill-pill">Coordination &amp; Consensus</span>
+        <span class="skill-pill">Migration &amp; Modernization</span>
+        <span class="skill-pill">Observability</span>
+        <span class="skill-pill">Security</span>
+      </div>
+      <div class="learning-cta">Read the handbook →</div>
+    </a>
+  </section>
+
+  <!-- TECH CONTENT -->
+  <!--
+    Auto-populated from the /content folder via the GitHub Contents API.
+    To add a new entry: drop a file into /content and push. The card list
+    will reflect it on the next page load. No HTML edits needed.
+  -->
+  <section class="reveal" id="tech-content">
+    <h2>Tech Content</h2>
+    <div class="tech-list" id="techList">
+      <div class="tech-item" style="cursor: default;">
+        <div class="tech-icon">…</div>
+        <div class="tech-body">
+          <div class="tech-title">Loading…</div>
+          <div class="tech-meta"><span>Fetching files from repo</span></div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -971,12 +1127,87 @@
   gallery.addEventListener('mouseenter', () => clearInterval(auto));
   gallery.addEventListener('mouseleave', () => auto = setInterval(() => go(idx + 1), 5000));
 
+  // ---------- Tech content (GitHub Contents API) ----------
+  const TECH_REPO = 'Vikas-code-master/vikas_gupta_info';
+  const TECH_PATH = 'content';
+  const techList = document.getElementById('techList');
+
+  function prettyTitle(name) {
+    const base = name.replace(/\.[^.]+$/, '');
+    return base.replace(/[_-]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  }
+  function fileIcon(name) {
+    const m = name.match(/\.([^.]+)$/);
+    if (!m) return 'FILE';
+    return m[1].slice(0, 4).toUpperCase();
+  }
+  function fileTypeLabel(name) {
+    const ext = (name.match(/\.([^.]+)$/) || [, ''])[1].toLowerCase();
+    const map = { html: 'Web page', pdf: 'PDF', md: 'Markdown', txt: 'Text', json: 'JSON',
+      png: 'Image', jpg: 'Image', jpeg: 'Image', gif: 'Image', svg: 'Image',
+      ppt: 'Slides', pptx: 'Slides', doc: 'Doc', docx: 'Doc',
+      xls: 'Sheet', xlsx: 'Sheet', csv: 'CSV', zip: 'Archive' };
+    return map[ext] || ext.toUpperCase() || 'File';
+  }
+  function formatSize(bytes) {
+    if (!bytes && bytes !== 0) return '';
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  }
+  function renderTechItems(files) {
+    if (!files.length) {
+      techList.innerHTML = `<div class="tech-item" style="cursor: default;">
+        <div class="tech-icon">∅</div>
+        <div class="tech-body">
+          <div class="tech-title">No files yet</div>
+          <div class="tech-meta"><span>Drop files into /content and push</span></div>
+        </div></div>`;
+      return;
+    }
+    techList.innerHTML = files.map(f => {
+      const href = `${TECH_PATH}/${encodeURIComponent(f.name)}`;
+      const meta = [fileTypeLabel(f.name), formatSize(f.size)].filter(Boolean)
+        .map(s => `<span>${s}</span>`).join('');
+      return `<a class="tech-item" href="${href}" target="_blank" rel="noopener">
+        <div class="tech-icon">${fileIcon(f.name)}</div>
+        <div class="tech-body">
+          <div class="tech-title">${prettyTitle(f.name)}</div>
+          <div class="tech-meta">${meta}</div>
+        </div></a>`;
+    }).join('');
+  }
+  function renderTechError(msg) {
+    techList.innerHTML = `<div class="tech-item" style="cursor: default;">
+      <div class="tech-icon">!</div>
+      <div class="tech-body">
+        <div class="tech-title">Could not load tech content</div>
+        <div class="tech-meta"><span>${msg}</span></div>
+      </div></div>`;
+  }
+  fetch(`https://api.github.com/repos/${TECH_REPO}/contents/${TECH_PATH}`, {
+    headers: { 'Accept': 'application/vnd.github+json' }
+  })
+    .then(r => {
+      if (!r.ok) throw new Error(`GitHub API ${r.status}`);
+      return r.json();
+    })
+    .then(items => {
+      const files = items
+        .filter(i => i.type === 'file' && !i.name.startsWith('.'))
+        .sort((a, b) => a.name.localeCompare(b.name));
+      renderTechItems(files);
+    })
+    .catch(err => renderTechError(err.message));
+
   // ---------- Command palette ----------
   const commands = [
     { icon: '👤', label: 'Go to About',         action: () => location.hash = '#about' },
     { icon: '💼', label: 'Go to Work',          action: () => location.hash = '#work' },
     { icon: '🎓', label: 'Go to Education',     action: () => location.hash = '#education' },
     { icon: '🚀', label: 'Go to Projects',      action: () => location.hash = '#projects' },
+    { icon: '📚', label: 'Go to Learning',      action: () => location.hash = '#learning' },
+    { icon: '📄', label: 'Go to Tech Content',  action: () => location.hash = '#tech-content' },
     { icon: '🧰', label: 'Go to Skills',        action: () => location.hash = '#skills' },
     { icon: '🏆', label: 'Go to Awards',        action: () => location.hash = '#awards' },
     { icon: '✉️', label: 'Go to Contact',       action: () => location.hash = '#contact' },
