@@ -252,46 +252,186 @@
   .prose p { color: var(--fg-muted); margin-bottom: 12px; font-size: 15px; }
   .prose strong { color: var(--fg); font-weight: 600; }
 
-  /* Work timeline */
+  /* Work — card */
   .work-item {
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 20px 22px;
-    margin-bottom: 14px;
+    padding: 24px 26px;
+    margin-bottom: 18px;
     transition: all var(--transition);
+    position: relative;
+    overflow: hidden;
   }
-  .work-item:hover { border-color: var(--border-strong); box-shadow: var(--shadow-sm); }
+  .work-item::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--brand, var(--accent));
+    opacity: 0;
+    transition: opacity var(--transition);
+  }
+  .work-item:hover {
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+  }
+  .work-item:hover::before { opacity: 1; }
+
+  /* Work — header */
   .work-head {
     display: flex;
-    justify-content: space-between;
+    gap: 16px;
     align-items: flex-start;
     flex-wrap: wrap;
-    gap: 6px;
-    margin-bottom: 4px;
+    margin-bottom: 14px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
   }
-  .work-company { font-weight: 700; font-size: 16px; }
-  .work-role { color: var(--fg-muted); font-size: 14px; margin-bottom: 10px; }
-  .work-meta { font-size: 12px; color: var(--fg-subtle); font-family: 'JetBrains Mono', monospace; }
-  .work-item ul { list-style: none; }
-  .work-item li {
+  .work-item > .work-head:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+  .work-logo {
+    width: 52px; height: 52px;
+    border-radius: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 800;
+    font-size: 22px;
+    letter-spacing: -0.02em;
+    flex-shrink: 0;
+    box-shadow: var(--shadow-sm);
+    background: var(--brand, linear-gradient(135deg, #667eea, #764ba2));
+  }
+  .work-head-text { flex: 1; min-width: 200px; }
+  .work-company {
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+  .work-role-line {
+    margin-top: 4px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .work-role { color: var(--fg-muted); font-size: 14px; font-weight: 500; }
+  .work-loc { font-size: 13px; color: var(--fg-subtle); }
+  .work-loc::before {
+    content: '·';
+    margin-right: 8px;
+    color: var(--border-strong);
+  }
+  .work-dates-wrap { text-align: right; }
+  .work-dates {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--fg-muted);
+    white-space: nowrap;
+  }
+  .work-duration {
+    display: block;
+    font-size: 11px;
+    color: var(--fg-subtle);
+    margin-top: 4px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Work — intro */
+  .role-intro {
     color: var(--fg-muted);
     font-size: 14px;
-    padding: 4px 0 4px 18px;
+    line-height: 1.6;
+    margin-bottom: 18px;
+  }
+
+  /* Work — projects */
+  .project-list {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .role-project {
+    padding-left: 22px;
     position: relative;
+    border-left: 2px solid var(--border);
+    transition: border-color var(--transition);
   }
-  .work-item li::before {
-    content: "▹";
+  .role-project:hover { border-left-color: var(--brand, var(--accent)); }
+  .role-project::before {
+    content: '';
     position: absolute;
-    left: 0;
-    color: var(--accent);
+    left: -7px;
+    top: 4px;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 2px solid var(--brand, var(--accent));
+    transition: all var(--transition);
   }
+  .role-project:hover::before {
+    background: var(--brand, var(--accent));
+    transform: scale(1.15);
+  }
+  .role-project-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--fg);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .role-project-desc {
+    font-size: 13.5px;
+    color: var(--fg-muted);
+    line-height: 1.6;
+  }
+
+  /* Impact badges */
+  .impact-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: -0.005em;
+    line-height: 1.5;
+  }
+  .impact-badge.scale {
+    background: rgba(245, 158, 11, 0.14);
+    color: #b45309;
+  }
+  .impact-badge.win {
+    background: rgba(34, 197, 94, 0.14);
+    color: #15803d;
+  }
+  [data-theme="dark"] .impact-badge.scale { color: #fbbf24; background: rgba(251, 191, 36, 0.16); }
+  [data-theme="dark"] .impact-badge.win   { color: #4ade80; background: rgba(74, 222, 128, 0.14); }
+
   .bullet-tech {
     display: flex;
     flex-wrap: wrap;
     gap: 5px;
-    margin-top: 8px;
-    margin-bottom: 2px;
+    margin-top: 10px;
   }
 
   /* Projects */
@@ -715,6 +855,8 @@
     .nav-links { display: none; }
     .hero h1 { font-size: 28px; }
     .work-head { flex-direction: column; }
+    .work-dates-wrap { text-align: left; width: 100%; }
+    .work-head-text { min-width: 0; }
   }
 </style>
 </head>
@@ -789,17 +931,33 @@
   <section class="reveal" id="work">
     <h2>Work Experience</h2>
 
-    <div class="work-item">
+    <div class="work-item" style="--brand: linear-gradient(135deg, #10b981, #059669);">
       <div class="work-head">
-        <div>
+        <div class="work-logo">O</div>
+        <div class="work-head-text">
           <div class="work-company">Onsurity</div>
-          <div class="work-role">SDE-2</div>
+          <div class="work-role-line">
+            <span class="work-role">SDE-2 · Backend</span>
+            <span class="work-loc">Bengaluru</span>
+          </div>
         </div>
-        <div class="work-meta">Mar 2025 — Present · Bengaluru</div>
+        <div class="work-dates-wrap">
+          <span class="work-dates">Mar 2025 — Present</span>
+          <span class="work-duration">~1 yr 3 mo</span>
+        </div>
       </div>
-      <ul>
-        <li>
-          <strong>Communication Module:</strong> Designed and implemented APIs using Spring Boot to enable multi-channel communication via SMS, WhatsApp, Email, and Push Notifications. Built dynamic, configurable templates and integrated multiple third-party messaging platforms for seamless delivery.
+
+      <div class="role-intro">
+        Owning backend services across the <strong>Wellness platform</strong> — communications, diagnostics, fitness, and tele-consultations — integrating multiple insurance and healthcare partners.
+      </div>
+
+      <div class="project-list">
+        <div class="role-project">
+          <div class="role-project-title">
+            Communication Module
+            <span class="impact-badge scale">4 channels</span>
+          </div>
+          <div class="role-project-desc">Designed and implemented APIs enabling multi-channel communication via <strong>SMS, WhatsApp, Email, and Push Notifications</strong>. Built dynamic, configurable templates and integrated multiple third-party messaging platforms for seamless delivery.</div>
           <div class="bullet-tech">
             <span class="tag">Java</span>
             <span class="tag">Spring Boot</span>
@@ -807,9 +965,11 @@
             <span class="tag">MongoDB</span>
             <span class="tag">AWS</span>
           </div>
-        </li>
-        <li>
-          <strong>Wellness — Diagnostic:</strong> Built REST APIs for member-level diagnostic test selection with partner-specific options; implemented test search, slot booking, coupon application, and end-to-end booking workflows.
+        </div>
+
+        <div class="role-project">
+          <div class="role-project-title">Wellness — Diagnostics</div>
+          <div class="role-project-desc">Built REST APIs for member-level diagnostic test selection with partner-specific options; implemented test search, slot booking, coupon application, and end-to-end booking workflows.</div>
           <div class="bullet-tech">
             <span class="tag">Java</span>
             <span class="tag">Spring Boot</span>
@@ -818,39 +978,60 @@
             <span class="tag">MongoDB</span>
             <span class="tag">AWS</span>
           </div>
-        </li>
-        <li>
-          <strong>Wellness — Gyms:</strong> Built integration APIs to aggregate and expose gym services from partners such as Cult and Fitpass.
+        </div>
+
+        <div class="role-project">
+          <div class="role-project-title">Wellness — Gyms</div>
+          <div class="role-project-desc">Built integration APIs to aggregate and expose gym services from partners such as <strong>Cult</strong> and <strong>Fitpass</strong>.</div>
           <div class="bullet-tech">
             <span class="tag">Java</span>
             <span class="tag">Spring Boot</span>
             <span class="tag">SQL Server</span>
             <span class="tag">AWS</span>
           </div>
-        </li>
-        <li>
-          <strong>Wellness — Consultations:</strong> Developed APIs enabling medical consultation services through third-party partners including MediBuddy and Practo.
+        </div>
+
+        <div class="role-project">
+          <div class="role-project-title">Wellness — Consultations</div>
+          <div class="role-project-desc">Developed APIs enabling medical consultation services through third-party partners including <strong>MediBuddy</strong> and <strong>Practo</strong>.</div>
           <div class="bullet-tech">
             <span class="tag">Java</span>
             <span class="tag">Spring Boot</span>
             <span class="tag">SQL Server</span>
             <span class="tag">AWS</span>
           </div>
-        </li>
-      </ul>
+        </div>
+      </div>
     </div>
 
-    <div class="work-item">
+    <div class="work-item" style="--brand: linear-gradient(135deg, #f59e0b, #d97706);">
       <div class="work-head">
-        <div>
+        <div class="work-logo">P</div>
+        <div class="work-head-text">
           <div class="work-company">Policybazaar</div>
-          <div class="work-role">SDE-1</div>
+          <div class="work-role-line">
+            <span class="work-role">SDE-1 · Backend</span>
+            <span class="work-loc">Gurugram</span>
+          </div>
         </div>
-        <div class="work-meta">May 2021 — Mar 2025 · Gurugram</div>
+        <div class="work-dates-wrap">
+          <span class="work-dates">May 2021 — Mar 2025</span>
+          <span class="work-duration">3 yrs 11 mo</span>
+        </div>
       </div>
-      <ul>
-        <li>
-          <strong>Coreservice:</strong> Developed features for pre-payment customer journeys — visit, enquiry, lead, and order — handling <strong>10M/day traffic</strong> (2:1 read/write).
+
+      <div class="role-intro">
+        Built and owned high-traffic services for India's largest insurance marketplace — pre-payment customer journeys, central document infrastructure, and identity/document compliance systems.
+      </div>
+
+      <div class="project-list">
+        <div class="role-project">
+          <div class="role-project-title">
+            Coreservice
+            <span class="impact-badge scale">10M req/day</span>
+            <span class="impact-badge scale">2:1 R/W</span>
+          </div>
+          <div class="role-project-desc">Developed features for pre-payment customer journeys — <strong>visit, enquiry, lead, and order</strong> — owning the hot path that handles the full top-of-funnel traffic for the marketplace.</div>
           <div class="bullet-tech">
             <span class="tag">Java</span>
             <span class="tag">Spring MVC</span>
@@ -858,9 +1039,15 @@
             <span class="tag">MongoDB</span>
             <span class="tag">AWS</span>
           </div>
-        </li>
-        <li>
-          <strong>Policy Copy Detail (PCD) &amp; Central Doc Repo (CDR):</strong> Built a robust central backend providing policy details for multiple teams. Improved performance using design patterns, indexing, and Kafka (2M/day). In CDR managed policy copies, miscellaneous, and KYC docs (250K/day).
+        </div>
+
+        <div class="role-project">
+          <div class="role-project-title">
+            Policy Copy Detail (PCD) &amp; Central Doc Repo (CDR)
+            <span class="impact-badge scale">2M/day</span>
+            <span class="impact-badge scale">250K docs/day</span>
+          </div>
+          <div class="role-project-desc">Built a robust central backend providing policy details for multiple teams. Improved performance using design patterns, indexing, and Kafka. In CDR managed policy copies, miscellaneous, and <strong>KYC documents</strong>.</div>
           <div class="bullet-tech">
             <span class="tag">Java</span>
             <span class="tag">Spring Boot</span>
@@ -869,9 +1056,11 @@
             <span class="tag">MongoDB</span>
             <span class="tag">AWS S3</span>
           </div>
-        </li>
-        <li>
-          <strong>Docprime:</strong> Implemented login, member addition, HealthId creation, document storage by user/consent from HIP in HealthLocker. Added JWT auth and authorization for secure resource access.
+        </div>
+
+        <div class="role-project">
+          <div class="role-project-title">Docprime — HealthLocker</div>
+          <div class="role-project-desc">Implemented login, member addition, <strong>HealthId creation</strong>, and document storage by user/consent from HIP. Added JWT auth and authorization for secure resource access.</div>
           <div class="bullet-tech">
             <span class="tag">Java</span>
             <span class="tag">Spring MVC</span>
@@ -881,9 +1070,14 @@
             <span class="tag">JWT</span>
             <span class="tag">AWS</span>
           </div>
-        </li>
-        <li>
-          <strong>Mongo Cron Jobs:</strong> Built scheduled jobs to migrate data from MongoDB to S3 — <strong>reduced cost by 20%</strong>.
+        </div>
+
+        <div class="role-project">
+          <div class="role-project-title">
+            Mongo → S3 Cron Jobs
+            <span class="impact-badge win">−20% infra cost</span>
+          </div>
+          <div class="role-project-desc">Built scheduled jobs to archive cold data from MongoDB to S3, cutting hot-storage footprint and shifting infrequent reads to cheaper tiered storage.</div>
           <div class="bullet-tech">
             <span class="tag">Java</span>
             <span class="tag">Spring MVC</span>
@@ -891,9 +1085,11 @@
             <span class="tag">AWS S3</span>
             <span class="tag">jQuery</span>
           </div>
-        </li>
-        <li>
-          <strong>Aadhaar Vault:</strong> Developed a secure storage system for UIDAI metadata used across teams.
+        </div>
+
+        <div class="role-project">
+          <div class="role-project-title">Aadhaar Vault</div>
+          <div class="role-project-desc">Developed a secure storage system for <strong>UIDAI metadata</strong> consumed across teams, isolating PII behind a controlled service surface for compliance.</div>
           <div class="bullet-tech">
             <span class="tag">Java</span>
             <span class="tag">Spring Boot</span>
@@ -901,22 +1097,43 @@
             <span class="tag">MongoDB</span>
             <span class="tag">AWS</span>
           </div>
-        </li>
-      </ul>
+        </div>
+      </div>
     </div>
 
-    <div class="work-item">
+    <div class="work-item" style="--brand: linear-gradient(135deg, #6366f1, #4f46e5);">
       <div class="work-head">
-        <div>
+        <div class="work-logo" style="font-size:14px;letter-spacing:0.5px;">IIT</div>
+        <div class="work-head-text">
           <div class="work-company">IIT Bhubaneswar</div>
-          <div class="work-role">Teaching Assistant</div>
+          <div class="work-role-line">
+            <span class="work-role">Teaching Assistant</span>
+            <span class="work-loc">Odisha</span>
+          </div>
         </div>
-        <div class="work-meta">Jul 2019 — Apr 2021 · Odisha</div>
+        <div class="work-dates-wrap">
+          <span class="work-dates">Jul 2019 — Apr 2021</span>
+          <span class="work-duration">1 yr 10 mo</span>
+        </div>
       </div>
-      <ul>
-        <li>Guided and supported 100+ students by resolving academic doubts.</li>
-        <li>Designed assignments, created test content, and provided technical mentoring.</li>
-      </ul>
+
+      <div class="role-intro">
+        Supported coursework during M.Tech — combining academic mentoring with assignment design and evaluation.
+      </div>
+
+      <div class="project-list">
+        <div class="role-project">
+          <div class="role-project-title">
+            Student Mentoring
+            <span class="impact-badge scale">100+ students</span>
+          </div>
+          <div class="role-project-desc">Guided and supported students by resolving academic doubts, conducting doubt-clearing sessions, and providing one-on-one technical mentoring.</div>
+        </div>
+        <div class="role-project">
+          <div class="role-project-title">Assignments &amp; Evaluation</div>
+          <div class="role-project-desc">Designed assignments, created test content, and evaluated student submissions across multiple core CS courses.</div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -924,23 +1141,36 @@
   <section class="reveal" id="education">
     <h2>Education</h2>
 
-    <div class="work-item">
+    <div class="work-item" style="--brand: linear-gradient(135deg, #6366f1, #4f46e5);">
       <div class="work-head">
-        <div>
+        <div class="work-logo" style="font-size:14px;letter-spacing:0.5px;">IIT</div>
+        <div class="work-head-text">
           <div class="work-company">Indian Institute of Technology, Bhubaneswar</div>
-          <div class="work-role">M.Tech.</div>
+          <div class="work-role-line">
+            <span class="work-role">M.Tech. · Computer Science</span>
+            <span class="work-loc">Bhubaneswar, Odisha</span>
+          </div>
         </div>
-        <div class="work-meta">2019 — 2021 · Bhubaneswar, Odisha</div>
+        <div class="work-dates-wrap">
+          <span class="work-dates">2019 — 2021</span>
+          <span class="work-duration">GATE AIR 41</span>
+        </div>
       </div>
     </div>
 
-    <div class="work-item">
+    <div class="work-item" style="--brand: linear-gradient(135deg, #ec4899, #be185d);">
       <div class="work-head">
-        <div>
+        <div class="work-logo" style="font-size:13px;letter-spacing:0.4px;">MMM</div>
+        <div class="work-head-text">
           <div class="work-company">Madan Mohan Malaviya University of Technology</div>
-          <div class="work-role">B.Tech. · State Govt. University</div>
+          <div class="work-role-line">
+            <span class="work-role">B.Tech. · State Govt. University</span>
+            <span class="work-loc">Gorakhpur, UP</span>
+          </div>
         </div>
-        <div class="work-meta">2014 — 2018 · Gorakhpur, UP</div>
+        <div class="work-dates-wrap">
+          <span class="work-dates">2014 — 2018</span>
+        </div>
       </div>
     </div>
   </section>
