@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Backend &amp; System Design — Troubleshooting Cheat Sheet</title>
+<style>
+  :root {
+    --bg: #0f1115;
+    --card: #181b22;
+    --card-alt: #1f232c;
+    --accent: #4f8cff;
+    --accent-soft: #2a3550;
+    --cause: #ffb454;
+    --fix: #3ddc97;
+    --text: #e6e9ef;
+    --muted: #9aa3b2;
+    --border: #2a2f3a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+  header {
+    padding: 48px 24px 32px;
+    text-align: center;
+    background: linear-gradient(160deg, #1b2333 0%, #0f1115 100%);
+    border-bottom: 1px solid var(--border);
+  }
+  header h1 {
+    margin: 0 0 8px;
+    font-size: 2rem;
+    letter-spacing: -0.5px;
+  }
+  header p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 1rem;
+  }
+  .wrap {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 32px 20px 80px;
+  }
+  .toc {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 36px;
+  }
+  .toc h2 {
+    margin: 0 0 14px;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+  }
+  .toc ol {
+    margin: 0;
+    padding-left: 22px;
+    columns: 2;
+    column-gap: 32px;
+  }
+  .toc li { margin-bottom: 6px; break-inside: avoid; }
+  .toc a {
+    color: var(--text);
+    text-decoration: none;
+    font-size: 0.92rem;
+  }
+  .toc a:hover { color: var(--accent); text-decoration: underline; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px 26px;
+    margin-bottom: 22px;
+    scroll-margin-top: 16px;
+  }
+  .card h3 {
+    margin: 0 0 16px;
+    font-size: 1.15rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .num {
+    flex: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    font-weight: 700;
+  }
+  .label {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 2px 8px;
+    border-radius: 5px;
+    margin-bottom: 8px;
+  }
+  .label.cause { background: rgba(255,180,84,0.15); color: var(--cause); }
+  .label.fix   { background: rgba(61,220,151,0.15); color: var(--fix); }
+  .section { margin-top: 14px; }
+  ul.points { margin: 6px 0 0; padding-left: 20px; }
+  ul.points li { margin-bottom: 6px; }
+  code {
+    background: var(--card-alt);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.85em;
+    color: #d8e0f0;
+  }
+  .tldr {
+    border-left: 3px solid var(--accent);
+    padding: 8px 14px;
+    background: var(--card-alt);
+    border-radius: 0 8px 8px 0;
+    margin-top: 14px;
+    font-size: 0.95rem;
+  }
+  .tldr b { color: var(--accent); }
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.85rem;
+    padding: 24px;
+    border-top: 1px solid var(--border);
+  }
+  a.top {
+    float: right;
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-decoration: none;
+  }
+  a.top:hover { color: var(--accent); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Backend &amp; System Design</h1>
+  <p>Production Troubleshooting Cheat Sheet &mdash; 15 common failure patterns</p>
+</header>
+
+<div class="wrap">
+
+  <nav class="toc">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#q1">Fast locally, slow in production</a></li>
+      <li><a href="#q2">Kafka consumers run, lag grows</a></li>
+      <li><a href="#q3">DB connections exhausted at peak</a></li>
+      <li><a href="#q4">More pods, slower responses</a></li>
+      <li><a href="#q5">Retries create duplicate payments</a></li>
+      <li><a href="#q6">Scheduled job runs multiple times</a></li>
+      <li><a href="#q7">One slow service breaks everything</a></li>
+      <li><a href="#q8">Random 500s, infra looks healthy</a></li>
+      <li><a href="#q9">Health checks pass, users fail</a></li>
+      <li><a href="#q10">Cache returns stale data</a></li>
+      <li><a href="#q11">Logs everywhere, debugging hard</a></li>
+      <li><a href="#q12">JVM memory creeps up per deploy</a></li>
+      <li><a href="#q13">Works in staging, fails at gateway</a></li>
+      <li><a href="#q14">Thread pools exhausted, CPU stable</a></li>
+      <li><a href="#q15">Circuit breakers but cascades persist</a></li>
+    </ol>
+  </nav>
+
+  <!-- Q1 -->
+  <div class="card" id="q1">
+    <h3><span class="num">1</span> API works locally but slow only in production <a class="top" href="#">&uarr; top</a></h3>
+    <div class="section">
+      <span class="label cause">Likely causes</span>
+      <ul class="points">
+        <li><b>Network latency</b> — prod hits real DBs, caches and downstream services over the network; locally they're in-memory or on <code>localhost</code>.</li>
+        <li><b>Data volume</b> — large prod tables expose missing indexes, full table scans and N+1 queries invisible on tiny local data.</li>
+        <li>Cold starts, TLS handshakes, DNS resolution, connection pool sizing.</li>
+        <li><b>Resource limits</b> — prod containers have CPU/memory caps and noisy neighbors.</li>
+      </ul>
+    </div>
+    <div class="tldr"><b>Check first:</b> APM traces / p99 latency breakdown to see <i>where</i> the time goes (DB vs downstream vs app), then DB slow-query logs and pool metrics.</div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="card" id="q2">
+    <h3><span class="num">2</span> Kafka consumers run normally, but lag keeps increasing <a class="top" href="#">&uarr; top</a></h3>
+    <div class="section">
+      <span class="label cause">Likely causes</span>
+      <ul class="points">
+        <li><b>Throughput mismatch</b> — producers publish faster than consumers process (heavy DB writes / downstream calls per message).</li>
+        <li><b>Partition skew / too few partitions</b> — parallelism is capped by partition count; adding consumers beyond that does nothing.</li>
+        <li>A slow/poison message blocking a partition; long GC pauses; rebalancing storms.</li>
+      </ul>
+    </div>
+    <div class="section">
+      <span class="label fix">Fix</span>
+      <ul class="points">
+        <li>Increase partitions + consumer instances, batch/async processing, profile per-message cost.</li>
+        <li>Tune <code>max.poll.records</code> / <code>max.poll.interval.ms</code> and watch for frequent rebalances.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="card" id="q3">
+    <h3><span class="num">3</span> DB connections suddenly exhausted at peak traffic <a class="top" href="#">&uarr; top</a></h3>
+    <div class="section">
+      <span class="label cause">Likely causes</span>
+      <ul class="points">
+        <li><b>Pool too small</b> for concurrency, or connections <b>leaked</b> (never closed/returned).</li>
+        <li><b>Slow queries</b> hold connections longer under load &rarr; pool drains.</li>
+        <li>No acquire/query <b>timeouts</b>, so requests pile up waiting.</li>
+        <li>Too many app instances &times; pool size &gt; DB <code>max_connections</code>.</li>
+      </ul>
+    </div>
+    <div class="section">
+      <span class="label fix">Fix</span>
+      <ul class="points">
+        <li>Right-size pool, add acquisition + query timeouts, fix leaks (try-with-resources).</li>
+        <li>Add a connection proxy (PgBouncer), optimize slow queries.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="card" id="q4">
+    <h3><span class="num">4</span> Autoscaling adds pods, but response time still climbs <a class="top" href="#">&uarr; top</a></h3>
+    <div class="section">
+      <span class="label cause">Likely causes</span>
+      <ul class="points">
+        <li>The bottleneck is <b>shared &amp; downstream</b>, not the app — database, cache or a third-party service. More pods = more pressure on the same DB &rarr; worse.</li>
+        <li>Lock contention / row locks, a single-threaded resource, or a queue behind everything.</li>
+        <li>Scaling on the <b>wrong metric</b> (CPU) when the real limit is DB connections or I/O.</li>
+      </ul>
+    </div>
+    <div class="tldr"><b>Fix:</b> find the shared bottleneck and scale/optimize <i>that</i> — add caching, read replicas, or backpressure.</div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="card" id="q5">
+    <h3><span class="num">5</span> Retry logic creates duplicate payment transactions <a class="top" href="#">&uarr; top</a></h3>
+    <div class="section">
+      <span class="label cause">Likely causes</span>
+      <ul class="points">
+        <li>Retries on a <b>non-idempotent</b> operation — the request succeeded but the response/ack was lost, so the client retries and charges again.</li>
+      </ul>
+    </div>
+    <div class="section">
+      <span class="label fix">Fix</span>
+      <ul class="points">
+        <li><b>Idempotency keys</b> — client-generated unique key per transaction; server dedupes.</li>
+        <li>Deduplication at the payment gateway; only retry on safe/known-failed states.</li>
+        <li>Exactly-once semantics or an outbox pattern. Make it idempotent <i>before</i> retrying.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="card" id="q6">
+    <h3><span class="num">6</span> Scheduled job runs multiple times after scaling <a class="top" href="#">&uarr; top</a></h3>
+    <div class="section">
+      <span class="label cause">Likely causes</span>
+      <ul class="points">
+        <li>Each instance runs its <b>own scheduler</b> — N replicas = N executions.</li>
+      </ul>
+    </div>
+    <div class="section">
+      <span class="label fix">Fix</span>
+      <ul class="points">
+        <li><b>Distributed lock</b> (Redis/ZooKeeper) or leader election.</li>
+        <li>Clustered scheduler (Quartz JDBC store, ShedLock) or a single external scheduler / central job queue that dispatches once.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="card" id="q7">
+    <h3><span class="num">7</span> One slow downstream service affects the whole platform <a class="top" href="#">&uarr; top</a></h3>
+    <div class="section">
+      <span class="label cause">Likely causes</span>
+      <ul class="points">
+        <li><b>Resource exhaustion cascade</b> — callers block on the slow service, holding threads/connections &rarr; pools fill &rarr; healthy requests starve.</li>
+        <li>No isolation between dependencies.</li>
+      </ul>
+    </div>
+    <div class="section">
+      <span class="label fix">Fix</span>
+      <ul class="points">
+        <li>Always set <b>timeouts</b>; add <b>circuit breakers</b>.</li>
+        <li><b>Bulkheads</b> — isolate thread pools per dependency; fallbacks / graceful degradation; go async where possible.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Q8 -->
+  <div class="card" id="q8">
+    <h3><span class="num">8</span> APIs randomly return 500s, but infra looks healthy <a class="top" href="#">&uarr; top</a></h3>
+    <div class="section">
+      <span class="label cause">Likely causes</span>
+      <ul class="points">
+        <li><b>App-level</b> — unhandled exceptions, race conditions, intermittent NPEs, serialization errors on edge-case data.</li>
+        <li><b>Dependency hiccups</b> — transient DB/cache/downstream timeouts surfacing as 500.</li>
+        <li>Connection/thread pool exhaustion under bursts; expired credentials/tokens; one bad pod.</li>
+      </ul>
+    </div>
+    <div class="tldr"><b>Fix:</b> structured error logging with correlation IDs, distributed tracing, error rate per pod/endpoint, and read the actual stack traces — healthy infra &ne; healthy app logic.</div>
+  </div>
+
+  <!-- Q9 -->
+  <div class="card" id="q9">
+    <h3><span class="num">9</span> Health checks pass, but users still face failures <a class="top" href="#">&uarr; top</a></h3>
+    <div class="section">
+      <span class="label cause">Likely causes</span>
+      <ul class="points">
+        <li>Health check is <b>too shallow</b> — liveness returns 200 without checking dependencies. App is "up" but DB/cache/downstream is broken.</li>
+      </ul>
+    </div>
+    <div class="section">
+      <span class="label fix">Fix</span>
+      <ul class="points">
+        <li>Meaningful <b>readiness/dependency checks</b> (verify DB, cache, critical downstreams).</li>
+        <li>Distinguish liveness vs readiness; add synthetic/end-to-end probes on real user paths.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Q10 -->
+  <div class="card" id="q10">
+    <h3><span class="num">10</span> Cache helps initially, then returns stale data <a class="top" href="#">&uarr; top</a></h3>
+    <div class="section">
+      <span class="label cause">Likely causes</span>
+      <ul class="points">
+        <li><b>Invalidation gap</b> — data updated in DB but cache not evicted/updated; TTL too long.</li>
+        <li>Write path bypasses cache; multiple writers; replication lag.</li>
+      </ul>
+    </div>
+    <div class="section">
+      <span class="label fix">Fix</span>
+      <ul class="points">
+        <li>Proper strategy: write-through / write-behind / cache-aside with explicit eviction.</li>
+        <li>Sensible TTLs, version/timestamp keys, event-driven invalidation.</li>
+      </ul>
+    </div>
+    <div class="tldr">"There are only two hard things in computer science: cache invalidation and naming things."</div>
+  </div>
+
+  <!-- Q11 -->
+  <div class="card" id="q11">
+    <h3><span class="num">11</span> Logs exist everywhere, but cross-service debugging is hard <a class="top" href="#">&uarr; top</a></h3>
+    <div class="section">
+      <span class="label cause">Likely causes</span>
+      <ul class="points">
+        <li>No <b>correlation/trace ID</b> propagated across services — can't stitch one request's journey.</li>
+        <li>Inconsistent formats, no centralization.</li>
+      </ul>
+    </div>
+    <div class="section">
+      <span class="label fix">Fix</span>
+      <ul class="points">
+        <li><b>Distributed tracing</b> (OpenTelemetry/Jaeger); propagate a trace ID through all calls.</li>
+        <li>Centralized structured (JSON) logging (ELK/Loki); link logs &harr; traces.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Q12 -->
+  <div class="card" id="q12">
+    <h3><span class="num">12</span> JVM memory slowly increases after every deployment <a class="top" href="#">&uarr; top</a></h3>
+    <div class="section">
+      <span class="label cause">Likely causes</span>
+      <ul class="points">
+        <li><b>Memory leak</b> — objects retained unintentionally: static collections, unbounded caches, thread-locals, unclosed resources, listener registrations.</li>
+        <li><b>ClassLoader leaks</b> — classic on redeploys; the old classloader can't be GC'd.</li>
+      </ul>
+    </div>
+    <div class="section">
+      <span class="label fix">Fix</span>
+      <ul class="points">
+        <li>Heap dump + analyze (MAT); watch old-gen growth across GC cycles.</li>
+        <li>Bound caches, fix leaked resources. Per-deploy specifically &rarr; suspect classloader/static state retention.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Q13 -->
+  <div class="card" id="q13">
+    <h3><span class="num">13</span> Works in staging but fails behind the production gateway <a class="top" href="#">&uarr; top</a></h3>
+    <div class="section">
+      <span class="label cause">Likely causes</span>
+      <ul class="points">
+        <li><b>Gateway-layer differences</b> — stricter timeouts, request/response size limits, header stripping/rewriting, path rewriting, auth/JWT validation, rate limiting, CORS, TLS/mTLS.</li>
+        <li>Buffering, body-size caps, or WAF rules blocking traffic.</li>
+      </ul>
+    </div>
+    <div class="tldr"><b>Fix:</b> diff gateway config staging vs prod, read the gateway's own logs (it emits its own 4xx/5xx/timeouts), verify timeouts, limits, headers, auth and routing.</div>
+  </div>
+
+  <!-- Q14 -->
+  <div class="card" id="q14">
+    <h3><span class="num">14</span> Thread pools exhausted even though CPU is stable <a class="top" href="#">&uarr; top</a></h3>
+    <div class="section">
+      <span class="label cause">Likely causes</span>
+      <ul class="points">
+        <li>Threads are <b>blocked on I/O</b>, not computing — waiting on slow DB/downstream calls or locks.</li>
+        <li>Low CPU + exhausted pool = classic blocking-wait signature.</li>
+      </ul>
+    </div>
+    <div class="section">
+      <span class="label fix">Fix</span>
+      <ul class="points">
+        <li>Add <b>timeouts</b> on all blocking calls; size pools correctly.</li>
+        <li>Use <b>async/non-blocking I/O</b>, bulkhead isolation; take a thread dump to see what they're blocked on.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Q15 -->
+  <div class="card" id="q15">
+    <h3><span class="num">15</span> Circuit breakers configured, but cascading failures persist <a class="top" href="#">&uarr; top</a></h3>
+    <div class="section">
+      <span class="label cause">Likely causes</span>
+      <ul class="points">
+        <li><b>Misconfigured thresholds/timeouts</b> — breaker opens too late; threads pile up before it trips.</li>
+        <li><b>No timeout</b> behind the breaker &rarr; calls hang regardless.</li>
+        <li><b>Shared thread pool</b> (no bulkhead) so one dependency starves all; breaker on the wrong layer; retries amplifying load.</li>
+      </ul>
+    </div>
+    <div class="section">
+      <span class="label fix">Fix</span>
+      <ul class="points">
+        <li>Pair breakers with <b>aggressive timeouts</b> + <b>bulkheads</b>.</li>
+        <li>Tune failure thresholds / half-open behavior, limit retries, add fallbacks. Breakers alone don't help without timeouts and isolation.</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  Backend &amp; System Design Troubleshooting Cheat Sheet &middot; Generated 2026-06-20
+</footer>
+</body>
+</html>
