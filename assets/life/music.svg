@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 320" fill="none">
+  <defs>
+    <linearGradient id="mus" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#702459"/>
+      <stop offset="50%" stop-color="#d6336c"/>
+      <stop offset="100%" stop-color="#f06595"/>
+    </linearGradient>
+    <linearGradient id="vinyl" cx="50%" cy="50%">
+      <stop offset="0%" stop-color="#1a1a2e"/>
+      <stop offset="100%" stop-color="#0f0f1a"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="320" rx="16" fill="url(#mus)"/>
+  <!-- Vinyl record -->
+  <g transform="translate(200,150)">
+    <g>
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="8s" repeatCount="indefinite"/>
+      <circle r="90" fill="#111"/>
+      <circle r="90" fill="none" stroke="#333" stroke-width="1"/>
+      <circle r="70" fill="none" stroke="#222" stroke-width=".5"/>
+      <circle r="50" fill="none" stroke="#222" stroke-width=".5"/>
+      <circle r="30" fill="none" stroke="#222" stroke-width=".5"/>
+      <circle r="18" fill="#d6336c"/>
+      <circle r="6" fill="#111"/>
+    </g>
+  </g>
+  <!-- Equalizer bars -->
+  <g transform="translate(48,80)">
+    <rect x="0" y="80" width="14" height="40" rx="4" fill="rgba(255,255,255,.85)">
+      <animate attributeName="height" values="40;120;60;100;40" dur="1.2s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="80;0;60;20;80" dur="1.2s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="22" y="60" width="14" height="60" rx="4" fill="rgba(255,255,255,.85)">
+      <animate attributeName="height" values="60;90;140;70;60" dur="1s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="60;30;0;50;60" dur="1s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="44" y="40" width="14" height="80" rx="4" fill="rgba(255,255,255,.85)">
+      <animate attributeName="height" values="80;50;130;90;80" dur="1.4s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="40;70;10;30;40" dur="1.4s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="66" y="70" width="14" height="50" rx="4" fill="rgba(255,255,255,.85)">
+      <animate attributeName="height" values="50;110;40;95;50" dur="0.9s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="70;10;80;25;70" dur="0.9s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+  <!-- Notes -->
+  <g fill="rgba(255,255,255,.6)">
+    <circle cx="320" cy="80" r="8"/>
+    <rect x="326" y="40" width="3" height="48" rx="1"/>
+    <animateTransform attributeName="transform" type="translate" values="0,0; 10,-20; 0,0" dur="2s" repeatCount="indefinite"/>
+  </g>
+  <g fill="rgba(255,255,255,.45)">
+    <circle cx="350" cy="110" r="7"/>
+    <rect x="355" y="75" width="3" height="40" rx="1"/>
+    <animateTransform attributeName="transform" type="translate" values="0,0; -8,-15; 0,0" dur="2.5s" repeatCount="indefinite"/>
+  </g>
+  <text x="200" y="300" text-anchor="middle" fill="rgba(255,255,255,.75)" font-family="system-ui,sans-serif" font-size="13" letter-spacing="3">SOUND &amp; RHYTHM</text>
+</svg>

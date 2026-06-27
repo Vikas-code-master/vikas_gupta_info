@@ -767,11 +767,30 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
-    font-size: 28px;
-    font-weight: 700;
-    letter-spacing: 0.02em;
     position: relative;
+    overflow: hidden;
+    background: var(--bg-card);
+  }
+  .gallery-slide img,
+  .gallery-slide object {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 8s ease;
+    pointer-events: none;
+  }
+  .gallery-slide:hover img,
+  .gallery-slide:hover object {
+    transform: scale(1.04);
+  }
+  .gallery-slide::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.45) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 1;
   }
   .gallery-slide::after {
     content: attr(data-label);
@@ -784,6 +803,7 @@
     padding: 4px 12px;
     border-radius: 999px;
     letter-spacing: 0;
+    z-index: 2;
   }
   .gallery-btn {
     position: absolute;
@@ -1520,10 +1540,18 @@
     <h2>Life Beyond Code</h2>
     <div class="gallery" id="gallery">
       <div class="gallery-track" id="galleryTrack">
-        <div class="gallery-slide" data-label="Chess" style="background: linear-gradient(135deg, #434343, #000000);">♟️</div>
-        <div class="gallery-slide" data-label="Cricket" style="background: linear-gradient(135deg, #43e97b, #38f9d7);">🏏</div>
-        <div class="gallery-slide" data-label="Sudoku" style="background: linear-gradient(135deg, #4facfe, #00f2fe);">🔢</div>
-        <div class="gallery-slide" data-label="Music" style="background: linear-gradient(135deg, #f093fb, #f5576c);">🎵</div>
+        <div class="gallery-slide" data-label="♟ Chess">
+          <object type="image/svg+xml" data="assets/life/chess.svg" aria-label="Animated chess board with moving pieces">Chess</object>
+        </div>
+        <div class="gallery-slide" data-label="🏏 Cricket">
+          <object type="image/svg+xml" data="assets/life/cricket.svg" aria-label="Animated cricket ball and pitch">Cricket</object>
+        </div>
+        <div class="gallery-slide" data-label="🔢 Sudoku">
+          <object type="image/svg+xml" data="assets/life/sudoku.svg" aria-label="Animated sudoku puzzle grid">Sudoku</object>
+        </div>
+        <div class="gallery-slide" data-label="🎵 Music">
+          <object type="image/svg+xml" data="assets/life/music.svg" aria-label="Animated vinyl record and equalizer">Music</object>
+        </div>
       </div>
       <button class="gallery-btn prev" id="galleryPrev" aria-label="Previous">‹</button>
       <button class="gallery-btn next" id="galleryNext" aria-label="Next">›</button>
