@@ -1084,10 +1084,27 @@
       </div>
 
       <div class="role-intro">
-        Owning backend services across the <strong>Wellness platform</strong> — communications, diagnostics, fitness, and tele-consultations — integrating multiple insurance and healthcare partners.
+        Owning backend services across the <strong>Wellness platform</strong> and core commerce flows — order management, communications, diagnostics, fitness, and tele-consultations — integrating multiple insurance and healthcare partners.
       </div>
 
       <div class="project-list">
+        <div class="role-project">
+          <div class="role-project-title">
+            Order Management Service
+            <span class="impact-badge scale">Saga</span>
+          </div>
+          <div class="role-project-desc">Built Order Management Service covering <strong>wallet and coupon handling</strong> — including automatic refund and auto-cancellation — while integrating with the payment gateway and product-specific downstream services. Implemented <strong>Saga (Choreography)</strong> for loosely coupled inter-service communication via <strong>Kafka</strong>, with fallback via the <strong>Outbox pattern</strong> and graceful rollback across services.</div>
+          <div class="bullet-tech">
+            <span class="tag">Java</span>
+            <span class="tag">Spring Boot</span>
+            <span class="tag">Kafka</span>
+            <span class="tag">Saga</span>
+            <span class="tag">Outbox Pattern</span>
+            <span class="tag">SQL Server</span>
+            <span class="tag">AWS</span>
+          </div>
+        </div>
+
         <div class="role-project">
           <div class="role-project-title">
             Communication Module
@@ -1104,36 +1121,14 @@
         </div>
 
         <div class="role-project">
-          <div class="role-project-title">Wellness — Diagnostics</div>
-          <div class="role-project-desc">Built REST APIs for member-level diagnostic test selection with partner-specific options; implemented test search, slot booking, coupon application, and end-to-end booking workflows.</div>
+          <div class="role-project-title">Wellness Platform</div>
+          <div class="role-project-desc">Built REST APIs across wellness verticals — <strong>diagnostics</strong> (member-level test selection, partner-specific options, search, slot booking, coupon application, and end-to-end booking workflows), <strong>gyms</strong> (integration APIs aggregating services from partners such as Cult and Fitpass), and <strong>consultations</strong> (medical consultation services via MediBuddy and Practo).</div>
           <div class="bullet-tech">
             <span class="tag">Java</span>
             <span class="tag">Spring Boot</span>
             <span class="tag">SQL Server</span>
             <span class="tag">Elasticsearch</span>
             <span class="tag">MongoDB</span>
-            <span class="tag">AWS</span>
-          </div>
-        </div>
-
-        <div class="role-project">
-          <div class="role-project-title">Wellness — Gyms</div>
-          <div class="role-project-desc">Built integration APIs to aggregate and expose gym services from partners such as <strong>Cult</strong> and <strong>Fitpass</strong>.</div>
-          <div class="bullet-tech">
-            <span class="tag">Java</span>
-            <span class="tag">Spring Boot</span>
-            <span class="tag">SQL Server</span>
-            <span class="tag">AWS</span>
-          </div>
-        </div>
-
-        <div class="role-project">
-          <div class="role-project-title">Wellness — Consultations</div>
-          <div class="role-project-desc">Developed APIs enabling medical consultation services through third-party partners including <strong>MediBuddy</strong> and <strong>Practo</strong>.</div>
-          <div class="bullet-tech">
-            <span class="tag">Java</span>
-            <span class="tag">Spring Boot</span>
-            <span class="tag">SQL Server</span>
             <span class="tag">AWS</span>
           </div>
         </div>
