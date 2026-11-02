@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+<script>try{var _p=localStorage.getItem('palette');if(_p)document.documentElement.setAttribute('data-palette',_p)}catch(e){}</script>
 <style>
   :root {
     --bg: #ffffff;
@@ -88,6 +89,7 @@
     font-weight: 700;
     font-size: 16px;
     letter-spacing: -0.02em;
+    white-space: nowrap;
   }
   .nav-brand span {
     color: var(--accent);
@@ -100,7 +102,7 @@
   }
   .nav-links {
     display: flex;
-    gap: 4px;
+    gap: 2px;
     list-style: none;
     flex-wrap: wrap;
   }
@@ -109,7 +111,7 @@
     text-decoration: none;
     font-size: 13px;
     font-weight: 500;
-    padding: 6px 10px;
+    padding: 6px 7px;
     border-radius: var(--radius-sm);
     transition: color var(--transition), background var(--transition);
   }
@@ -330,6 +332,107 @@
   /* Prose */
   .prose p { color: var(--fg-muted); margin-bottom: 12px; font-size: 15px; }
   .prose strong { color: var(--fg); font-weight: 600; }
+
+  /* About — vibrant */
+  .about-card {
+    position: relative;
+    padding: 28px 30px;
+    border-radius: calc(var(--radius) + 4px);
+    background:
+      linear-gradient(var(--bg-card), var(--bg-card)) padding-box,
+      linear-gradient(120deg, var(--accent), var(--accent-2), var(--accent-3), #f59e0b, var(--accent)) border-box;
+    background-size: 100% 100%, 300% 300%;
+    border: 1.5px solid transparent;
+    box-shadow: var(--shadow-md), 0 0 48px var(--accent-glow);
+    animation: aboutBorder 10s linear infinite;
+    overflow: hidden;
+  }
+  .about-card::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(40% 60% at 0% 0%, rgba(37,99,235,0.10), transparent 70%),
+      radial-gradient(40% 60% at 100% 100%, rgba(236,72,153,0.10), transparent 70%);
+  }
+  .about-card > * { position: relative; }
+  @keyframes aboutBorder { to { background-position: 0 0, 300% 0; } }
+  .about-lead {
+    font-family: var(--font-display);
+    font-size: 21px; line-height: 1.5; font-weight: 500;
+    letter-spacing: -0.01em; color: var(--fg);
+    margin-bottom: 18px;
+  }
+  .about-hi {
+    font-weight: 700;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--accent-3));
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .about-num {
+    font-weight: 700; color: #fff; padding: 1px 10px; border-radius: 999px; white-space: nowrap;
+    background: linear-gradient(135deg, #f59e0b, #ef4444);
+    box-shadow: 0 4px 14px rgba(239, 68, 68, 0.3);
+  }
+  .hl { font-weight: 600; color: var(--fg); padding: 0 3px; border-radius: 4px; }
+  .hl-blue   { background: linear-gradient(transparent 55%, rgba(59,130,246,0.30) 55%); }
+  .hl-violet { background: linear-gradient(transparent 55%, rgba(139,92,246,0.30) 55%); }
+  .hl-pink   { background: linear-gradient(transparent 55%, rgba(236,72,153,0.28) 55%); }
+  .about-stack { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+  .chip {
+    font-size: 13px; font-weight: 600; padding: 6px 13px; border-radius: 999px;
+    color: var(--c); background: color-mix(in srgb, var(--c) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--c) 35%, transparent);
+    transition: transform var(--transition), box-shadow var(--transition);
+    cursor: default;
+  }
+  .chip:hover { transform: translateY(-2px) scale(1.04); box-shadow: 0 6px 18px color-mix(in srgb, var(--c) 30%, transparent); }
+  .chip-java   { --c: #e76f00; }
+  .chip-spring { --c: #16a34a; }
+  .chip-micro  { --c: #7c3aed; }
+  .chip-kafka  { --c: #0891b2; }
+  .chip-redis  { --c: #dc2626; }
+  .chip-aws    { --c: #d97706; }
+  [data-theme="dark"] .chip-java   { --c: #fb923c; }
+  [data-theme="dark"] .chip-spring { --c: #4ade80; }
+  [data-theme="dark"] .chip-micro  { --c: #a78bfa; }
+  [data-theme="dark"] .chip-kafka  { --c: #22d3ee; }
+  [data-theme="dark"] .chip-redis  { --c: #f87171; }
+  [data-theme="dark"] .chip-aws    { --c: #fbbf24; }
+  .about-card .prose p:last-child { margin-bottom: 0; }
+  .about-focus {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 12px; margin-top: 22px;
+  }
+  .focus {
+    display: flex; flex-direction: column; gap: 10px; align-items: flex-start;
+    padding: 16px; border-radius: var(--radius);
+    background: var(--bg-elev); border: 1px solid var(--border);
+    position: relative; overflow: hidden;
+    transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+  }
+  .focus::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 3px;
+    background: linear-gradient(90deg, var(--c1), var(--c2));
+    transform: scaleX(0.25); transform-origin: left; transition: transform 0.35s ease;
+  }
+  .focus:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: color-mix(in srgb, var(--c1) 45%, transparent); }
+  .focus:hover::after { transform: scaleX(1); }
+  .focus-ico {
+    flex-shrink: 0; width: 36px; height: 36px; border-radius: 10px;
+    display: grid; place-items: center; font-size: 17px;
+    background: linear-gradient(135deg, var(--c1), var(--c2));
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--c1) 35%, transparent);
+  }
+  .focus h4 { font-family: var(--font-display); font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+  .focus p { font-size: 12.5px; color: var(--fg-muted); line-height: 1.45; }
+  .about-foot {
+    margin-top: 20px; padding-top: 16px; border-top: 1px dashed var(--border-strong);
+    font-size: 13px; color: var(--fg-muted);
+  }
+  .about-foot strong { color: var(--fg); }
+  @media (max-width: 640px) {
+    .about-card { padding: 22px 18px; }
+    .about-lead { font-size: 18px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .about-card { animation: none; } }
 
   /* Work — card */
   .work-item {
@@ -583,6 +686,98 @@
   }
   .tech-meta span::before { content: "·"; margin-right: 10px; color: var(--border-strong); }
   .tech-meta span:first-child::before { content: ""; margin-right: 0; }
+
+  /* System Design (HLD) */
+  #system-design, .hld { min-width: 0; max-width: 100%; }
+  .hld {
+    --n-client: #64748b; --n-service: #2563eb; --n-db: #059669; --n-cache: #dc2626;
+    --n-queue: #d97706; --n-external: #db2777; --n-worker: #7c3aed;
+    --e-sync: #2563eb; --e-async: #d97706;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  [data-theme="dark"] .hld {
+    --n-client: #94a3b8; --n-service: #60a5fa; --n-db: #34d399; --n-cache: #f87171;
+    --n-queue: #fbbf24; --n-external: #f472b6; --n-worker: #a78bfa;
+    --e-sync: #60a5fa; --e-async: #fbbf24;
+  }
+  .hld-tabs {
+    display: flex; gap: 4px; padding: 10px; overflow-x: auto;
+    border-bottom: 1px solid var(--border); background: var(--bg-elev);
+    scrollbar-width: none;
+  }
+  .hld-tabs::-webkit-scrollbar { display: none; }
+  .hld-tab {
+    flex: 0 0 auto; font: inherit; font-size: 13px; font-weight: 500;
+    padding: 7px 14px; border-radius: 999px; border: 1px solid transparent;
+    background: transparent; color: var(--fg-muted); cursor: pointer;
+    transition: all var(--transition);
+  }
+  .hld-tab:hover { color: var(--fg); background: var(--bg-card); }
+  .hld-tab.active { color: var(--accent); background: var(--accent-soft); border-color: var(--accent); }
+  .hld-head {
+    display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;
+    padding: 18px 22px 6px;
+  }
+  .hld-title { font-family: var(--font-display); font-size: 17px; font-weight: 700; }
+  .hld-sub { color: var(--fg-muted); font-size: 13px; margin-top: 2px; }
+  .hld-play {
+    flex: 0 0 auto; font: inherit; font-size: 12px; padding: 6px 12px; border-radius: 999px;
+    border: 1px solid var(--border-strong); background: var(--bg-card); color: var(--fg-muted); cursor: pointer;
+  }
+  .hld-play:hover { color: var(--accent); border-color: var(--accent); }
+  .hld-canvas { overflow-x: auto; padding: 4px 12px 0; }
+  .hld-canvas svg { display: block; width: 100%; min-width: 680px; height: auto; font-family: 'Inter', sans-serif; }
+  .hld-legend { display: flex; flex-wrap: wrap; gap: 14px; padding: 6px 22px 0; font-size: 11.5px; color: var(--fg-subtle); }
+  .hld-legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .hld-legend i { display: inline-block; width: 18px; height: 0; border-top: 2px solid var(--e-sync); }
+  .hld-legend i.async { border-top: 2px dashed var(--e-async); }
+  .hld-legend b { display: inline-block; width: 10px; height: 10px; border-radius: 3px; border: 2px solid; }
+  .hld-steps { list-style: none; counter-reset: step; padding: 14px 22px 20px; display: grid; gap: 6px; }
+  .hld-steps li {
+    counter-increment: step; position: relative; padding: 7px 10px 7px 38px;
+    font-size: 13px; color: var(--fg-muted); border-radius: var(--radius-sm);
+    cursor: pointer; transition: background var(--transition), color var(--transition);
+  }
+  .hld-steps li::before {
+    content: counter(step); position: absolute; left: 10px; top: 7px;
+    width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center;
+    font-size: 11px; font-weight: 600; background: var(--bg-elev); border: 1px solid var(--border-strong);
+  }
+  .hld-steps li.active { background: var(--accent-soft); color: var(--fg); }
+  .hld-steps li.active::before { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  .hld svg .node rect.box { fill: var(--bg-card); stroke: var(--border-strong); stroke-width: 1.2; transition: stroke var(--transition); }
+  .hld svg .node rect.bar { fill: var(--kind); }
+  .hld svg .node .lbl { fill: var(--fg); font-size: 13px; font-weight: 600; }
+  .hld svg .node .sub { fill: var(--fg-subtle); font-size: 10.5px; }
+  .hld svg .node { cursor: default; transition: opacity var(--transition); }
+  .hld svg .node:hover rect.box, .hld svg .node.hot rect.box { stroke: var(--kind); stroke-width: 2; }
+  .hld svg .node.hot rect.box { filter: drop-shadow(0 0 6px var(--kind)); }
+  .hld svg .edge path.line { fill: none; stroke-width: 1.6; opacity: 0.45; transition: opacity var(--transition), stroke-width var(--transition); }
+  .hld svg .edge.sync path.line { stroke: var(--e-sync); }
+  .hld svg .edge.async path.line { stroke: var(--e-async); stroke-dasharray: 6 5; animation: hldDash 1s linear infinite; }
+  .hld svg .edge .dot { opacity: 0.85; }
+  .hld svg .edge.sync .dot { fill: var(--e-sync); }
+  .hld svg .edge.async .dot { fill: var(--e-async); }
+  .hld svg .edge .elbl { fill: var(--fg-muted); font-size: 10px; font-family: 'JetBrains Mono', monospace; }
+  .hld svg .edge .elbl-bg { fill: var(--bg-card); opacity: 0.92; }
+  .hld svg .edge.hot path.line { opacity: 1; stroke-width: 2.6; }
+  .hld svg.dim .edge:not(.hot) { opacity: 0.5; }
+  .hld svg.dim .node:not(.hot) { opacity: 0.7; }
+  .hld svg marker path.sync { fill: var(--e-sync); }
+  .hld svg marker path.async { fill: var(--e-async); }
+  @keyframes hldDash { to { stroke-dashoffset: -11; } }
+  @media (prefers-reduced-motion: reduce) {
+    .hld svg .edge .dot { display: none; }
+    .hld svg .edge.async path.line { animation: none; }
+  }
+  @media (max-width: 600px) {
+    .hld-head { padding: 16px 16px 4px; }
+    .hld-steps, .hld-legend { padding-left: 16px; padding-right: 16px; }
+  }
 
   /* Learning */
   .learning-grid {
@@ -994,11 +1189,504 @@
     .work-dates-wrap { text-align: left; width: 100%; }
     .work-head-text { min-width: 0; }
   }
+
+  /* =====================================================================
+     VIBRANT THEME LAYER — overrides the base styles above
+     ===================================================================== */
+  /* Palettes: p1..p5 drive every gradient, glow and accent on the page */
+  :root, [data-palette="aurora"] { --p1: #6366f1; --p2: #8b5cf6; --p3: #ec4899; --p4: #f59e0b; --p5: #06b6d4; }
+  [data-palette="ocean"]   { --p1: #0284c7; --p2: #3b82f6; --p3: #6366f1; --p4: #22d3ee; --p5: #14b8a6; }
+  [data-palette="sunset"]  { --p1: #ea580c; --p2: #ef4444; --p3: #ec4899; --p4: #facc15; --p5: #fb7185; }
+  [data-palette="emerald"] { --p1: #059669; --p2: #14b8a6; --p3: #22c55e; --p4: #a3e635; --p5: #06b6d4; }
+  [data-palette="cyber"]   { --p1: #c026d3; --p2: #a855f7; --p3: #06b6d4; --p4: #22d3ee; --p5: #f0abfc; }
+  [data-palette="royal"]   { --p1: #7c3aed; --p2: #4f46e5; --p3: #d97706; --p4: #fbbf24; --p5: #a78bfa; }
+  [data-palette="rose"]    { --p1: #e11d48; --p2: #db2777; --p3: #c026d3; --p4: #fb7185; --p5: #f472b6; }
+
+  /* Neutral palettes — tones flip per light/dark so gradients stay legible */
+  :root { --on-grad: #fff; }
+  [data-palette="ivory"]    { --p1: #57534e; --p2: #78716c; --p3: #9c845a; --p4: #c4ae84; --p5: #d6c7a8; }
+  [data-palette="charcoal"] { --p1: #18181b; --p2: #3f3f46; --p3: #52525b; --p4: #71717a; --p5: #a1a1aa; }
+  [data-palette="slate"]    { --p1: #334155; --p2: #475569; --p3: #64748b; --p4: #94a3b8; --p5: #cbd5e1; }
+  [data-palette="ivory"][data-theme="dark"]    { --p1: #faf7f0; --p2: #ede6d6; --p3: #d6c7a8; --p4: #b8a580; --p5: #a8a29e; --on-grad: #1c1917; }
+  [data-palette="charcoal"][data-theme="dark"] { --p1: #fafafa; --p2: #e4e4e7; --p3: #d4d4d8; --p4: #a1a1aa; --p5: #71717a; --on-grad: #18181b; }
+  [data-palette="slate"][data-theme="dark"]    { --p1: #f1f5f9; --p2: #e2e8f0; --p3: #cbd5e1; --p4: #94a3b8; --p5: #64748b; --on-grad: #0f172a; }
+  /* Neutral page backgrounds: off-white paper by day, charcoal by night */
+  [data-palette="ivory"][data-theme="light"]    { --bg: #faf7f0; --bg-elev: #f3eee3; --card-bg: rgba(255,253,248,.85); --border: #e7e0d2; --border-strong: #d6cdbb; }
+  [data-palette="ivory"][data-theme="dark"]     { --bg: #1a1917; --bg-elev: #22211e; --bg-card: #23221f; --card-bg: rgba(35,34,31,.78); --border: #2f2d29; --border-strong: #403d37; }
+  [data-palette="charcoal"][data-theme="light"] { --bg: #f5f5f4; --bg-elev: #ededec; --card-bg: rgba(255,255,255,.82); --border: #e2e2e0; --border-strong: #cfcfcc; }
+  [data-palette="charcoal"][data-theme="dark"]  { --bg: #161616; --bg-elev: #1e1e1e; --bg-card: #1f1f1f; --card-bg: rgba(31,31,31,.8); --border: #2b2b2b; --border-strong: #3a3a3a; }
+  [data-palette="slate"][data-theme="light"]    { --bg: #f6f8fb; --bg-elev: #eef2f7; --card-bg: rgba(255,255,255,.82); --border: #e2e8f0; --border-strong: #cbd5e1; }
+  [data-palette="slate"][data-theme="dark"]     { --bg: #0f141b; --bg-elev: #151b24; --bg-card: #161d27; --card-bg: rgba(22,29,39,.8); --border: #222b38; --border-strong: #334155; }
+  :root {
+    --accent: var(--p1); --accent-2: var(--p2); --accent-3: var(--p3);
+    --accent-soft: color-mix(in srgb, var(--p1) 9%, transparent);
+    --accent-glow: color-mix(in srgb, var(--p2) 18%, transparent);
+  }
+  [data-theme="dark"] {
+    --accent: color-mix(in srgb, var(--p1) 62%, white);
+    --accent-2: color-mix(in srgb, var(--p2) 70%, white);
+    --accent-3: color-mix(in srgb, var(--p3) 70%, white);
+    --accent-soft: color-mix(in srgb, var(--p1) 16%, transparent);
+    --accent-glow: color-mix(in srgb, var(--p2) 26%, transparent);
+  }
+  :root {
+    --v1: #2563eb; --v2: #7c3aed; --v3: #db2777; --v4: #ea580c; --v5: #059669; --v6: #0891b2;
+    --grad: linear-gradient(120deg, var(--p1) 0%, var(--p2) 35%, var(--p3) 70%, var(--p4) 100%);
+    --grad-soft: linear-gradient(120deg, color-mix(in srgb, var(--p1) 14%, transparent), color-mix(in srgb, var(--p3) 12%, transparent));
+    --bg: #f7f8fc;
+    --card-bg: rgba(255,255,255,0.78);
+    --aurora-o: 0.55;
+  }
+  [data-theme="dark"] {
+    --v1: #60a5fa; --v2: color-mix(in srgb, var(--p2) 70%, white); --v3: color-mix(in srgb, var(--p3) 70%, white); --v4: #fb923c; --v5: #34d399; --v6: #22d3ee;
+    --bg: #07070c;
+    --card-bg: rgba(20,20,28,0.72);
+    --border: #23232e;
+    --border-strong: #34344a;
+    --aurora-o: 0.9;
+  }
+  ::selection { background: var(--p2); color: var(--on-grad); }
+  html { scrollbar-color: var(--p2) transparent; }
+
+  /* Aurora background + dot grid */
+  body { background: var(--bg); }
+  body::before, body::after {
+    content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  }
+  body::before {
+    opacity: var(--aurora-o);
+    background:
+      radial-gradient(38vw 38vw at 8% 12%,  color-mix(in srgb, var(--p1) 20%, transparent), transparent 60%),
+      radial-gradient(34vw 34vw at 92% 18%, color-mix(in srgb, var(--p3) 16%, transparent), transparent 60%),
+      radial-gradient(40vw 40vw at 75% 92%, color-mix(in srgb, var(--p5) 14%, transparent), transparent 60%),
+      radial-gradient(30vw 30vw at 15% 85%, color-mix(in srgb, var(--p4) 12%, transparent), transparent 60%);
+    filter: blur(10px);
+    animation: aurora 26s ease-in-out infinite alternate;
+  }
+  body::after {
+    background-image: radial-gradient(color-mix(in srgb, var(--fg) 9%, transparent) 1px, transparent 1px);
+    background-size: 22px 22px;
+    mask-image: linear-gradient(to bottom, #000 0%, transparent 70%);
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 70%);
+  }
+  @keyframes aurora {
+    0%   { transform: translate3d(0,0,0) scale(1); }
+    50%  { transform: translate3d(-3%, 2%, 0) scale(1.08); }
+    100% { transform: translate3d(3%, -2%, 0) scale(1.02); }
+  }
+
+  /* Nav */
+  nav.top { background: color-mix(in srgb, var(--bg) 72%, transparent); border-bottom-color: transparent; }
+  [data-theme="dark"] nav.top { background: color-mix(in srgb, var(--bg) 72%, transparent); }
+  nav.top::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--p2) 50%, transparent), color-mix(in srgb, var(--p3) 50%, transparent), transparent);
+  }
+  .scroll-progress {
+    position: absolute; left: 0; bottom: -1px; height: 2px; width: 100%;
+    background: var(--grad); transform-origin: left; transform: scaleX(0);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--p2) 60%, transparent);
+  }
+  .nav-brand {
+    background: var(--grad); -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; font-size: 17px;
+  }
+  .nav-brand span { -webkit-text-fill-color: var(--p3); }
+  .nav-links a { position: relative; }
+  .nav-links a::after {
+    content: ""; position: absolute; left: 8px; right: 8px; bottom: 2px; height: 2px; border-radius: 2px;
+    background: var(--grad); transform: scaleX(0); transition: transform .25s ease;
+  }
+  .nav-links a:hover::after, .nav-links a.active::after { transform: scaleX(1); }
+  .nav-links a.active { color: var(--fg); }
+  .cmd-trigger, .icon-btn { background: var(--card-bg); }
+
+  /* Hero */
+  .hero h1 { font-size: 50px; }
+  .avatar { position: relative; border-width: 4px; }
+  .avatar::before {
+    content: ""; position: absolute; inset: -8px; border-radius: 50%; z-index: -1;
+    background: conic-gradient(from 0deg, var(--p1), var(--p2), var(--p3), var(--p4), var(--p5), var(--p1));
+    animation: spin 6s linear infinite;
+    filter: blur(1px);
+  }
+  .avatar::after {
+    content: ""; position: absolute; inset: -18px; border-radius: 50%; z-index: -2;
+    background: conic-gradient(from 180deg, var(--p1), var(--p3), var(--p5), var(--p1));
+    filter: blur(22px); opacity: .45; animation: spin 10s linear infinite reverse;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .hero-links a, .email-copy { background: var(--card-bg); }
+  .hero-links a:hover, .email-copy:hover {
+    color: var(--on-grad); border-color: transparent; background: var(--grad);
+    box-shadow: 0 6px 18px color-mix(in srgb, var(--p2) 35%, transparent);
+  }
+
+  /* Section headings */
+  section h2 {
+    font-size: 26px; font-weight: 700; letter-spacing: -0.025em; text-transform: none;
+    color: var(--fg); margin-bottom: 26px; gap: 14px;
+  }
+  section h2::before {
+    width: 10px; height: 26px; border-radius: 4px; background: var(--grad);
+    box-shadow: 0 4px 14px color-mix(in srgb, var(--p2) 45%, transparent);
+  }
+  section h2::after {
+    content: ""; flex: 1; height: 1px;
+    background: linear-gradient(90deg, color-mix(in srgb, var(--fg) 18%, transparent), transparent);
+  }
+
+  /* Cards — glassy surface with gradient border on hover */
+  .work-item, .project, .learning-card, .tech-item, .stat, .skill-group, .ach, .profile, .hld, .gallery, .pub {
+    background:
+      linear-gradient(var(--card-bg), var(--card-bg)) padding-box,
+      linear-gradient(var(--bg), var(--bg)) padding-box,
+      linear-gradient(var(--border), var(--border)) border-box;
+    border: 1px solid transparent;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+  html .work-item:hover, html .project:hover, html .learning-card:hover, html .tech-item:hover,
+  html .stat:hover, html .skill-group:hover, html .ach:hover, html .profile:hover, html .pub:hover {
+    border-color: transparent;
+    background:
+      linear-gradient(var(--card-bg), var(--card-bg)) padding-box,
+      linear-gradient(var(--bg), var(--bg)) padding-box,
+      var(--grad) border-box;
+    box-shadow: 0 14px 34px -12px color-mix(in srgb, var(--p2) 35%, transparent), var(--shadow-md);
+  }
+  .skill-group, .ach, .profile { transition: all var(--transition); }
+  .skill-group:hover, .ach:hover, .profile:hover { transform: translateY(-3px); }
+
+  /* Stats */
+  .stat { overflow: hidden; }
+  .stat::before {
+    content: ""; position: absolute; left: 0; top: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--sa), var(--sb));
+  }
+  .stat:nth-child(1) { --sa: #3b82f6; --sb: var(--p5); }
+  .stat:nth-child(2) { --sa: var(--p2); --sb: var(--p3); }
+  .stat:nth-child(3) { --sa: #f59e0b; --sb: #ef4444; }
+  .stat:nth-child(4) { --sa: #10b981; --sb: #84cc16; }
+  .stat-value { background: linear-gradient(135deg, var(--sa), var(--sb)); -webkit-background-clip: text; background-clip: text; font-size: 34px; }
+
+  /* Work */
+  .work-logo { box-shadow: 0 8px 22px -6px rgba(0,0,0,.35); }
+  .work-item::before { width: 4px; opacity: .9; }
+  .work-dates { background: var(--grad-soft); border-color: transparent; color: var(--fg); }
+  .role-project::before {
+    background: var(--brand, var(--grad));
+    border: 2px solid var(--bg-card);
+    box-shadow: 0 0 0 1px var(--border-strong);
+  }
+  .role-project:hover::before { background: var(--brand, var(--grad)); box-shadow: 0 0 12px 2px color-mix(in srgb, var(--p2) 50%, transparent); }
+  .role-project { border-left-color: color-mix(in srgb, var(--fg) 10%, transparent); }
+  .role-project:hover { border-left-color: var(--p2); }
+
+  /* Colourful tags (cycle through the palette) */
+  .tag {
+    --c: var(--v1);
+    color: var(--c);
+    background: color-mix(in srgb, var(--c) 11%, transparent);
+    border: 1px solid color-mix(in srgb, var(--c) 26%, transparent);
+    padding: 2px 9px;
+    transition: transform .15s ease;
+  }
+  .tag:hover { transform: translateY(-1px); }
+  .tag:nth-child(6n+2) { --c: var(--v2); }
+  .tag:nth-child(6n+3) { --c: var(--v3); }
+  .tag:nth-child(6n+4) { --c: var(--v4); }
+  .tag:nth-child(6n+5) { --c: var(--v5); }
+  .tag:nth-child(6n+6) { --c: var(--v6); }
+
+  /* Projects */
+  .project-icon {
+    width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center;
+    background: var(--grad); box-shadow: 0 8px 20px -6px color-mix(in srgb, var(--p2) 55%, transparent); font-size: 22px;
+  }
+  .project:nth-child(2) .project-icon { background: linear-gradient(135deg, var(--p5), #3b82f6); box-shadow: 0 8px 20px -6px color-mix(in srgb, var(--p5) 55%, transparent); }
+  .project:nth-child(3) .project-icon { background: linear-gradient(135deg, #f59e0b, #ef4444); box-shadow: 0 8px 20px -6px rgba(239,68,68,.5); }
+
+  /* Learning */
+  .learning-card::before { background: var(--grad-soft); }
+  .learning-cta { background: var(--grad); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+  .learning-meta { padding: 2px 9px; border-radius: 999px; background: var(--grad-soft); color: var(--fg-muted); }
+
+  /* Tech content */
+  .tech-icon { background: var(--grad); color: var(--on-grad); font-size: 13px; box-shadow: 0 6px 16px -6px color-mix(in srgb, var(--p2) 60%, transparent); }
+
+  /* Skills — each group gets its own colour */
+  .skill-group { --c: var(--v1); position: relative; overflow: hidden; }
+  .skill-group:nth-child(9n+2) { --c: var(--v2); }
+  .skill-group:nth-child(9n+3) { --c: var(--v3); }
+  .skill-group:nth-child(9n+4) { --c: var(--v4); }
+  .skill-group:nth-child(9n+5) { --c: var(--v5); }
+  .skill-group:nth-child(9n+6) { --c: var(--v6); }
+  .skill-group:nth-child(9n+7) { --c: var(--v2); }
+  .skill-group:nth-child(9n+8) { --c: var(--v3); }
+  .skill-group:nth-child(9n+9) { --c: var(--v4); }
+  .skill-group::before {
+    content: ""; position: absolute; top: -40px; right: -40px; width: 110px; height: 110px; border-radius: 50%;
+    background: radial-gradient(circle, color-mix(in srgb, var(--c) 22%, transparent), transparent 70%);
+    pointer-events: none;
+  }
+  .skill-group h4 { color: var(--c); display: flex; align-items: center; gap: 8px; }
+  .skill-group h4::before {
+    content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--c);
+    box-shadow: 0 0 10px var(--c);
+  }
+  .skill-group .skill-pill:hover {
+    color: var(--c); border-color: var(--c);
+    background: color-mix(in srgb, var(--c) 12%, transparent);
+  }
+  .skill-pill { background: color-mix(in srgb, var(--bg-elev) 70%, transparent); }
+
+  /* Awards */
+  .ach-icon {
+    width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; font-size: 20px;
+    background: linear-gradient(135deg, var(--aa), var(--ab));
+    box-shadow: 0 8px 18px -6px var(--aa);
+  }
+  .ach:nth-child(1) { --aa: #f59e0b; --ab: #ef4444; }
+  .ach:nth-child(2) { --aa: var(--p1); --ab: var(--p5); }
+  .ach:nth-child(3) { --aa: var(--p2); --ab: var(--p3); }
+  .ach:nth-child(4) { --aa: #10b981; --ab: #84cc16; }
+
+  /* Coding profiles */
+  .profile-logo { color: #fff; background: linear-gradient(135deg, var(--pa), var(--pb)); width: 42px; height: 42px; border-radius: 12px; }
+  .profile:nth-child(1) { --pa: #f59e0b; --pb: #f97316; }
+  .profile:nth-child(2) { --pa: #3b82f6; --pb: #ef4444; }
+  .profile:nth-child(3) { --pa: #6b7280; --pb: #111827; }
+
+  /* System design card */
+  .hld-tab.active { color: var(--on-grad); background: var(--grad); border-color: transparent; box-shadow: 0 6px 16px -6px color-mix(in srgb, var(--p2) 60%, transparent); }
+  .hld-tabs { background: transparent; }
+
+  /* Gallery & footer */
+  .gallery { box-shadow: 0 20px 40px -20px color-mix(in srgb, var(--p2) 40%, transparent); }
+  .gallery-dot.active { background: linear-gradient(90deg, var(--p2), var(--p3)); width: 18px; border-radius: 4px; }
+  footer { border-top: 0; position: relative; }
+  footer::before {
+    content: ""; position: absolute; top: 0; left: 10%; right: 10%; height: 1px;
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--p2) 60%, transparent), color-mix(in srgb, var(--p3) 60%, transparent), transparent);
+  }
+
+  /* Command palette & toast */
+  .cmd-modal { border: 1px solid transparent; background: linear-gradient(var(--bg-card), var(--bg-card)) padding-box, var(--grad) border-box; }
+  .toast { background: var(--grad); color: var(--on-grad); }
+
+  @media (max-width: 640px) {
+    .hero h1 { font-size: 30px; }
+    section h2 { font-size: 22px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    body::before, .avatar::before, .avatar::after { animation: none; }
+  }
+
+  /* =====================================================================
+     COOL LAYER — motion, depth & texture
+     ===================================================================== */
+  /* Cursor spotlight + film grain */
+  .spotlight {
+    position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background: radial-gradient(520px circle at var(--sx, 50%) var(--sy, -20%),
+      color-mix(in srgb, var(--p2) 13%, transparent), color-mix(in srgb, var(--p3) 6%, transparent) 40%, transparent 70%);
+    transition: opacity .4s ease;
+  }
+  [data-theme="dark"] .spotlight {
+    background: radial-gradient(560px circle at var(--sx, 50%) var(--sy, -20%),
+      color-mix(in srgb, var(--p2) 18%, transparent), color-mix(in srgb, var(--p3) 7%, transparent) 40%, transparent 70%);
+  }
+  .grain {
+    position: fixed; inset: -50%; z-index: 90; pointer-events: none; opacity: .045;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    animation: grain 1.2s steps(4) infinite;
+  }
+  [data-theme="dark"] .grain { opacity: .07; }
+  @keyframes grain {
+    0% { transform: translate(0,0); } 25% { transform: translate(-3%,2%); }
+    50% { transform: translate(2%,-3%); } 75% { transform: translate(-2%,-1%); } 100% { transform: translate(0,0); }
+  }
+
+  /* Hero */
+  .hero h1 { font-size: 58px; margin-bottom: 8px; }
+  .hero-status {
+    display: inline-flex; align-items: center; gap: 8px; margin-bottom: 14px;
+    font-size: 12px; font-weight: 500; color: var(--fg-muted);
+    padding: 5px 12px 5px 10px; border-radius: 999px;
+    background: var(--card-bg); border: 1px solid var(--border);
+    backdrop-filter: blur(6px);
+  }
+  .pulse-dot {
+    width: 8px; height: 8px; border-radius: 50%; background: #22c55e; position: relative;
+  }
+  .pulse-dot::after {
+    content: ""; position: absolute; inset: -4px; border-radius: 50%; border: 2px solid #22c55e;
+    animation: ping 1.8s cubic-bezier(0,0,.2,1) infinite;
+  }
+  @keyframes ping { 0% { transform: scale(.6); opacity: 1; } 100% { transform: scale(1.8); opacity: 0; } }
+  .hero-term {
+    display: inline-flex; align-items: center; flex-wrap: wrap; gap: 6px;
+    font-family: 'JetBrains Mono', monospace; font-size: 13.5px;
+    margin: 2px 0 18px; padding: 8px 14px; border-radius: 10px;
+    background: color-mix(in srgb, #0b0b14 92%, transparent); color: #e5e7eb;
+    border: 1px solid color-mix(in srgb, var(--p2) 35%, transparent);
+    box-shadow: 0 10px 30px -12px color-mix(in srgb, var(--p2) 55%, transparent), inset 0 1px 0 rgba(255,255,255,.05);
+    min-height: 38px;
+  }
+  .term-prompt { color: #4ade80; }
+  .term-sep { color: color-mix(in srgb, var(--p1) 70%, white); margin-right: 4px; }
+  .term-typed { color: color-mix(in srgb, var(--p3) 55%, white); }
+  .term-caret {
+    width: 8px; height: 16px; background: linear-gradient(color-mix(in srgb, var(--p2) 70%, white), color-mix(in srgb, var(--p3) 70%, white));
+    border-radius: 1px; animation: blink 1s steps(2, end) infinite; margin-left: -2px;
+  }
+
+  /* Tech ribbon */
+  section.ribbon {
+    margin: -8px -24px 44px; display: grid; gap: 10px;
+    mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+  }
+  .marquee { overflow: hidden; }
+  .marquee-track { display: flex; gap: 10px; width: max-content; animation: marquee 38s linear infinite; }
+  .marquee.rev .marquee-track { animation-direction: reverse; animation-duration: 44s; }
+  .ribbon:hover .marquee-track { animation-play-state: paused; }
+  .marquee-track span {
+    white-space: nowrap; font-size: 13px; font-weight: 500; padding: 7px 14px; border-radius: 999px;
+    background: var(--card-bg); border: 1px solid var(--border); color: var(--fg);
+    transition: all var(--transition);
+  }
+  .marquee-track span:hover {
+    color: var(--on-grad); background: var(--grad); border-color: transparent;
+    box-shadow: 0 6px 18px -6px color-mix(in srgb, var(--p2) 60%, transparent);
+  }
+  @keyframes marquee { to { transform: translateX(-50%); } }
+
+  /* Numbered section headings */
+  main { counter-reset: sec; }
+  section h2 { counter-increment: sec; }
+  section h2::before {
+    content: counter(sec, decimal-leading-zero);
+    width: auto; height: auto; padding: 4px 9px; border-radius: 8px;
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; letter-spacing: 0;
+    color: var(--on-grad); background: var(--grad);
+    box-shadow: 0 6px 16px -6px color-mix(in srgb, var(--p2) 70%, transparent);
+  }
+  section.reveal.visible h2 {
+    background: linear-gradient(90deg, var(--fg) 0%, var(--fg) 40%, var(--p2) 50%, var(--p3) 56%, var(--fg) 66%, var(--fg) 100%);
+    background-size: 300% 100%; background-position: 100% 0;
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    animation: headSweep 1.6s .2s ease-out both;
+  }
+  section.reveal.visible h2::before, section.reveal.visible h2::after { -webkit-text-fill-color: initial; }
+  @keyframes headSweep { from { background-position: 100% 0; } to { background-position: 0% 0; } }
+
+  /* Staggered entrance for grid children */
+  .reveal.visible .stagger { animation: rise .65s cubic-bezier(.2,.65,.3,1) backwards; animation-delay: calc(var(--i, 0) * 70ms + 120ms); }
+  @keyframes rise { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+
+  /* 3D tilt */
+  .tilt { transform-style: preserve-3d; will-change: transform; }
+  .tilt.tilting { transition: transform .08s linear, box-shadow var(--transition), background var(--transition) !important; }
+
+  /* Contact CTA */
+  .contact-card {
+    position: relative; overflow: hidden; padding: 34px 32px; border-radius: 18px;
+    background:
+      linear-gradient(120deg, color-mix(in srgb, var(--p1) 10%, transparent), color-mix(in srgb, var(--p3) 8%, transparent) 60%, rgba(245,158,11,.06)) padding-box,
+      linear-gradient(var(--bg-card), var(--bg-card)) padding-box,
+      var(--grad) border-box;
+    border: 1.5px solid transparent;
+    box-shadow: 0 24px 60px -24px color-mix(in srgb, var(--p2) 55%, transparent);
+  }
+  .contact-card::before {
+    content: ""; position: absolute; width: 340px; height: 340px; right: -120px; top: -160px; border-radius: 50%;
+    background: radial-gradient(circle, color-mix(in srgb, var(--p3) 22%, transparent), transparent 70%); pointer-events: none;
+  }
+  .contact-card > * { position: relative; }
+  .contact-title {
+    font-family: var(--font-display); font-size: 30px; font-weight: 700; letter-spacing: -0.03em;
+    line-height: 1.15; margin-bottom: 14px; color: var(--fg);
+  }
+  .contact-title span { background: var(--grad); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+
+  @media (max-width: 640px) {
+    .hero h1 { font-size: 34px; }
+    .hero-term { font-size: 12px; }
+    section.ribbon { margin-left: -16px; margin-right: -16px; }
+    .contact-card { padding: 24px 20px; }
+    .contact-title { font-size: 23px; }
+  }
+  @media (hover: none) { .spotlight { display: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .grain, .marquee-track, .pulse-dot::after, .term-caret { animation: none; }
+    .reveal.visible .stagger, section.reveal.visible h2 { animation: none; }
+  }
+
+  /* Neutral palettes: keep everything in the same muted family */
+  :is([data-palette="ivory"], [data-palette="charcoal"], [data-palette="slate"]) {
+    & .stats .stat { --sa: var(--p1); --sb: var(--p4); }
+    & .achievements .ach { --aa: var(--p1); --ab: var(--p4); }
+    & .profiles .profile { --pa: var(--p2); --pb: var(--p1); }
+    & .projects .project .project-icon { background: var(--grad); box-shadow: 0 8px 20px -8px color-mix(in srgb, var(--p1) 50%, transparent); }
+    & .about-focus .focus { --c1: var(--p1) !important; --c2: var(--p4) !important; }
+    & .skills-grid .skill-group { --c: var(--p1); }
+    & .about-num { background: var(--grad); color: var(--on-grad); box-shadow: none; }
+    & .hl-blue, & .hl-violet, & .hl-pink { background: linear-gradient(transparent 58%, color-mix(in srgb, var(--p4) 35%, transparent) 58%); }
+    & .tech-icon, & .focus-ico, & .ach-icon, & .profile-logo { color: var(--on-grad); }
+  }
+
+  /* Palette picker */
+  .palette-wrap { position: relative; }
+  .palette-pop {
+    position: absolute; right: 0; top: calc(100% + 10px); width: 250px; z-index: 80;
+    padding: 12px; border-radius: 14px;
+    background: linear-gradient(var(--bg-card), var(--bg-card)) padding-box, var(--grad) border-box;
+    border: 1px solid transparent; box-shadow: var(--shadow-lg);
+    opacity: 0; transform: translateY(-6px) scale(.98); pointer-events: none;
+    transition: opacity .18s ease, transform .18s ease;
+  }
+  .palette-pop.open { opacity: 1; transform: none; pointer-events: auto; }
+  .palette-pop h5 {
+    font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--fg-subtle);
+    margin: 2px 4px 10px; font-weight: 600;
+  }
+  .palette-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .swatch {
+    display: flex; align-items: center; gap: 8px; padding: 7px 8px; border-radius: 10px;
+    border: 1px solid var(--border); background: var(--bg-elev); color: var(--fg);
+    font: inherit; font-size: 12.5px; font-weight: 500; cursor: pointer; text-align: left;
+    transition: border-color var(--transition), transform var(--transition);
+  }
+  .swatch:hover { transform: translateY(-1px); border-color: var(--border-strong); }
+  .swatch i {
+    width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--s1), var(--s2), var(--s3), var(--s4));
+    box-shadow: inset 0 0 0 2px rgba(255,255,255,.35);
+  }
+  .swatch.active { border-color: var(--accent); background: var(--accent-soft); }
+  .swatch.active::after { content: "✓"; margin-left: auto; color: var(--accent); font-weight: 700; }
+  #paletteBtn { background: var(--card-bg); }
+  .nav-links { flex-wrap: nowrap; overflow-x: auto; min-width: 0; scrollbar-width: none; }
+  .nav-links::-webkit-scrollbar { display: none; }
+  .nav-links a { white-space: nowrap; }
+  .nav-wrap > .nav-links { flex: 1 1 auto; justify-content: center; }
+  .cmd-trigger { padding: 6px 9px; gap: 6px; }
+  .cmd-trigger > span:first-child { font-size: 0; }
+  .cmd-trigger > span:first-child::before { content: "⌕"; font-size: 16px; line-height: 1; }
+  #paletteBtn span {
+    width: 16px; height: 16px; border-radius: 50%; display: block;
+    background: conic-gradient(var(--p1), var(--p2), var(--p3), var(--p4), var(--p1));
+  }
 </style>
 </head>
 <body>
 
+<div class="spotlight" id="spotlight" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
 <nav class="top">
+  <div class="scroll-progress" id="scrollProgress"></div>
   <div class="nav-wrap">
     <div class="nav-brand">vikas<span>.</span>gupta</div>
     <ul class="nav-links">
@@ -1006,6 +1694,7 @@
       <li><a href="#work">Work</a></li>
       <li><a href="#education">Education</a></li>
       <li><a href="#projects">Projects</a></li>
+      <li><a href="#system-design">Design</a></li>
       <li><a href="#learning">Learning</a></li>
       <li><a href="#tech-content">Tech</a></li>
       <li><a href="#skills">Skills</a></li>
@@ -1017,6 +1706,13 @@
         <span>Search</span>
         <span class="kbd">⌘K</span>
       </button>
+      <div class="palette-wrap">
+        <button class="icon-btn" id="paletteBtn" aria-label="Change colour theme" aria-haspopup="true" aria-expanded="false" title="Colour theme"><span></span></button>
+        <div class="palette-pop" id="palettePop" role="menu">
+          <h5>Colour theme</h5>
+          <div class="palette-grid" id="paletteGrid"></div>
+        </div>
+      </div>
       <button class="icon-btn" id="themeToggle" aria-label="Toggle theme">🌙</button>
     </div>
   </div>
@@ -1027,11 +1723,16 @@
   <section class="hero reveal" id="about">
     <div class="avatar">V</div>
     <div>
-      <h1><span class="name-grad">Vikas Kumar Gupta</span><span class="cursor" aria-hidden="true"></span></h1>
+      <div class="hero-status"><span class="pulse-dot"></span> Building backend systems at Onsurity</div>
+      <h1><span class="name-grad">Vikas Kumar Gupta</span></h1>
       <div class="title">
         Software Developer
         <span class="sep">·</span> SDE-2 @ Onsurity
         <span class="sep">·</span> Bengaluru, India
+      </div>
+      <div class="hero-term" aria-label="Java backend engineer building distributed systems">
+        <span class="term-prompt">vikas@backend</span><span class="term-sep">:~$</span>
+        <span class="term-typed" id="typed">building distributed systems</span><span class="term-caret"></span>
       </div>
       <div class="hero-links">
         <button class="email-copy" id="emailCopy" data-email="vkg7341@gmail.com">
@@ -1042,6 +1743,16 @@
         <a href="https://github.com/Vikas-code-master" target="_blank" rel="noopener">gh/ GitHub</a>
       </div>
     </div>
+  </section>
+
+  <!-- TECH RIBBON -->
+  <section class="ribbon" aria-label="Tech stack">
+    <div class="marquee"><div class="marquee-track">
+      <span>☕ Java</span><span>🌱 Spring Boot</span><span>📨 Apache Kafka</span><span>⚡ Redis</span><span>☁️ AWS</span><span>🐳 Docker</span><span>☸️ Kubernetes</span><span>🔎 Elasticsearch</span><span>🍃 MongoDB</span><span>🗄️ SQL Server</span><span>🐘 PostgreSQL</span>
+    </div></div>
+    <div class="marquee rev"><div class="marquee-track">
+      <span>🔀 Saga Pattern</span><span>📤 Transactional Outbox</span><span>🔁 Idempotency</span><span>🛡️ Circuit Breakers</span><span>🧵 Multithreading</span><span>📈 Horizontal Scaling</span><span>📊 Prometheus · Grafana</span><span>🧠 RAG · LangChain</span><span>🦙 Ollama</span><span>⚙️ Jenkins CI/CD</span>
+    </div></div>
   </section>
 
   <!-- STATS -->
@@ -1057,9 +1768,33 @@
   <!-- ABOUT -->
   <section class="reveal">
     <h2>About</h2>
-    <div class="prose">
-      <p>I'm a <strong>software developer</strong> currently working as <strong>SDE-2 at Onsurity</strong>, with 5+ years of experience building scalable backend systems across insurtech, healthtech, and wellness domains. I specialize in <strong>Java</strong>, <strong>Spring Boot</strong>, and event-driven microservices on AWS.</p>
-      <p>Previously at <strong>Policybazaar</strong>, I built and owned core services handling 10M+ requests per day. I hold an <strong>M.Tech from IIT Bhubaneswar</strong> and cracked GATE with a 98.57 percentile and the UG entrance exam with rank 41 (General). Outside work I enjoy chess, cricket, sudoku, and music.</p>
+    <div class="about-card">
+      <p class="about-lead">
+        <span class="about-hi">👋 Java Backend Engineer</span> with <span class="about-num">5.8 years</span> of experience designing, developing, and optimizing <span class="hl hl-blue">scalable backend systems</span> and <span class="hl hl-violet">distributed applications</span>.
+      </p>
+
+      <div class="about-stack">
+        <span class="chip chip-java">☕ Java</span>
+        <span class="chip chip-spring">🌱 Spring Boot</span>
+        <span class="chip chip-micro">🧩 Microservices</span>
+        <span class="chip chip-kafka">📨 Apache Kafka</span>
+        <span class="chip chip-redis">⚡ Redis</span>
+        <span class="chip chip-aws">☁️ AWS</span>
+      </div>
+
+      <div class="prose">
+        <p>Currently <strong>SDE-2 at Onsurity</strong>, building backend systems across insurtech, healthtech, and wellness. Previously at <strong>Policybazaar</strong>, I built and owned core services handling <strong>10M+ requests per day</strong>.</p>
+        <p>I enjoy solving complex engineering problems and building <span class="hl hl-pink">reliable, high-performance</span> backend solutions — from event-driven systems and async processing to caching strategies and third-party integrations.</p>
+      </div>
+
+      <div class="about-focus">
+        <div class="focus" style="--c1:#2563eb;--c2:#06b6d4"><div class="focus-ico">🚀</div><div><h4>High-Throughput Systems</h4><p>Services serving millions of requests/day with low latency.</p></div></div>
+        <div class="focus" style="--c1:#8b5cf6;--c2:#ec4899"><div class="focus-ico">🔀</div><div><h4>Distributed Patterns</h4><p>Saga, Transactional Outbox, idempotency, event-driven flows.</p></div></div>
+        <div class="focus" style="--c1:#10b981;--c2:#84cc16"><div class="focus-ico">🗄️</div><div><h4>Database Performance</h4><p>Indexing, query batching, read replicas, connection pooling.</p></div></div>
+        <div class="focus" style="--c1:#f59e0b;--c2:#ef4444"><div class="focus-ico">🛡️</div><div><h4>Fault Tolerance</h4><p>Retries, circuit breakers, compensating transactions.</p></div></div>
+      </div>
+
+      <p class="about-foot">🎓 <strong>M.Tech, IIT Bhubaneswar</strong> · GATE 98.57 percentile · ♟ chess · 🏏 cricket · 🔢 sudoku · 🎵 music</p>
     </div>
   </section>
 
@@ -1360,6 +2095,32 @@
     </div>
   </section>
 
+  <!-- SYSTEM DESIGN (HLD) -->
+  <section class="reveal" id="system-design">
+    <h2>System Design — HLD</h2>
+    <div class="hld" id="hld">
+      <div class="hld-tabs" id="hldTabs" role="tablist"></div>
+      <div class="hld-head">
+        <div>
+          <div class="hld-title" id="hldTitle"></div>
+          <div class="hld-sub" id="hldSub"></div>
+        </div>
+        <button class="hld-play" id="hldPlay" aria-label="Pause flow animation">❚❚ Pause</button>
+      </div>
+      <div class="hld-canvas"><svg id="hldSvg" role="img" aria-label="High-level architecture diagram"></svg></div>
+      <div class="hld-legend">
+        <span><i></i>Sync call (REST)</span>
+        <span><i class="async"></i>Async (Kafka / events)</span>
+        <span><b style="border-color:var(--n-service)"></b>Service</span>
+        <span><b style="border-color:var(--n-db)"></b>Database</span>
+        <span><b style="border-color:var(--n-cache)"></b>Cache</span>
+        <span><b style="border-color:var(--n-queue)"></b>Queue</span>
+        <span><b style="border-color:var(--n-external)"></b>External</span>
+      </div>
+      <ol class="hld-steps" id="hldSteps"></ol>
+    </div>
+  </section>
+
   <!-- LEARNING -->
   <section class="reveal" id="learning">
     <h2>Learning</h2>
@@ -1609,7 +2370,8 @@
   <!-- CONTACT -->
   <section class="reveal" id="contact">
     <h2>Contact</h2>
-    <div class="prose">
+    <div class="prose contact-card">
+      <h3 class="contact-title">Let's build something <span>reliable</span> together.</h3>
       <p>The fastest way to reach me is email — <button class="email-copy" data-email="vkg7341@gmail.com">click to copy ✉</button> — or call <strong>+91-8574337341</strong>. You can also DM on LinkedIn. Based in Bengaluru, India; I usually respond within a day.</p>
       <p>Languages: <strong>English</strong>, <strong>Hindi</strong>.</p>
     </div>
@@ -1666,6 +2428,51 @@
     toastTimer = setTimeout(() => toast.classList.remove('show'), 1800);
   }
 
+  // ---------- Colour palette switcher ----------
+  const PALETTES = [
+    { id: 'aurora',  name: 'Aurora',  c: ['#6366f1', '#8b5cf6', '#ec4899', '#f59e0b'] },
+    { id: 'ocean',   name: 'Ocean',   c: ['#0284c7', '#3b82f6', '#6366f1', '#22d3ee'] },
+    { id: 'sunset',  name: 'Sunset',  c: ['#ea580c', '#ef4444', '#ec4899', '#facc15'] },
+    { id: 'emerald', name: 'Emerald', c: ['#059669', '#14b8a6', '#22c55e', '#a3e635'] },
+    { id: 'cyber',   name: 'Cyber',   c: ['#c026d3', '#a855f7', '#06b6d4', '#22d3ee'] },
+    { id: 'royal',   name: 'Royal',   c: ['#7c3aed', '#4f46e5', '#d97706', '#fbbf24'] },
+    { id: 'rose',    name: 'Rose',    c: ['#e11d48', '#db2777', '#c026d3', '#fb7185'] },
+    { id: 'ivory',    name: 'Ivory',    c: ['#faf7f0', '#e7dcc8', '#b8a580', '#78716c'] },
+    { id: 'charcoal', name: 'Charcoal', c: ['#a1a1aa', '#52525b', '#27272a', '#18181b'] },
+    { id: 'slate',    name: 'Slate',    c: ['#cbd5e1', '#94a3b8', '#475569', '#1e293b'] },
+  ];
+  const paletteBtn = document.getElementById('paletteBtn');
+  const palettePop = document.getElementById('palettePop');
+  const paletteGrid = document.getElementById('paletteGrid');
+  const currentPalette = () => document.documentElement.getAttribute('data-palette') || 'aurora';
+  function setPalette(id, announce) {
+    document.documentElement.setAttribute('data-palette', id);
+    try { localStorage.setItem('palette', id); } catch {}
+    paletteGrid.querySelectorAll('.swatch').forEach(b => b.classList.toggle('active', b.dataset.id === id));
+    if (announce) showToast(`Theme: ${PALETTES.find(p => p.id === id).name}`);
+  }
+  PALETTES.forEach(p => {
+    if (p.id === 'ivory') {
+      const h = document.createElement('h5');
+      h.textContent = 'Neutral'; h.style.cssText = 'grid-column:1/-1;margin:8px 4px 2px';
+      paletteGrid.appendChild(h);
+    }
+    const b = document.createElement('button');
+    b.className = 'swatch'; b.dataset.id = p.id; b.setAttribute('role', 'menuitemradio');
+    b.style.cssText = p.c.map((c, i) => `--s${i + 1}:${c}`).join(';');
+    b.innerHTML = `<i></i>${p.name}`;
+    b.addEventListener('click', () => setPalette(p.id, true));
+    paletteGrid.appendChild(b);
+  });
+  setPalette(currentPalette(), false);
+  const togglePop = (open) => {
+    palettePop.classList.toggle('open', open);
+    paletteBtn.setAttribute('aria-expanded', open);
+  };
+  paletteBtn.addEventListener('click', e => { e.stopPropagation(); togglePop(!palettePop.classList.contains('open')); });
+  document.addEventListener('click', e => { if (!palettePop.contains(e.target)) togglePop(false); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') togglePop(false); });
+
   // ---------- Email copy ----------
   document.querySelectorAll('.email-copy').forEach(btn => {
     btn.addEventListener('click', async () => {
@@ -1680,6 +2487,433 @@
       }
     });
   });
+
+  // ---------- System Design (HLD) animated diagrams ----------
+  (function initHLD() {
+    const svg = document.getElementById('hldSvg');
+    if (!svg) return;
+    const NS = 'http://www.w3.org/2000/svg';
+    const W = 160, H = 56;
+    const KIND = { client: '--n-client', service: '--n-service', db: '--n-db', cache: '--n-cache', queue: '--n-queue', external: '--n-external', worker: '--n-worker' };
+
+    const DIAGRAMS = [
+      {
+        key: 'oms', tab: 'Order Management', title: 'Order Management Service',
+        sub: 'Horizontally scaled order platform · Redis idempotency · Saga choreography + Transactional Outbox',
+        h: 450,
+        nodes: [
+          { id: 'client',  x: 20,  y: 190, label: '📱 Client', sub: 'Web / Mobile app', kind: 'client' },
+          { id: 'lb',      x: 210, y: 190, label: '⚖️ Load Balancer', sub: 'API Gateway', kind: 'service' },
+          { id: 'n1',      x: 400, y: 100, label: '🧾 Order Service', sub: 'Node 1', kind: 'service' },
+          { id: 'n2',      x: 400, y: 280, label: '🧾 Order Service', sub: 'Node 2', kind: 'service' },
+          { id: 'pg',      x: 210, y: 380, label: '💳 Payment Gateway', sub: 'External PG', kind: 'external' },
+          { id: 'redis',   x: 620, y: 10,  label: '⚡ Redis', sub: 'Idempotency keys', kind: 'cache' },
+          { id: 'primary', x: 620, y: 140, label: '🗄️ SQL Server', sub: 'Order + Outbox (1 txn)', kind: 'db' },
+          { id: 'replica', x: 620, y: 270, label: '🗄️ Read Replica', sub: 'Read traffic', kind: 'db' },
+          { id: 'relay',   x: 820, y: 140, label: '📤 Outbox Relay', sub: 'Poll → publish', kind: 'worker' },
+          { id: 'kafka',   x: 820, y: 270, label: '📨 Kafka', sub: 'order-events topics', kind: 'queue' },
+          { id: 'down',    x: 820, y: 380, label: '🎟️ Wallet · Coupon', sub: 'Saga participants', kind: 'service' },
+        ],
+        edges: [
+          { from: 'client', to: 'lb' },
+          { from: 'lb', to: 'n1' }, { from: 'lb', to: 'n2' },
+          { from: 'n1', to: 'redis', label: 'SETNX' }, { from: 'n2', to: 'redis' },
+          { from: 'n1', to: 'primary' }, { from: 'n2', to: 'primary' },
+          { from: 'n2', to: 'replica', label: 'reads' },
+          { from: 'primary', to: 'replica', label: 'replication', type: 'async' },
+          { from: 'n2', to: 'pg', label: 'pay / refund' },
+          { from: 'primary', to: 'relay', label: 'poll', type: 'async' },
+          { from: 'relay', to: 'kafka', label: 'publish', type: 'async' },
+          { from: 'kafka', to: 'down', label: 'saga events', type: 'async', bidir: true },
+        ],
+        steps: [
+          { text: 'Client places an order; the load balancer routes it to either of the 2 Order Service nodes.', edges: ['client>lb', 'lb>n1', 'lb>n2'] },
+          { text: 'Node acquires a distributed idempotency key in Redis — duplicate requests on any node are rejected.', edges: ['n1>redis', 'n2>redis'] },
+          { text: 'Order row and outbox event are written in a single DB transaction on the primary.', edges: ['n1>primary', 'n2>primary'] },
+          { text: 'Reads (order status, history) are served from the read replica to offload the primary.', edges: ['primary>replica', 'n2>replica'] },
+          { text: 'Payment is captured via the payment gateway; refunds/cancellations go through the same path.', edges: ['n2>pg'] },
+          { text: 'Outbox relay polls unpublished events and reliably publishes them to Kafka.', edges: ['primary>relay', 'relay>kafka'] },
+          { text: 'Wallet / coupon services react to events (choreography); on failure they emit compensating events to roll back.', edges: ['kafka>down'] },
+        ],
+      },
+      {
+        key: 'enroll', tab: 'Enrollment Integration', title: 'Enrollment Integration Service',
+        sub: 'Bulk insurer data exchange · Multithreaded processing · Kafka-based async COI generation · 99.99% success',
+        h: 400,
+        nodes: [
+          { id: 'cron',   x: 20,  y: 60,  label: '⏰ Cron Scheduler', sub: 'Batch trigger', kind: 'worker' },
+          { id: 'hr',     x: 20,  y: 210, label: '👥 HR / Admin', sub: 'Bulk member upload', kind: 'client' },
+          { id: 'svc',    x: 220, y: 135, label: '🧩 Enrollment Svc', sub: 'Product workflows', kind: 'service' },
+          { id: 'db',     x: 220, y: 320, label: '🗄️ SQL Server · Mongo', sub: 'Members & families', kind: 'db' },
+          { id: 'pool',   x: 420, y: 135, label: '🧵 Worker Pool', sub: 'Concurrent batches', kind: 'worker' },
+          { id: 'digit',  x: 630, y: 20,  label: '🏢 Digit', sub: 'Insurer API', kind: 'external' },
+          { id: 'sompo',  x: 630, y: 110, label: '🏢 Universal Sompo', sub: 'Insurer API', kind: 'external' },
+          { id: 'ageas',  x: 630, y: 200, label: '🏢 Ageas Federal', sub: 'Insurer API', kind: 'external' },
+          { id: 'kafka',  x: 420, y: 320, label: '📨 Kafka', sub: 'doc-generation', kind: 'queue' },
+          { id: 'coi',    x: 630, y: 320, label: '📄 COI Generator', sub: 'Async consumer', kind: 'worker' },
+          { id: 's3',     x: 830, y: 320, label: '☁️ AWS S3', sub: 'COI documents', kind: 'db' },
+        ],
+        edges: [
+          { from: 'cron', to: 'svc', label: 'trigger' }, { from: 'hr', to: 'svc', label: 'upload' },
+          { from: 'svc', to: 'db', label: 'family composition' },
+          { from: 'svc', to: 'pool', label: 'split batches' },
+          { from: 'pool', to: 'digit' }, { from: 'pool', to: 'sompo' }, { from: 'pool', to: 'ageas' },
+          { from: 'pool', to: 'kafka', label: 'policy issued', type: 'async' },
+          { from: 'kafka', to: 'coi', type: 'async' },
+          { from: 'coi', to: 's3', label: 'store PDF' },
+        ],
+        steps: [
+          { text: 'A cron job (or HR bulk upload) kicks off an enrollment batch.', edges: ['cron>svc', 'hr>svc'] },
+          { text: 'Product-specific workflow (Health / Cyber / Life / Loss of Job) builds family composition and persists members.', edges: ['svc>db'] },
+          { text: 'Batch is split and processed concurrently by a worker thread pool.', edges: ['svc>pool'] },
+          { text: 'Policy data is exchanged with each insurer (Digit, Universal Sompo, Ageas Federal) in parallel.', edges: ['pool>digit', 'pool>sompo', 'pool>ageas'] },
+          { text: 'Issued policies emit Kafka events — slow document work is decoupled from the main flow.', edges: ['pool>kafka', 'kafka>coi'] },
+          { text: 'Certificate of Insurance PDFs are generated and stored in S3.', edges: ['coi>s3'] },
+        ],
+      },
+      {
+        key: 'wellness', tab: 'Wellness Platform', title: 'Wellness Platform',
+        sub: 'Diagnostics · Gyms · Consultations — parallel partner fan-out behind a resilience layer',
+        h: 420,
+        nodes: [
+          { id: 'app',   x: 20,  y: 180, label: '📱 Member App', sub: 'Search & book', kind: 'client' },
+          { id: 'gw',    x: 210, y: 180, label: '🚪 API Gateway', sub: 'Auth · routing', kind: 'service' },
+          { id: 'svc',   x: 400, y: 180, label: '💚 Wellness Svc', sub: 'Diag · Gym · Consult', kind: 'service' },
+          { id: 'redis', x: 300, y: 30,  label: '⚡ Redis', sub: 'Tests · slots · partners', kind: 'cache' },
+          { id: 'es',    x: 500, y: 30,  label: '🔎 Elasticsearch', sub: 'Test discovery', kind: 'db' },
+          { id: 'db',    x: 300, y: 340, label: '🗄️ SQL Server · Mongo', sub: 'Bookings · idempotency', kind: 'db' },
+          { id: 'async', x: 500, y: 340, label: '🔔 Async Workers', sub: 'Notifications', kind: 'worker' },
+          { id: 'cb',    x: 625, y: 180, label: '🛡️ Resilience', sub: 'Timeout · Retry · CB', kind: 'worker' },
+          { id: 'p1', x: 830, y: 10,  label: '🏋️ Cult', sub: 'Gyms', kind: 'external' },
+          { id: 'p2', x: 830, y: 92,  label: '🏋️ Fitpass', sub: 'Gyms', kind: 'external' },
+          { id: 'p3', x: 830, y: 174, label: '🩺 MediBuddy', sub: 'Diag · Consult', kind: 'external' },
+          { id: 'p4', x: 830, y: 256, label: '🩺 Practo', sub: 'Consultations', kind: 'external' },
+          { id: 'p5', x: 830, y: 338, label: '🩺 LetsDoc', sub: 'Consultations', kind: 'external' },
+        ],
+        edges: [
+          { from: 'app', to: 'gw' }, { from: 'gw', to: 'svc' },
+          { from: 'svc', to: 'redis', label: 'cache' }, { from: 'svc', to: 'es', label: 'search' },
+          { from: 'svc', to: 'cb', label: 'fan-out' },
+          { from: 'cb', to: 'p1' }, { from: 'cb', to: 'p2' }, { from: 'cb', to: 'p3' }, { from: 'cb', to: 'p4' }, { from: 'cb', to: 'p5' },
+          { from: 'svc', to: 'db', label: 'book' },
+          { from: 'svc', to: 'async', label: 'events', type: 'async' },
+        ],
+        steps: [
+          { text: 'Member searches tests, gyms or doctors; request enters via the API gateway.', edges: ['app>gw', 'gw>svc'] },
+          { text: 'Hot data (tests, slots, partners) is served from Redis; test discovery runs on tuned Elasticsearch indexes.', edges: ['svc>redis', 'svc>es'] },
+          { text: 'Partner APIs are called in parallel through a resilience layer — timeouts, retries and circuit breakers.', edges: ['svc>cb', 'cb>p1', 'cb>p2', 'cb>p3', 'cb>p4', 'cb>p5'] },
+          { text: 'Booking + payment are persisted with idempotency controls to prevent duplicates.', edges: ['svc>db'] },
+          { text: 'Notifications and background tasks run asynchronously off the request path.', edges: ['svc>async'] },
+        ],
+      },
+      {
+        key: 'core', tab: 'Core Service (10M/day)', title: 'Core Service — Policybazaar',
+        sub: 'Pre-payment journeys at ~10M requests/day · 2:1 read-to-write · cache-aside + read/write split',
+        h: 400,
+        nodes: [
+          { id: 'client', x: 20,  y: 170, label: '🌐 Customers', sub: 'Visit · enquiry · lead', kind: 'client' },
+          { id: 'lb',     x: 210, y: 170, label: '⚖️ Load Balancer', sub: 'Horizontal scale', kind: 'service' },
+          { id: 'core',   x: 400, y: 170, label: '⚙️ Core Service', sub: 'Spring MVC nodes', kind: 'service' },
+          { id: 'redis',  x: 640, y: 20,  label: '⚡ Redis', sub: 'Cache-aside', kind: 'cache' },
+          { id: 'pri',    x: 640, y: 170, label: '🗄️ Primary DB', sub: 'Writes (SQL / Mongo)', kind: 'db' },
+          { id: 'rep',    x: 640, y: 320, label: '🗄️ Read Replicas', sub: 'Indexed reads', kind: 'db' },
+          { id: 'kafka',  x: 400, y: 320, label: '📨 Kafka', sub: 'Async decoupling', kind: 'queue' },
+          { id: 'cons',   x: 160, y: 320, label: '🔁 Consumers', sub: 'Leads · orders', kind: 'worker' },
+        ],
+        edges: [
+          { from: 'client', to: 'lb' }, { from: 'lb', to: 'core' },
+          { from: 'core', to: 'redis', label: '1. get' },
+          { from: 'core', to: 'rep', label: '2. miss → read' },
+          { from: 'core', to: 'pri', label: 'write' },
+          { from: 'pri', to: 'rep', label: 'replicate', type: 'async' },
+          { from: 'core', to: 'kafka', label: 'publish', type: 'async' },
+          { from: 'kafka', to: 'cons', type: 'async' },
+        ],
+        steps: [
+          { text: 'Traffic is spread across horizontally scaled Core Service nodes.', edges: ['client>lb', 'lb>core'] },
+          { text: 'Reads check Redis first (cache-aside); on a miss, read from an indexed replica and populate the cache.', edges: ['core>redis', 'core>rep'] },
+          { text: 'Writes go to the primary with batched queries and a tuned connection pool; replicas stay in sync.', edges: ['core>pri', 'pri>rep'] },
+          { text: 'Non-critical work is published to Kafka and processed by consumers to keep latency low.', edges: ['core>kafka', 'kafka>cons'] },
+        ],
+      },
+      {
+        key: 'rag', tab: 'RAG Q&A', title: 'RAG-Based Document Q&A',
+        sub: 'Fully local pipeline — LangChain · Ollama · Llama 3.2 · Nomic embeddings · ChromaDB',
+        h: 380,
+        nodes: [
+          { id: 'pdf',   x: 20,  y: 40,  label: '📚 PDF Docs', sub: 'Source corpus', kind: 'client' },
+          { id: 'load',  x: 220, y: 40,  label: '📄 PyPDF Loader', sub: 'Ingestion', kind: 'worker' },
+          { id: 'split', x: 420, y: 40,  label: '✂️ Text Splitter', sub: 'Recursive chunks', kind: 'worker' },
+          { id: 'emb',   x: 620, y: 40,  label: '🧮 Nomic Embed', sub: 'via Ollama', kind: 'service' },
+          { id: 'vdb',   x: 820, y: 160, label: '🧠 ChromaDB', sub: 'Persistent vectors', kind: 'db' },
+          { id: 'user',  x: 20,  y: 280, label: '🙋 User Question', sub: 'Natural language', kind: 'client' },
+          { id: 'ret',   x: 420, y: 280, label: '🎯 Retriever', sub: 'Top-k + sources', kind: 'service' },
+          { id: 'llm',   x: 620, y: 280, label: '🦙 Llama 3.2', sub: 'Local LLM (Ollama)', kind: 'worker' },
+          { id: 'ans',   x: 820, y: 300, label: '✅ Answer', sub: '+ source attribution', kind: 'client' },
+        ],
+        edges: [
+          { from: 'pdf', to: 'load' }, { from: 'load', to: 'split' }, { from: 'split', to: 'emb', label: 'chunks' },
+          { from: 'emb', to: 'vdb', label: 'upsert' },
+          { from: 'user', to: 'ret', label: 'embed query' },
+          { from: 'ret', to: 'vdb', label: 'similarity search', bidir: true },
+          { from: 'ret', to: 'llm', label: 'context + prompt' },
+          { from: 'llm', to: 'ans' },
+        ],
+        steps: [
+          { text: 'PDFs are loaded with PyPDF and split into overlapping chunks (configurable size).', edges: ['pdf>load', 'load>split'] },
+          { text: 'Chunks are embedded with Nomic embeddings and persisted in ChromaDB.', edges: ['split>emb', 'emb>vdb'] },
+          { text: 'A user question is embedded and the retriever runs a top-k similarity search.', edges: ['user>ret', 'ret>vdb'] },
+          { text: 'Retrieved context is passed to Llama 3.2 running locally — no external LLM API.', edges: ['ret>llm'] },
+          { text: 'The answer is returned with source attribution to the original pages.', edges: ['llm>ans'] },
+        ],
+      },
+    ];
+
+    const tabsEl = document.getElementById('hldTabs');
+    const titleEl = document.getElementById('hldTitle');
+    const subEl = document.getElementById('hldSub');
+    const stepsEl = document.getElementById('hldSteps');
+    const playBtn = document.getElementById('hldPlay');
+    let current = 0, stepIdx = 0, timer = null, playing = true, hoverLock = false;
+
+    const el = (tag, attrs = {}, parent) => {
+      const n = document.createElementNS(NS, tag);
+      for (const k in attrs) n.setAttribute(k, attrs[k]);
+      if (parent) parent.appendChild(n);
+      return n;
+    };
+    // Point on rect boundary from its centre towards (tx, ty)
+    const clip = (n, tx, ty, gap = 5) => {
+      const w = n.w || W, cx = n.x + w / 2, cy = n.y + H / 2;
+      const dx = tx - cx, dy = ty - cy;
+      const t = Math.min((w / 2 + gap) / Math.abs(dx || 1e-6), (H / 2 + gap) / Math.abs(dy || 1e-6));
+      return [cx + dx * t, cy + dy * t];
+    };
+
+    function render(i) {
+      const d = DIAGRAMS[i];
+      svg.innerHTML = '';
+      svg.setAttribute('viewBox', `0 0 1000 ${d.h}`);
+      svg.classList.remove('dim');
+      titleEl.textContent = d.title;
+      subEl.textContent = d.sub;
+      [...tabsEl.children].forEach((b, j) => { b.classList.toggle('active', j === i); b.setAttribute('aria-selected', j === i); });
+
+      const defs = el('defs', {}, svg);
+      ['sync', 'async'].forEach(t => {
+        const m = el('marker', { id: 'hld-arrow-' + t, viewBox: '0 0 10 10', refX: '9', refY: '5', markerWidth: '7', markerHeight: '7', orient: 'auto-start-reverse' }, defs);
+        el('path', { d: 'M0,0 L10,5 L0,10 z', class: t }, m);
+      });
+
+      const byId = Object.fromEntries(d.nodes.map(n => [n.id, n]));
+      const edgeLayer = el('g', {}, svg);
+      const nodeLayer = el('g', {}, svg);
+
+      d.edges.forEach((e, k) => {
+        const a = byId[e.from], b = byId[e.to];
+        const type = e.type || 'sync';
+        const acx = a.x + (a.w || W) / 2, acy = a.y + H / 2, bcx = b.x + (b.w || W) / 2, bcy = b.y + H / 2;
+        let p, mid, vis;
+        if (e.curve) {
+          const mx = (acx + bcx) / 2, my = (acy + bcy) / 2 + e.curve * 1.6;
+          const [x1, y1] = clip(a, mx, my), [x2, y2] = clip(b, mx, my);
+          p = `M${x1},${y1} Q${mx},${my} ${x2},${y2}`;
+          mid = [(x1 + 2 * mx + x2) / 4, (y1 + 2 * my + y2) / 4];
+          vis = Math.hypot(x2 - x1, y2 - y1) * 1.2;
+        } else {
+          const [x1, y1] = clip(a, bcx, bcy), [x2, y2] = clip(b, acx, acy);
+          p = `M${x1},${y1} L${x2},${y2}`;
+          mid = [(x1 + x2) / 2, (y1 + y2) / 2];
+          vis = Math.hypot(x2 - x1, y2 - y1);
+        }
+        const g = el('g', { class: `edge ${type}`, 'data-key': `${e.from}>${e.to}`, 'data-from': e.from, 'data-to': e.to }, edgeLayer);
+        const attrs = { d: p, class: 'line', 'marker-end': `url(#hld-arrow-${type})` };
+        if (e.bidir) attrs['marker-start'] = `url(#hld-arrow-${type})`;
+        el('path', attrs, g);
+
+        // Moving packets
+        const len = Math.hypot(bcx - acx, bcy - acy);
+        const dur = Math.max(1.4, len / 140).toFixed(2);
+        const packets = e.bidir ? [[0, false], [dur / 2, true]] : [[0, false], [dur / 2, false]];
+        packets.forEach(([delay, reverse]) => {
+          const c = el('circle', { r: type === 'async' ? 3.5 : 4, class: 'dot' }, g);
+          const am = el('animateMotion', { dur: dur + 's', repeatCount: 'indefinite', path: p, begin: (-(delay + k * 0.37) % dur).toFixed(2) + 's' }, c);
+          if (reverse) { am.setAttribute('keyPoints', '1;0'); am.setAttribute('keyTimes', '0;1'); am.setAttribute('calcMode', 'linear'); }
+        });
+
+        const tw = e.label ? e.label.length * 6.1 + 10 : 0;
+        if (e.label && vis > tw + 24) {
+          el('rect', { x: mid[0] - tw / 2, y: mid[1] - 8, width: tw, height: 15, rx: 4, class: 'elbl-bg' }, g);
+          const t = el('text', { x: mid[0], y: mid[1] + 3.5, 'text-anchor': 'middle', class: 'elbl' }, g);
+          t.textContent = e.label;
+        }
+      });
+
+      d.nodes.forEach(n => {
+        const w = n.w || W;
+        const g = el('g', { class: 'node', 'data-id': n.id, transform: `translate(${n.x},${n.y})`, style: `--kind: var(${KIND[n.kind]})` }, nodeLayer);
+        el('rect', { width: w, height: H, rx: 10, class: 'box' }, g);
+        el('rect', { x: 0, y: 10, width: 4, height: H - 20, rx: 2, class: 'bar' }, g);
+        const l = el('text', { x: 14, y: 24, class: 'lbl' }, g); l.textContent = n.label;
+        const s = el('text', { x: 14, y: 42, class: 'sub' }, g); s.textContent = n.sub;
+        const title = el('title', {}, g); title.textContent = `${n.label.replace(/^\S+\s/, '')} — ${n.sub}`;
+        g.addEventListener('mouseenter', () => { hoverLock = true; highlightNode(n.id); });
+        g.addEventListener('mouseleave', () => { hoverLock = false; highlightStep(stepIdx); });
+      });
+
+      stepsEl.innerHTML = '';
+      d.steps.forEach((s, j) => {
+        const li = document.createElement('li');
+        li.textContent = s.text;
+        li.addEventListener('click', () => { stepIdx = j; highlightStep(j); restartTimer(); });
+        stepsEl.appendChild(li);
+      });
+      stepIdx = 0;
+      highlightStep(0);
+      if (!playing) svg.pauseAnimations && svg.pauseAnimations();
+    }
+
+    function clearHot() { svg.querySelectorAll('.hot').forEach(x => x.classList.remove('hot')); }
+    function highlightStep(j) {
+      const d = DIAGRAMS[current];
+      clearHot();
+      svg.classList.add('dim');
+      d.steps[j].edges.forEach(k => {
+        const g = svg.querySelector(`.edge[data-key="${k}"]`);
+        if (!g) return;
+        g.classList.add('hot');
+        svg.querySelector(`.node[data-id="${g.dataset.from}"]`).classList.add('hot');
+        svg.querySelector(`.node[data-id="${g.dataset.to}"]`).classList.add('hot');
+      });
+      [...stepsEl.children].forEach((li, i) => li.classList.toggle('active', i === j));
+    }
+    function highlightNode(id) {
+      clearHot();
+      svg.classList.add('dim');
+      svg.querySelector(`.node[data-id="${id}"]`).classList.add('hot');
+      svg.querySelectorAll(`.edge[data-from="${id}"], .edge[data-to="${id}"]`).forEach(g => {
+        g.classList.add('hot');
+        svg.querySelector(`.node[data-id="${g.dataset.from}"]`).classList.add('hot');
+        svg.querySelector(`.node[data-id="${g.dataset.to}"]`).classList.add('hot');
+      });
+    }
+    function restartTimer() {
+      clearInterval(timer);
+      if (!playing) return;
+      timer = setInterval(() => {
+        if (hoverLock) return;
+        stepIdx = (stepIdx + 1) % DIAGRAMS[current].steps.length;
+        highlightStep(stepIdx);
+      }, 3200);
+    }
+
+    DIAGRAMS.forEach((d, i) => {
+      const b = document.createElement('button');
+      b.className = 'hld-tab';
+      b.setAttribute('role', 'tab');
+      b.textContent = d.tab;
+      b.addEventListener('click', () => { current = i; render(i); restartTimer(); });
+      tabsEl.appendChild(b);
+    });
+
+    playBtn.addEventListener('click', () => {
+      playing = !playing;
+      playBtn.textContent = playing ? '❚❚ Pause' : '▶ Play';
+      playBtn.setAttribute('aria-label', playing ? 'Pause flow animation' : 'Play flow animation');
+      if (playing) { svg.unpauseAnimations && svg.unpauseAnimations(); } else { svg.pauseAnimations && svg.pauseAnimations(); }
+      restartTimer();
+    });
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      playing = false; playBtn.textContent = '▶ Play';
+    }
+    render(0);
+    restartTimer();
+  })();
+
+  // ---------- Scroll progress + active nav link ----------
+  const progressEl = document.getElementById('scrollProgress');
+  const onScroll = () => {
+    const max = document.documentElement.scrollHeight - innerHeight;
+    progressEl.style.transform = `scaleX(${max > 0 ? scrollY / max : 0})`;
+  };
+  addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+  const navLinks = [...document.querySelectorAll('.nav-links a')];
+  const navIO = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      if (!en.isIntersecting) return;
+      navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + en.target.id));
+    });
+  }, { rootMargin: '-45% 0px -50% 0px' });
+  navLinks.forEach(a => { const s = document.querySelector(a.getAttribute('href')); if (s) navIO.observe(s); });
+
+  // ---------- Cool layer: typing, ribbon, spotlight, stagger, tilt ----------
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const finePointer = matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  // Typing terminal
+  const typedEl = document.getElementById('typed');
+  if (typedEl && !reduceMotion) {
+    const phrases = [
+      'building distributed systems',
+      'shipping Kafka event pipelines',
+      'scaling services to 10M req/day',
+      'designing fault-tolerant APIs',
+      'java · spring boot · redis · aws',
+    ];
+    let p = 0, c = phrases[0].length, deleting = true;
+    const tick = () => {
+      const word = phrases[p];
+      c += deleting ? -1 : 1;
+      typedEl.textContent = word.slice(0, c);
+      let delay = deleting ? 28 : 55;
+      if (!deleting && c === word.length) { deleting = true; delay = 1800; }
+      else if (deleting && c === 0) { deleting = false; p = (p + 1) % phrases.length; delay = 300; }
+      setTimeout(tick, delay);
+    };
+    setTimeout(tick, 2200);
+  }
+
+  // Seamless marquee: duplicate the track content once
+  document.querySelectorAll('.marquee-track').forEach(t => { t.innerHTML += t.innerHTML; });
+
+  // Cursor spotlight
+  const spot = document.getElementById('spotlight');
+  if (spot && finePointer) {
+    let raf = 0, mx = 0, my = 0;
+    addEventListener('pointermove', e => {
+      mx = e.clientX; my = e.clientY;
+      if (!raf) raf = requestAnimationFrame(() => {
+        spot.style.setProperty('--sx', mx + 'px');
+        spot.style.setProperty('--sy', my + 'px');
+        raf = 0;
+      });
+    }, { passive: true });
+  }
+
+  // Stagger grid children
+  document.querySelectorAll('.stats, .projects, .learning-grid, .skills-grid, .achievements, .profiles, .about-focus, .about-stack')
+    .forEach(grid => [...grid.children].forEach((ch, i) => { ch.classList.add('stagger'); ch.style.setProperty('--i', i); }));
+
+  // 3D tilt on cards
+  if (finePointer && !reduceMotion) {
+    document.querySelectorAll('.project, .learning-card, .stat, .ach, .focus, .profile, .skill-group').forEach(card => {
+      card.classList.add('tilt');
+      card.addEventListener('pointermove', e => {
+        const r = card.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width - 0.5;
+        const py = (e.clientY - r.top) / r.height - 0.5;
+        const max = r.width > 400 ? 3 : 7;
+        card.classList.add('tilting');
+        card.style.transform = `perspective(900px) rotateX(${(-py * max).toFixed(2)}deg) rotateY(${(px * max).toFixed(2)}deg) translateY(-3px)`;
+      });
+      card.addEventListener('pointerleave', () => {
+        card.classList.remove('tilting');
+        card.style.transform = '';
+      });
+    });
+  }
 
   // ---------- Year ----------
   document.getElementById('year').textContent = new Date().getFullYear();
@@ -1835,12 +3069,15 @@
     { icon: '💼', label: 'Go to Work',          action: () => location.hash = '#work' },
     { icon: '🎓', label: 'Go to Education',     action: () => location.hash = '#education' },
     { icon: '🚀', label: 'Go to Projects',      action: () => location.hash = '#projects' },
+    { icon: '🏗️', label: 'Go to System Design', action: () => location.hash = '#system-design' },
     { icon: '📚', label: 'Go to Learning',      action: () => location.hash = '#learning' },
     { icon: '📄', label: 'Go to Tech Content',  action: () => location.hash = '#tech-content' },
     { icon: '🧰', label: 'Go to Skills',        action: () => location.hash = '#skills' },
     { icon: '🏆', label: 'Go to Awards',        action: () => location.hash = '#awards' },
     { icon: '✉️', label: 'Go to Contact',       action: () => location.hash = '#contact' },
     { icon: '🌓', label: 'Toggle theme',        action: () => themeToggle.click() },
+    { icon: '🎲', label: 'Theme: next colour palette', action: () => { const i = PALETTES.findIndex(p => p.id === currentPalette()); setPalette(PALETTES[(i + 1) % PALETTES.length].id, true); } },
+    ...PALETTES.map(p => ({ icon: '🎨', label: `Theme: ${p.name}`, action: () => setPalette(p.id, true) })),
     { icon: '📋', label: 'Copy email',          action: () => document.querySelector('.email-copy').click() },
     { icon: '🔗', label: 'Open LinkedIn',       action: () => window.open('https://linkedin.com/in/vikas-kumar-gupta1', '_blank') },
     { icon: '🐙', label: 'Open GitHub',         action: () => window.open('https://github.com/Vikas-code-master', '_blank') },
