@@ -1084,7 +1084,7 @@
       </div>
 
       <div class="role-intro">
-        Owning backend services across the <strong>Wellness platform</strong> and core commerce flows — order management, communications, diagnostics, fitness, and tele-consultations — integrating multiple insurance and healthcare partners.
+        Owning backend services across core commerce, insurer integrations, and the <strong>Wellness platform</strong> — order management, enrollment &amp; COI workflows, diagnostics, fitness, and tele-consultations — integrating multiple insurance and healthcare partners.
       </div>
 
       <div class="project-list">
@@ -1093,27 +1093,14 @@
             Order Management Service
             <span class="impact-badge scale">Saga</span>
           </div>
-          <div class="role-project-desc">Built Order Management Service covering <strong>wallet and coupon handling</strong> — including automatic refund and auto-cancellation — while integrating with the payment gateway and product-specific downstream services. Implemented <strong>Saga (Choreography)</strong> for loosely coupled inter-service communication via <strong>Kafka</strong>, with fallback via the <strong>Outbox pattern</strong> and graceful rollback across services.</div>
+          <div class="role-project-desc">Designed and developed a distributed order management platform supporting <strong>wallet and coupon management</strong>, automated refunds, and order cancellations. Deployed across <strong>2 application nodes</strong> for horizontal scalability and high availability. Implemented <strong>distributed idempotency</strong> using centralized <strong>Redis</strong> to prevent duplicate order processing across nodes, and leveraged database read replicas to offload reads from the primary. Integrated payment gateways and downstream services, using Kafka-based <strong>Saga Choreography</strong> and the <strong>Transactional Outbox</strong> pattern for reliable event publishing, async inter-service communication, and failure recovery through compensating transactions.</div>
           <div class="bullet-tech">
             <span class="tag">Java</span>
             <span class="tag">Spring Boot</span>
             <span class="tag">Kafka</span>
+            <span class="tag">Redis</span>
             <span class="tag">Saga</span>
-            <span class="tag">Outbox Pattern</span>
-            <span class="tag">SQL Server</span>
-            <span class="tag">AWS</span>
-          </div>
-        </div>
-
-        <div class="role-project">
-          <div class="role-project-title">
-            Communication Module
-            <span class="impact-badge scale">4 channels</span>
-          </div>
-          <div class="role-project-desc">Designed and implemented APIs enabling multi-channel communication via <strong>SMS, WhatsApp, Email, and Push Notifications</strong>. Built dynamic, configurable templates and integrated multiple third-party messaging platforms for seamless delivery.</div>
-          <div class="bullet-tech">
-            <span class="tag">Java</span>
-            <span class="tag">Spring Boot</span>
+            <span class="tag">Transactional Outbox</span>
             <span class="tag">SQL Server</span>
             <span class="tag">MongoDB</span>
             <span class="tag">AWS</span>
@@ -1121,13 +1108,38 @@
         </div>
 
         <div class="role-project">
-          <div class="role-project-title">Wellness Platform</div>
-          <div class="role-project-desc">Built REST APIs across wellness verticals — <strong>diagnostics</strong> (member-level test selection, partner-specific options, search, slot booking, coupon application, and end-to-end booking workflows), <strong>gyms</strong> (integration APIs aggregating services from partners such as Cult and Fitpass), and <strong>consultations</strong> (medical consultation services via MediBuddy and Practo).</div>
+          <div class="role-project-title">
+            Enrollment Integration Service
+            <span class="impact-badge win">99.99% success</span>
+          </div>
+          <div class="role-project-desc">Designed and developed a scalable insurer integration platform automating bulk data exchange with <strong>Digit, Universal Sompo, and Ageas Federal</strong>. Implemented product-specific workflows for family composition, <strong>Certificate of Insurance (COI)</strong> generation, and policy data exchange across Health, Cyber, Life, and Loss of Job products. Leveraged <strong>multithreading</strong> for concurrent processing and Kafka-based asynchronous document generation to improve throughput and decouple time-intensive operations.</div>
           <div class="bullet-tech">
             <span class="tag">Java</span>
             <span class="tag">Spring Boot</span>
+            <span class="tag">Kafka</span>
+            <span class="tag">Multithreading</span>
+            <span class="tag">Cron Scheduler</span>
             <span class="tag">SQL Server</span>
+            <span class="tag">MongoDB</span>
+            <span class="tag">AWS</span>
+          </div>
+        </div>
+
+        <div class="role-project">
+          <div class="role-project-title">
+            Wellness Platform
+            <span class="impact-badge scale">5 partners</span>
+          </div>
+          <div class="role-project-desc">Designed and developed scalable backend services integrating healthcare and wellness partners for diagnostic bookings, gym discovery, and medical consultations.
+            <br><strong>Diagnostics:</strong> REST APIs for test discovery, partner-specific test selection, slot availability, coupon application, and end-to-end booking — with <strong>Redis caching</strong> for hot test/slot/partner data and optimized <strong>Elasticsearch</strong> indexing and queries to cut retrieval latency.
+            <br><strong>Partner Integrations:</strong> Cult, Fitpass, MediBuddy, Practo, and LetsDoc — parallel API execution to aggregate partner responses, with tuned connection pooling and HTTP client configs.
+            <br><strong>Reliability:</strong> timeouts, retries, and <strong>circuit breakers</strong> against third-party failures; idempotency controls for booking and payment operations; async workflows for notifications and background jobs.</div>
+          <div class="bullet-tech">
+            <span class="tag">Java</span>
+            <span class="tag">Spring Boot</span>
+            <span class="tag">Redis</span>
             <span class="tag">Elasticsearch</span>
+            <span class="tag">SQL Server</span>
             <span class="tag">MongoDB</span>
             <span class="tag">AWS</span>
           </div>
@@ -1162,10 +1174,12 @@
             <span class="impact-badge scale">10M req/day</span>
             <span class="impact-badge scale">2:1 R/W</span>
           </div>
-          <div class="role-project-desc">Developed features for pre-payment customer journeys — <strong>visit, enquiry, lead, and order</strong> — owning the hot path that handles the full top-of-funnel traffic for the marketplace.</div>
+          <div class="role-project-desc">Developed and optimized high-throughput backend services powering pre-payment customer journeys — <strong>visits, enquiries, leads, and orders</strong>. Implemented Redis-based <strong>cache-aside</strong> caching to reduce database load and read latency. Optimized MongoDB/SQL queries through indexing and query batching, used <strong>read replicas</strong> with read-write separation, tuned connection pooling, and integrated <strong>Kafka</strong>-based async processing to decouple operations and improve throughput.</div>
           <div class="bullet-tech">
             <span class="tag">Java</span>
             <span class="tag">Spring MVC</span>
+            <span class="tag">Redis</span>
+            <span class="tag">Kafka</span>
             <span class="tag">SQL Server</span>
             <span class="tag">MongoDB</span>
             <span class="tag">AWS</span>
@@ -1174,24 +1188,38 @@
 
         <div class="role-project">
           <div class="role-project-title">
-            Policy Copy Detail (PCD) &amp; Central Doc Repo (CDR)
-            <span class="impact-badge scale">2M/day</span>
-            <span class="impact-badge scale">250K docs/day</span>
+            Policy Copy Detail (PCD)
+            <span class="impact-badge scale">2M req/day</span>
           </div>
-          <div class="role-project-desc">Built a robust central backend providing policy details for multiple teams. Improved performance using design patterns, indexing, and Kafka. In CDR managed policy copies, miscellaneous, and <strong>KYC documents</strong>.</div>
+          <div class="role-project-desc">Developed and optimized centralized backend services for policy details consumed by multiple internal teams. Improved query performance through <strong>database indexing</strong> and applied design patterns for reusability and maintainability. Integrated <strong>Kafka</strong> for asynchronous processing.</div>
           <div class="bullet-tech">
             <span class="tag">Java</span>
             <span class="tag">Spring Boot</span>
             <span class="tag">Kafka</span>
             <span class="tag">SQL Server</span>
             <span class="tag">MongoDB</span>
+            <span class="tag">AWS</span>
+          </div>
+        </div>
+
+        <div class="role-project">
+          <div class="role-project-title">
+            Central Document Repository (CDR)
+            <span class="impact-badge scale">250K req/day</span>
+          </div>
+          <div class="role-project-desc">Built backend services for managing and retrieving policy copies, miscellaneous documents, and <strong>KYC records</strong>, with <strong>AWS S3</strong> for document storage and retrieval.</div>
+          <div class="bullet-tech">
+            <span class="tag">Java</span>
+            <span class="tag">Spring Boot</span>
             <span class="tag">AWS S3</span>
+            <span class="tag">SQL Server</span>
+            <span class="tag">MongoDB</span>
           </div>
         </div>
 
         <div class="role-project">
           <div class="role-project-title">Docprime — HealthLocker</div>
-          <div class="role-project-desc">Implemented login, member addition, <strong>HealthId creation</strong>, and document storage by user/consent from HIP. Added JWT auth and authorization for secure resource access.</div>
+          <div class="role-project-desc">Developed authentication and member-management features, including <strong>Health ID creation</strong> and consent-based document storage from Health Information Providers (HIPs). Implemented <strong>JWT</strong>-based authentication and authorization to secure user access and health document workflows.</div>
           <div class="bullet-tech">
             <span class="tag">Java</span>
             <span class="tag">Spring MVC</span>
@@ -1208,7 +1236,7 @@
             Mongo → S3 Cron Jobs
             <span class="impact-badge win">−20% infra cost</span>
           </div>
-          <div class="role-project-desc">Built scheduled jobs to archive cold data from MongoDB to S3, cutting hot-storage footprint and shifting infrequent reads to cheaper tiered storage.</div>
+          <div class="role-project-desc">Developed scheduled jobs to migrate data from MongoDB to <strong>AWS S3</strong>, optimizing data archival and storage utilization to reduce infrastructure costs by 20%.</div>
           <div class="bullet-tech">
             <span class="tag">Java</span>
             <span class="tag">Spring MVC</span>
@@ -1220,7 +1248,7 @@
 
         <div class="role-project">
           <div class="role-project-title">Aadhaar Vault</div>
-          <div class="role-project-desc">Developed a secure storage system for <strong>UIDAI metadata</strong> consumed across teams, isolating PII behind a controlled service surface for compliance.</div>
+          <div class="role-project-desc">Developed a centralized and secure storage service for <strong>UIDAI-related metadata</strong>, enabling multiple internal teams to access shared data through standardized backend APIs.</div>
           <div class="bullet-tech">
             <span class="tag">Java</span>
             <span class="tag">Spring Boot</span>
@@ -1312,10 +1340,16 @@
     <h2>Personal Projects</h2>
     <div class="projects">
       <a class="project" href="https://github.com/Vikas-code-master" target="_blank" rel="noopener">
+        <div class="project-icon">🤖</div>
+        <h3>RAG-Based Document Q&amp;A System</h3>
+        <p>On-premise Retrieval-Augmented Generation pipeline for context-aware Q&amp;A over PDFs, using LangChain, Ollama, and Llama 3.2. PyPDF ingestion, recursive chunking, Nomic embeddings, and ChromaDB for persistent vector storage — with configurable chunking/retrieval, source attribution, and fully local inference (no external LLM API).</p>
+        <div class="project-tags"><span class="tag">Python</span><span class="tag">LangChain</span><span class="tag">Ollama</span><span class="tag">Llama 3.2</span><span class="tag">ChromaDB</span></div>
+      </a>
+      <a class="project" href="https://github.com/Vikas-code-master" target="_blank" rel="noopener">
         <div class="project-icon">⚙️</div>
         <h3>Order &amp; Product Microservices on K8s</h3>
-        <p>Designed and deployed Order and Product microservices on a Kubernetes cluster. Implemented CI/CD pipeline using Jenkins and integrated Prometheus + Grafana for real-time monitoring and alerting.</p>
-        <div class="project-tags"><span class="tag">K8s</span><span class="tag">Jenkins</span><span class="tag">Prometheus</span><span class="tag">Grafana</span></div>
+        <p>Designed and deployed Spring Boot Order and Product microservices on Kubernetes with containerized deployments and Jenkins-based CI/CD. Integrated Prometheus + Grafana for metrics, monitoring, and alerting.</p>
+        <div class="project-tags"><span class="tag">Spring Boot</span><span class="tag">K8s</span><span class="tag">Docker</span><span class="tag">Jenkins</span><span class="tag">Prometheus</span><span class="tag">Grafana</span></div>
       </a>
       <a class="project" href="https://github.com/Vikas-code-master" target="_blank" rel="noopener">
         <div class="project-icon">🏨</div>
@@ -1473,37 +1507,55 @@
       <div class="skill-group">
         <h4>Languages</h4>
         <div class="skill-list">
-          <span class="skill-pill">Java</span><span class="skill-pill">C++</span><span class="skill-pill">Python</span><span class="skill-pill">SQL</span><span class="skill-pill">JavaScript</span><span class="skill-pill">Bash</span>
+          <span class="skill-pill">Java</span><span class="skill-pill">Python</span><span class="skill-pill">C++</span><span class="skill-pill">SQL</span><span class="skill-pill">JavaScript</span><span class="skill-pill">Bash</span>
         </div>
       </div>
       <div class="skill-group">
-        <h4>Frameworks</h4>
+        <h4>Backend &amp; Frameworks</h4>
         <div class="skill-list">
-          <span class="skill-pill">Spring</span><span class="skill-pill">Spring Boot</span><span class="skill-pill">React</span><span class="skill-pill">PyTorch</span><span class="skill-pill">Keras (TensorFlow)</span>
+          <span class="skill-pill">Spring Boot</span><span class="skill-pill">Spring MVC</span><span class="skill-pill">Hibernate</span><span class="skill-pill">JPA</span><span class="skill-pill">RESTful APIs</span><span class="skill-pill">Microservices</span>
         </div>
       </div>
       <div class="skill-group">
-        <h4>Databases</h4>
+        <h4>System Design &amp; Architecture</h4>
         <div class="skill-list">
-          <span class="skill-pill">SQL Server</span><span class="skill-pill">MySQL</span><span class="skill-pill">PostgreSQL</span><span class="skill-pill">MongoDB</span>
+          <span class="skill-pill">Distributed Systems</span><span class="skill-pill">High Availability</span><span class="skill-pill">Horizontal Scaling</span><span class="skill-pill">Event-Driven Architecture</span><span class="skill-pill">Fault Tolerance</span><span class="skill-pill">Saga Pattern</span><span class="skill-pill">Transactional Outbox</span>
         </div>
       </div>
       <div class="skill-group">
-        <h4>Messaging &amp; Caching</h4>
+        <h4>Concurrency &amp; Distributed Computing</h4>
         <div class="skill-list">
-          <span class="skill-pill">Kafka</span><span class="skill-pill">Redis</span><span class="skill-pill">Elasticsearch</span>
+          <span class="skill-pill">Multithreading</span><span class="skill-pill">Concurrency</span><span class="skill-pill">Distributed Idempotency</span><span class="skill-pill">Asynchronous Processing</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <h4>Messaging &amp; In-Memory Stores</h4>
+        <div class="skill-list">
+          <span class="skill-pill">Apache Kafka</span><span class="skill-pill">AWS SQS</span><span class="skill-pill">Redis</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <h4>Databases &amp; Search</h4>
+        <div class="skill-list">
+          <span class="skill-pill">SQL Server</span><span class="skill-pill">MySQL</span><span class="skill-pill">PostgreSQL</span><span class="skill-pill">MongoDB</span><span class="skill-pill">Elasticsearch</span><span class="skill-pill">Indexing</span><span class="skill-pill">Query Optimization</span><span class="skill-pill">Replication</span>
         </div>
       </div>
       <div class="skill-group">
         <h4>Cloud &amp; DevOps</h4>
         <div class="skill-list">
-          <span class="skill-pill">AWS</span><span class="skill-pill">Docker</span><span class="skill-pill">Kubernetes</span><span class="skill-pill">Jenkins</span>
+          <span class="skill-pill">AWS</span><span class="skill-pill">Amazon S3</span><span class="skill-pill">Docker</span><span class="skill-pill">Kubernetes</span><span class="skill-pill">Jenkins</span><span class="skill-pill">CI/CD</span>
         </div>
       </div>
       <div class="skill-group">
         <h4>Observability</h4>
         <div class="skill-list">
           <span class="skill-pill">Prometheus</span><span class="skill-pill">Grafana</span><span class="skill-pill">New Relic</span><span class="skill-pill">Kibana</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <h4>AI/ML &amp; LLM Engineering</h4>
+        <div class="skill-list">
+          <span class="skill-pill">LLMs</span><span class="skill-pill">Transformers</span><span class="skill-pill">RAG</span><span class="skill-pill">LangChain</span><span class="skill-pill">Ollama</span><span class="skill-pill">PyTorch</span><span class="skill-pill">TensorFlow</span><span class="skill-pill">Embeddings</span><span class="skill-pill">Vector Databases</span>
         </div>
       </div>
     </div>
